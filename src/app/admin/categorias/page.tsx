@@ -1,6 +1,6 @@
 import { getCategories, getTags } from "@/lib/queries/categories";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Tag, FolderOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, Tag, FolderOpen, X } from "lucide-react";
 
 export default async function CategoriasAdmin() {
   const [blogCategories, tags] = await Promise.all([getCategories(), getTags()]);
@@ -122,13 +122,5 @@ export default async function CategoriasAdmin() {
         </div>
       </div>
     </div>
-  );
-}
-
-function X({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
   );
 }
