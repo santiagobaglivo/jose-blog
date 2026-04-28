@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft, Image, Bold, Italic, List, Link2, Heading2, Quote } from "lucide-react";
+import { ArrowLeft, Image } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getCategories, getTags } from "@/lib/queries/categories";
+import { RichTextEditor } from "@/components/editor/RichTextEditor";
 
 export default async function NuevoArticuloPage() {
   const [blogCategories, tags] = await Promise.all([getCategories(), getTags()]);
@@ -62,35 +63,8 @@ export default async function NuevoArticuloPage() {
             </p>
           </div>
 
-          {/* Toolbar */}
-          <div className="bg-card border border-border/50 rounded-xl overflow-hidden">
-            <div className="flex items-center gap-1 px-3 py-2 border-b border-border/50 bg-secondary/20">
-              {[
-                { icon: Heading2, label: "Título" },
-                { icon: Bold, label: "Negrita" },
-                { icon: Italic, label: "Cursiva" },
-                { icon: List, label: "Lista" },
-                { icon: Quote, label: "Cita" },
-                { icon: Link2, label: "Enlace" },
-                { icon: Image, label: "Imagen" },
-              ].map((tool) => (
-                <button
-                  key={tool.label}
-                  className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
-                  title={tool.label}
-                >
-                  <tool.icon className="h-4 w-4" />
-                </button>
-              ))}
-            </div>
-            <textarea
-              rows={18}
-              placeholder="Comience a escribir el contenido del artículo...
-
-Utilice la barra de herramientas para dar formato al texto, agregar títulos, listas, citas y enlaces. También puede insertar imágenes en el cuerpo del artículo."
-              className="w-full px-5 py-4 text-[0.9375rem] text-foreground placeholder:text-muted-foreground/40 focus:outline-none resize-none leading-relaxed"
-            />
-          </div>
+          {/* Editor */}
+          <RichTextEditor />
         </div>
 
         {/* Sidebar */}
