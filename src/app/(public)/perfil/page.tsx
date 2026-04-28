@@ -1,8 +1,57 @@
-import { Breadcrumbs } from "@/components/shared/breadcrumbs";
-import { Badge } from "@/components/ui/badge";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { MessageSquare, FileText, Calendar } from "lucide-react";
 
-export default function PerfilPage() {
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/lib/supabase/server";
+import { PerfilForm } from "./perfil-form";
+
+export const metadata: Metadata = {
+  title: "Mi perfil | Velázquez & Asociados",
+  description: "Gestioná tu información personal y preferencias.",
+};
+
+function getInitials(displayName: string, fallback: string | null | undefined) {
+  const source = displayName.trim() || fallback?.split("@")[0] || "";
+  if (!source) return "U";
+  const parts = source.split(/\s+/).filter(Boolean);
+  const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}` : source.slice(0, 2);
+  return initials.toUpperCase();
+}
+
+export default async function PerfilPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/auth/login?redirectedFrom=/perfil");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile) {
+    redirect("/auth/login?redirectedFrom=/perfil");
+  }
+
+  const initials = getInitials(profile.display_name, user.email);
+  const memberSince = format(new Date(profile.created_at), "MMMM 'de' yyyy", { locale: es });
+  const lastSignIn = user.last_sign_in_at ?? profile.updated_at;
+  const lastActivityLabel = format(new Date(lastSignIn), "d MMM", { locale: es });
+
+  // TODO Sprint 3: contar comentarios y hilos reales cuando existan las tablas.
+  const commentsCount = 0;
+  const threadsCount = 0;
+
   return (
     <>
       <section className="bg-gradient-to-b from-secondary/40 to-transparent pt-10 pb-8">
@@ -13,33 +62,36 @@ export default function PerfilPage() {
 
       <section className="py-8 lg:py-12">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
-          {/* Profile header */}
           <div className="flex flex-col sm:flex-row items-start gap-6 mb-10">
-            <div className="h-20 w-20 rounded-full bg-primary flex items-center justify-center shrink-0">
-              <span className="text-primary-foreground text-xl font-semibold font-serif">LG</span>
-            </div>
+            <Avatar size="lg" className="size-20 shrink-0">
+              {profile.avatar_url ? (
+                <AvatarImage src={profile.avatar_url} alt={profile.display_name} />
+              ) : null}
+              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-semibold font-serif">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1">
-              <h1 className="text-2xl font-semibold text-foreground">Laura Giménez</h1>
+              <h1 className="text-2xl font-semibold text-foreground">{profile.display_name}</h1>
               <p className="text-[0.875rem] text-muted-foreground mt-1">
-                Contadora independiente — Miembro desde marzo de 2026
+                Miembro desde {memberSince}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Badge variant="secondary" className="text-[0.75rem]">
-                  Usuario
+                <Badge
+                  variant={profile.role === "admin" ? "default" : "secondary"}
+                  className="text-[0.75rem] capitalize"
+                >
+                  {profile.role === "admin" ? "Administrador" : "Usuario"}
                 </Badge>
               </div>
             </div>
-            <button className="h-9 px-4 border border-border text-[0.8125rem] font-medium rounded-lg hover:bg-secondary/60 transition-colors shrink-0">
-              Editar perfil
-            </button>
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-3 gap-4 mb-10">
             {[
-              { icon: MessageSquare, label: "Comentarios", value: "3" },
-              { icon: FileText, label: "Hilos creados", value: "2" },
-              { icon: Calendar, label: "Última actividad", value: "Hoy" },
+              { icon: MessageSquare, label: "Comentarios", value: String(commentsCount) },
+              { icon: FileText, label: "Hilos creados", value: String(threadsCount) },
+              { icon: Calendar, label: "Última actividad", value: lastActivityLabel },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -52,57 +104,7 @@ export default function PerfilPage() {
             ))}
           </div>
 
-          {/* Profile form */}
-          <div className="bg-card border border-border/50 rounded-xl p-8">
-            <h2 className="text-lg font-semibold text-foreground font-sans mb-6">
-              Información personal
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-[0.8125rem] font-medium text-foreground mb-1.5">
-                  Nombre
-                </label>
-                <input
-                  type="text"
-                  defaultValue="Laura"
-                  className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-[0.8125rem] font-medium text-foreground mb-1.5">
-                  Apellido
-                </label>
-                <input
-                  type="text"
-                  defaultValue="Giménez"
-                  className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-[0.8125rem] font-medium text-foreground mb-1.5">
-                Email
-              </label>
-              <input
-                type="email"
-                defaultValue="laura.g@email.com"
-                className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all"
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-[0.8125rem] font-medium text-foreground mb-1.5">
-                Descripción breve
-              </label>
-              <textarea
-                rows={3}
-                defaultValue="Contadora independiente especializada en PyMEs del sector comercial."
-                className="w-full px-4 py-3 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all resize-none"
-              />
-            </div>
-            <button className="h-10 px-5 bg-primary text-primary-foreground text-[0.8125rem] font-medium rounded-lg hover:bg-primary/90 transition-colors">
-              Guardar cambios
-            </button>
-          </div>
+          <PerfilForm profile={profile} email={user.email ?? null} />
         </div>
       </section>
     </>
