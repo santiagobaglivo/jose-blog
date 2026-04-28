@@ -1,0 +1,1086 @@
+{
+  "epics": {
+    "INFRA": {
+      "jira_key": "JB-3",
+      "summary": "Infraestructura y Setup"
+    },
+    "AUTH": {
+      "jira_key": "JB-4",
+      "summary": "Autenticaci\u00f3n y Usuarios"
+    },
+    "BLOG": {
+      "jira_key": "JB-5",
+      "summary": "Blog backend"
+    },
+    "COMMENTS": {
+      "jira_key": "JB-6",
+      "summary": "Comentarios y moderaci\u00f3n"
+    },
+    "FORUM": {
+      "jira_key": "JB-7",
+      "summary": "Foros"
+    },
+    "CASES": {
+      "jira_key": "JB-8",
+      "summary": "Casos / Contacto con seguimiento"
+    },
+    "DASH": {
+      "jira_key": "JB-9",
+      "summary": "Dashboard y M\u00e9tricas"
+    },
+    "VISUAL": {
+      "jira_key": "JB-10",
+      "summary": "Visual y UX premium"
+    },
+    "STORAGE": {
+      "jira_key": "JB-11",
+      "summary": "Storage y Media"
+    },
+    "DEUDA": {
+      "jira_key": "JB-12",
+      "summary": "Deuda t\u00e9cnica y Refactor"
+    },
+    "QA": {
+      "jira_key": "JB-13",
+      "summary": "QA, Hardening y Producci\u00f3n"
+    }
+  },
+  "tasks": [
+    {
+      "jira_key": "JB-14",
+      "summary": "Crear proyecto Supabase y variables de entorno",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-15",
+      "summary": "Setup Supabase CLI y estructura migraciones",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-16",
+      "summary": "Refactor: extraer mock-data a queries abstractas",
+      "epic": "DEUDA",
+      "epic_jira": "JB-12",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-17",
+      "summary": "Centralizar statusMap y iconMap en lib/",
+      "epic": "DEUDA",
+      "epic_jira": "JB-12",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-18",
+      "summary": "Mover mock data inline de /admin/usuarios a mock-data.ts",
+      "epic": "DEUDA",
+      "epic_jira": "JB-12",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-19",
+      "summary": "Reemplazar componente X SVG inline por lucide",
+      "epic": "DEUDA",
+      "epic_jira": "JB-12",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-20",
+      "summary": "Instalar dependencias backend y forms",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-21",
+      "summary": "Setup Toaster global con sonner",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-22",
+      "summary": "Setup ESLint estricto + Prettier",
+      "epic": "DEUDA",
+      "epic_jira": "JB-12",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-23",
+      "summary": "Crear cliente Supabase (browser, server, middleware)",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-24",
+      "summary": "Crear error.tsx y not-found.tsx premium",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-25",
+      "summary": "Estructura src/types/database.ts placeholder",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-26",
+      "summary": "README t\u00e9cnico con setup y arquitectura",
+      "epic": "INFRA",
+      "epic_jira": "JB-3",
+      "sprint": "Sprint 0",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-27",
+      "summary": "Migraci\u00f3n 001: Extensions y enums",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-28",
+      "summary": "Migraci\u00f3n 002: Profiles + trigger handle_new_user",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-29",
+      "summary": "Migraci\u00f3n 003: Categor\u00edas y tags + seeds",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-30",
+      "summary": "Migraci\u00f3n 004: RLS policies profiles, categories, tags",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-31",
+      "summary": "Generar types DB y commitear",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-32",
+      "summary": "P\u00e1gina /auth/login con server action",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-33",
+      "summary": "P\u00e1gina /auth/registro",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-34",
+      "summary": "P\u00e1ginas /auth/recuperar y /auth/reset-password",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-35",
+      "summary": "Middleware de auth con refresh y protecci\u00f3n /admin",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-36",
+      "summary": "Server actions auth (signIn, signUp, signOut, reset)",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-37",
+      "summary": "Hook useUser() + UserProvider context",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-38",
+      "summary": "Header reactivo a sesi\u00f3n (login/avatar/dropdown)",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-39",
+      "summary": "Proteger /admin con AdminGuard server-side",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-40",
+      "summary": "Conectar /perfil real (lectura + actualizaci\u00f3n)",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-41",
+      "summary": "Bucket avatars + ImageUploader para perfil",
+      "epic": "STORAGE",
+      "epic_jira": "JB-11",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-42",
+      "summary": "Conectar /admin/usuarios con queries reales",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Story",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-43",
+      "summary": "Acci\u00f3n admin: cambiar rol de usuario",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-44",
+      "summary": "Validators zod compartidos para auth",
+      "epic": "AUTH",
+      "epic_jira": "JB-4",
+      "sprint": "Sprint 1",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-45",
+      "summary": "Migraci\u00f3n 005: Posts + indices + tsvector",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-46",
+      "summary": "RLS policies posts y post_tags",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-47",
+      "summary": "Bucket post-images con policies",
+      "epic": "STORAGE",
+      "epic_jira": "JB-11",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-48",
+      "summary": "Componente RichTextEditor con TipTap",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-49",
+      "summary": "Sanitizaci\u00f3n server-side antes de persistir HTML",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-50",
+      "summary": "CategorySelect server-driven",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-51",
+      "summary": "TagSelector multi-select con creaci\u00f3n inline",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-52",
+      "summary": "/admin/articulos real con filtros y b\u00fasqueda",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-53",
+      "summary": "/admin/articulos/nuevo editor real conectado",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-54",
+      "summary": "/admin/articulos/[id] editar art\u00edculo",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-55",
+      "summary": "Soft delete posts",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-56",
+      "summary": "Auto-c\u00e1lculo read_time y slug \u00fanico",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-57",
+      "summary": "/admin/programados real con datos",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-58",
+      "summary": "Funci\u00f3n publish_scheduled_posts + cron",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-59",
+      "summary": "/blog real con paginaci\u00f3n, filtros, b\u00fasqueda",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-60",
+      "summary": "/blog/[slug] real con SEO + view tracking",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-61",
+      "summary": "Edge Function track-post-view con dedupe",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-62",
+      "summary": "/admin/categorias CRUD real",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Story",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-63",
+      "summary": "SEO b\u00e1sico blog (metadata + JSON-LD)",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-64",
+      "summary": "Sitemap.xml y robots.txt",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-65",
+      "summary": "accent_color por art\u00edculo (UI + DB)",
+      "epic": "BLOG",
+      "epic_jira": "JB-5",
+      "sprint": "Sprint 2",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-66",
+      "summary": "Migraci\u00f3n 006: Comments",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-67",
+      "summary": "RLS policies comments",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-68",
+      "summary": "CommentForm con honeypot + rate-limit",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-69",
+      "summary": "CommentItem con replies anidadas (1 nivel)",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-70",
+      "summary": "Conectar comentarios en /blog/[slug]",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-71",
+      "summary": "/admin/comentarios real con filtros",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-72",
+      "summary": "Acciones moderaci\u00f3n con moderation_logs",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-73",
+      "summary": "Admin responde comentario",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-74",
+      "summary": "Edge Function send-comment-notification (admin)",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-75",
+      "summary": "Edge Function send-comment-approved (autor)",
+      "epic": "COMMENTS",
+      "epic_jira": "JB-6",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-76",
+      "summary": "Migraci\u00f3n 007: Forums + indices + tsvector",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-77",
+      "summary": "RLS policies forums",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-78",
+      "summary": "Trigger reply count y last_reply",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-79",
+      "summary": "/foros real con categor\u00edas + actividad",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-80",
+      "summary": "/foros/[category] real con paginaci\u00f3n + b\u00fasqueda",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-81",
+      "summary": "/foros/[category]/[thread] real con replies",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-82",
+      "summary": "NewThreadForm component",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-83",
+      "summary": "ReplyForm component",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-84",
+      "summary": "/admin/foros real con CRUD categor\u00edas y moderaci\u00f3n",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Story",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-85",
+      "summary": "Acciones admin foros (pin/lock/hide/delete)",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-86",
+      "summary": "B\u00fasqueda full-text en foros",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-87",
+      "summary": "Anti-spam threads y replies",
+      "epic": "FORUM",
+      "epic_jira": "JB-7",
+      "sprint": "Sprint 3",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-88",
+      "summary": "Migraci\u00f3n 008: Cases + case_messages",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-89",
+      "summary": "RLS policies cases y case_messages",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-90",
+      "summary": "/contacto crea caso real",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-91",
+      "summary": "/seguimiento consulta por c\u00f3digo + email",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-92",
+      "summary": "Edge Function case-public-status",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-93",
+      "summary": "/admin/casos listado con filtros",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-94",
+      "summary": "/admin/casos/[id] detalle + mensajes + notas",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-95",
+      "summary": "Server actions de casos",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-96",
+      "summary": "Edge Functions case email (notification + status update)",
+      "epic": "CASES",
+      "epic_jira": "JB-8",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-97",
+      "summary": "Migraci\u00f3n 009: Post views + moderation_logs",
+      "epic": "DASH",
+      "epic_jira": "JB-9",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-98",
+      "summary": "/admin dashboard con m\u00e9tricas reales",
+      "epic": "DASH",
+      "epic_jira": "JB-9",
+      "sprint": "Sprint 4",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-99",
+      "summary": "Chart visitas \u00faltimos 30 d\u00edas",
+      "epic": "DASH",
+      "epic_jira": "JB-9",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-100",
+      "summary": "Card top 5 art\u00edculos m\u00e1s le\u00eddos",
+      "epic": "DASH",
+      "epic_jira": "JB-9",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-101",
+      "summary": "Card casos abiertos en dashboard",
+      "epic": "DASH",
+      "epic_jira": "JB-9",
+      "sprint": "Sprint 4",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-102",
+      "summary": "WhatsAppButton floating + inline",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-103",
+      "summary": "WhatsApp en formularios y CTAs",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-104",
+      "summary": "HeroCarousel con transici\u00f3n Framer Motion",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-105",
+      "summary": "Tabla home_slides + admin CRUD b\u00e1sico",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-106",
+      "summary": "Home: menos texto + m\u00e1s visuales",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-107",
+      "summary": "P\u00e1gina /servicios/[slug] template",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-108",
+      "summary": "Migraci\u00f3n services + seeds",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-109",
+      "summary": "/admin/servicios CRUD",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Story",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-110",
+      "summary": "Editor: insertar imagen desde Storage existente",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-111",
+      "summary": "P\u00e1gina /buscar global (blog + foros + servicios)",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Story",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-112",
+      "summary": "Open Graph din\u00e1mico para art\u00edculos",
+      "epic": "VISUAL",
+      "epic_jira": "JB-10",
+      "sprint": "Sprint 5",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-113",
+      "summary": "Suite Vitest unit (slug, sanitize, validators)",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-114",
+      "summary": "Suite Playwright E2E flujo cr\u00edtico",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-115",
+      "summary": "Auditor\u00eda RLS automatizada",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-116",
+      "summary": "Auditor\u00eda XSS en editor",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-117",
+      "summary": "Auditor\u00eda rate-limit endpoints",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-118",
+      "summary": "Optimizaci\u00f3n im\u00e1genes + Lighthouse target \u226590",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-119",
+      "summary": "Setup Resend + dominio verificado",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-120",
+      "summary": "Deploy Vercel + env vars + dominio",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Story",
+      "priority": "Highest"
+    },
+    {
+      "jira_key": "JB-121",
+      "summary": "Habilitar Supabase backups (PITR)",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-122",
+      "summary": "Vercel Analytics + Speed Insights",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-123",
+      "summary": "Runbook de incidentes (docs/RUNBOOK.md)",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-124",
+      "summary": "P\u00e1gina de mantenimiento est\u00e1tica",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Low"
+    },
+    {
+      "jira_key": "JB-125",
+      "summary": "Smoke tests post-deploy",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-126",
+      "summary": "Capacitaci\u00f3n cliente: video + manual + sesi\u00f3n",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "High"
+    },
+    {
+      "jira_key": "JB-127",
+      "summary": "Plan de rollback documentado",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    },
+    {
+      "jira_key": "JB-128",
+      "summary": "GitHub Actions CI (lint, build, test)",
+      "epic": "QA",
+      "epic_jira": "JB-13",
+      "sprint": "Sprint 6",
+      "type": "Task",
+      "priority": "Medium"
+    }
+  ],
+  "errors": []
+}
