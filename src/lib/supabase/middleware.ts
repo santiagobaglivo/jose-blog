@@ -27,7 +27,34 @@ export async function updateSession(request: NextRequest) {
 
   // No correr código entre createServerClient y getUser:
   // refresca el token y sincroniza cookies entre request y response.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/admin")) {
+    if (!user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/auth/login";
+      loginUrl.search = "";
+      loginUrl.searchParams.set("redirectedFrom", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.role !== "admin") {
+      const homeUrl = request.nextUrl.clone();
+      homeUrl.pathname = "/";
+      homeUrl.search = "";
+      return NextResponse.redirect(homeUrl);
+    }
+  }
 
   return supabaseResponse;
 }
