@@ -82,9 +82,7 @@ export default async function UsuariosAdmin() {
                           <h3 className="text-[0.8125rem] font-medium text-foreground">
                             {user.name}
                           </h3>
-                          <p className="text-[0.75rem] text-muted-foreground/60">
-                            {user.email}
-                          </p>
+                          <p className="text-[0.75rem] text-muted-foreground/60">{user.email}</p>
                         </div>
                       </div>
                     </td>
@@ -100,7 +98,9 @@ export default async function UsuariosAdmin() {
                       {user.lastActive}
                     </td>
                     <td className="px-5 py-4 text-[0.75rem] text-muted-foreground/60 hidden lg:table-cell">
-                      <span>{user.comments} comentarios · {user.threads} hilos</span>
+                      <span>
+                        {user.comments} comentarios · {user.threads} hilos
+                      </span>
                     </td>
                     <td className="px-3 py-4">
                       <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">

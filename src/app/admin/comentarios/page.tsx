@@ -6,10 +6,7 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { Check, X, Trash2, Shield } from "lucide-react";
 
 export default async function ComentariosAdmin() {
-  const [comments, posts] = await Promise.all([
-    getAllCommentsAdmin(),
-    getAllPostsAdmin(),
-  ]);
+  const [comments, posts] = await Promise.all([getAllCommentsAdmin(), getAllPostsAdmin()]);
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -52,10 +49,7 @@ export default async function ComentariosAdmin() {
           const status = commentStatusMap[comment.status];
           const post = posts.find((p) => p.slug === comment.postSlug);
           return (
-            <div
-              key={comment.id}
-              className="bg-card border border-border/50 rounded-xl p-5"
-            >
+            <div key={comment.id} className="bg-card border border-border/50 rounded-xl p-5">
               <div className="flex items-start gap-4">
                 <div className="shrink-0 h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
                   <span className="text-[0.75rem] font-semibold text-muted-foreground">
@@ -70,15 +64,14 @@ export default async function ComentariosAdmin() {
                     <Badge variant="outline" className={`text-[0.6875rem] ${status.className}`}>
                       {status.label}
                     </Badge>
-                    <span className="text-[0.75rem] text-muted-foreground/60">
-                      {comment.date}
-                    </span>
+                    <span className="text-[0.75rem] text-muted-foreground/60">{comment.date}</span>
                   </div>
                   <p className="text-[0.8125rem] text-muted-foreground leading-relaxed mb-2">
                     {comment.content}
                   </p>
                   <p className="text-[0.75rem] text-muted-foreground/50">
-                    En: <span className="text-muted-foreground/70">{post?.title ?? "Artículo"}</span>
+                    En:{" "}
+                    <span className="text-muted-foreground/70">{post?.title ?? "Artículo"}</span>
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

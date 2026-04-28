@@ -42,9 +42,8 @@ export default function ContactoPage() {
               Estamos para ayudarlo
             </h1>
             <p className="mt-3 text-[0.9375rem] text-muted-foreground">
-              Complete el formulario o comuníquese directamente con nuestro
-              equipo. Coordinaremos una reunión para analizar su situación
-              particular.
+              Complete el formulario o comuníquese directamente con nuestro equipo. Coordinaremos
+              una reunión para analizar su situación particular.
             </p>
           </div>
         </div>
@@ -141,9 +140,7 @@ export default function ContactoPage() {
               <div className="mt-4 rounded-xl overflow-hidden aspect-[4/3] bg-secondary/60 flex items-center justify-center border border-border/50">
                 <div className="text-center">
                   <MapPin className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                  <p className="text-[0.8125rem] text-muted-foreground/50">
-                    Mapa interactivo
-                  </p>
+                  <p className="text-[0.8125rem] text-muted-foreground/50">Mapa interactivo</p>
                 </div>
               </div>
             </div>

@@ -365,7 +365,8 @@ export const comments: Comment[] = [
     author: "Silvia Pacheco",
     email: "silvia.p@correo.com",
     avatar: "SP",
-    content: "¿Podrían hacer un artículo sobre el impacto en contribuyentes del régimen simplificado?",
+    content:
+      "¿Podrían hacer un artículo sobre el impacto en contribuyentes del régimen simplificado?",
     date: "14 de abril de 2026",
     status: "pendiente",
     postSlug: "reforma-tributaria-2026-impacto-pymes",
@@ -375,7 +376,8 @@ export const comments: Comment[] = [
     author: "Gonzalo Ortega",
     email: "gortega@mail.com",
     avatar: "GO",
-    content: "El punto sobre la clasificación de activos me resultó muy útil. Justamente estamos cerrando ejercicio.",
+    content:
+      "El punto sobre la clasificación de activos me resultó muy útil. Justamente estamos cerrando ejercicio.",
     date: "9 de abril de 2026",
     status: "aprobado",
     postSlug: "balance-general-errores-comunes",
@@ -395,7 +397,8 @@ export const comments: Comment[] = [
     author: "Ana Rosales",
     email: "ana.r@email.com",
     avatar: "AR",
-    content: "¿El capital mínimo se actualiza automáticamente con el SMVM o hay que estar pendiente?",
+    content:
+      "¿El capital mínimo se actualiza automáticamente con el SMVM o hay que estar pendiente?",
     date: "5 de abril de 2026",
     status: "aprobado",
     postSlug: "constitucion-sas-guia-completa",
@@ -405,7 +408,8 @@ export const comments: Comment[] = [
     author: "Diego Martínez",
     email: "diego.m@email.com",
     avatar: "DM",
-    content: "Gracias por la guía. Estamos evaluando constituir una SAS para un proyecto nuevo y esto nos aclara mucho el panorama.",
+    content:
+      "Gracias por la guía. Estamos evaluando constituir una SAS para un proyecto nuevo y esto nos aclara mucho el panorama.",
     date: "4 de abril de 2026",
     status: "pendiente",
     postSlug: "constitucion-sas-guia-completa",
@@ -417,7 +421,8 @@ export const forumCategories: ForumCategory[] = [
   {
     slug: "impuestos",
     name: "Impuestos",
-    description: "Consultas sobre IVA, Ganancias, Bienes Personales, monotributo y regímenes especiales.",
+    description:
+      "Consultas sobre IVA, Ganancias, Bienes Personales, monotributo y regímenes especiales.",
     icon: "receipt",
     threadCount: 47,
     replyCount: 186,

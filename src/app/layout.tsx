@@ -29,18 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
-    >
+    <html lang="es" className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         {children}
-        <Toaster
-          theme="light"
-          position="top-right"
-          richColors
-          closeButton
-        />
+        <Toaster theme="light" position="top-right" richColors closeButton />
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 ## Bloqueantes para arrancar (responder antes de Sprint 1)
 
 ### Producto
+
 1. **Sistema de "seguimiento de casos":** ¿Es un portal con login donde el cliente ve el estado de su caso, o solo gestión interna del estudio? Federico lo absorbió como formulario de contacto + gestión interna. **Necesitamos confirmación explícita.**
 2. **Comentarios anónimos vs registrados:** ¿Se permite comentar sin estar registrado (con nombre + email + moderación), o exigimos registro previo?
 3. **Foros — acceso:** ¿Cualquiera puede leer foros sin login, o solo registrados? ¿Crear hilo requiere registro? Asumimos: leer público, escribir registrado.
@@ -11,6 +12,7 @@
 6. **Pagos / Stripe:** ¿Se integra ahora o queda para fase 2? (default: fase 2)
 
 ### Identidad / contenido
+
 7. **Nombre real del estudio:** El prototipo usa "Velázquez & Asociados" como ejemplo. **¿Cuál es el nombre real?**
 8. **Logotipo:** ¿Tiene logo? Necesitamos SVG o PNG en alta resolución.
 9. **Slogan / tagline oficial.**
@@ -22,12 +24,14 @@
 15. **Cuentas de redes sociales** (LinkedIn, Twitter/X, Instagram, Facebook si aplican).
 
 ### Visual
+
 16. **Fotografía institucional:** ¿Cliente provee fotos del estudio/equipo o usamos banco de imágenes premium (Unsplash/Pexels)?
 17. **Hero carousel:** ¿Cuántas imágenes? ¿Provee el cliente las imágenes o las elegimos?
 18. **Color por categoría/blog:** Confirmar paleta de acentos por categoría (ej. impuestos=ámbar, contabilidad=verde, empresas=azul, etc.) o si lo decidimos nosotros.
 19. **Tono de marca:** ¿Más conservador, moderno, fresco? El prototipo apuesta por "editorial premium institucional moderno" — confirmar.
 
 ### Operativo
+
 20. **¿Quién será admin?** Solo Jose Luis o varios profesionales del estudio. ¿Cuántos usuarios admin estimados?
 21. **Email para notificaciones:** ¿Qué email recibe alertas de comentarios pendientes y nuevos casos?
 22. **Dominio:** ¿Tiene dominio comprado? ¿DNS gestionado por el cliente o lo hacemos nosotros?
@@ -37,6 +41,7 @@
 ## Datos a solicitar específicamente
 
 ### Mínimo viable para lanzar
+
 - [ ] Nombre estudio + tagline + logo (SVG)
 - [ ] Texto "Sobre el estudio" (mínimo 200 palabras)
 - [ ] 3-5 servicios con descripción (50-100 palabras cada uno)
@@ -48,6 +53,7 @@
 - [ ] Aviso de privacidad y términos (o autorización para generar plantilla)
 
 ### Deseable
+
 - [ ] Video institucional corto (30-60s) para hero o sección about
 - [ ] Testimonios de clientes (con foto, nombre, empresa)
 - [ ] Casos de éxito o números clave
@@ -55,15 +61,15 @@
 
 ## Decisiones técnicas pendientes (sin bloquear desarrollo)
 
-| # | Decisión | Default | Confirmar con |
-|---|---|---|---|
-| 1 | Editor de blog | TipTap | — |
-| 2 | Email provider | Resend | Jose / Federico |
-| 3 | Hosting | Vercel | — |
-| 4 | Paleta por categoría | Definimos nosotros | Jose |
-| 5 | OAuth providers | Solo email/pass MVP | — |
-| 6 | Captcha | Honeypot + rate-limit MVP, Turnstile post-MVP | — |
-| 7 | Comentarios anónimos | Permitir con moderación obligatoria | Jose |
-| 8 | Soft delete retention | 30 días | — |
-| 9 | Programación blog | Cron c/5min vía pg_cron | — |
-| 10 | Storage transformation | Resize en Edge Function al subir | — |
+| #   | Decisión               | Default                                       | Confirmar con   |
+| --- | ---------------------- | --------------------------------------------- | --------------- |
+| 1   | Editor de blog         | TipTap                                        | —               |
+| 2   | Email provider         | Resend                                        | Jose / Federico |
+| 3   | Hosting                | Vercel                                        | —               |
+| 4   | Paleta por categoría   | Definimos nosotros                            | Jose            |
+| 5   | OAuth providers        | Solo email/pass MVP                           | —               |
+| 6   | Captcha                | Honeypot + rate-limit MVP, Turnstile post-MVP | —               |
+| 7   | Comentarios anónimos   | Permitir con moderación obligatoria           | Jose            |
+| 8   | Soft delete retention  | 30 días                                       | —               |
+| 9   | Programación blog      | Cron c/5min vía pg_cron                       | —               |
+| 10  | Storage transformation | Resize en Edge Function al subir              | —               |

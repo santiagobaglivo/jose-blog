@@ -9,9 +9,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 }
 
 export async function getRelatedPosts(slug: string, limit = 4): Promise<Post[]> {
-  return posts
-    .filter((p) => p.status === "publicado" && p.slug !== slug)
-    .slice(0, limit);
+  return posts.filter((p) => p.status === "publicado" && p.slug !== slug).slice(0, limit);
 }
 
 export async function getDraftPosts(): Promise<Post[]> {

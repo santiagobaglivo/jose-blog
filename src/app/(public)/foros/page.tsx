@@ -5,12 +5,7 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SearchBar } from "@/components/shared/search-bar";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Badge } from "@/components/ui/badge";
-import {
-  HelpCircle,
-  MessageSquare,
-  Eye,
-  Pin,
-} from "lucide-react";
+import { HelpCircle, MessageSquare, Eye, Pin } from "lucide-react";
 
 export default async function ForosPage() {
   const [forumCategories, recentThreads] = await Promise.all([
@@ -32,8 +27,8 @@ export default async function ForosPage() {
                 Foros de consulta
               </h1>
               <p className="mt-3 text-[0.9375rem] text-muted-foreground max-w-xl">
-                Espacio de intercambio profesional donde colegas y clientes
-                comparten consultas, experiencias y soluciones.
+                Espacio de intercambio profesional donde colegas y clientes comparten consultas,
+                experiencias y soluciones.
               </p>
             </div>
             <SearchBar placeholder="Buscar en los foros..." className="w-full lg:w-72" />
@@ -45,9 +40,7 @@ export default async function ForosPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {/* Categories */}
           <div className="mb-16">
-            <h2 className="text-lg font-semibold text-foreground font-sans mb-6">
-              Categorías
-            </h2>
+            <h2 className="text-lg font-semibold text-foreground font-sans mb-6">Categorías</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {forumCategories.map((cat) => {
                 const Icon = forumIconMap[cat.icon] ?? HelpCircle;
@@ -103,9 +96,7 @@ export default async function ForosPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      {thread.pinned && (
-                        <Pin className="h-3.5 w-3.5 text-warm shrink-0" />
-                      )}
+                      {thread.pinned && <Pin className="h-3.5 w-3.5 text-warm shrink-0" />}
                       <h3 className="text-[0.875rem] font-medium text-foreground group-hover:text-primary/80 transition-colors truncate">
                         {thread.title}
                       </h3>

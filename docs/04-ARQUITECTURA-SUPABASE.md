@@ -526,11 +526,11 @@ create policy "views_select_admin" on post_views
 
 ## Storage buckets
 
-| Bucket | Visibilidad | Path strategy | Política |
-|---|---|---|---|
-| `post-images` | público | `posts/{post_id}/{filename}` | INSERT: solo admin; SELECT: público |
-| `avatars` | público | `{user_id}/{filename}` | INSERT/UPDATE: self; SELECT: público |
-| `case-attachments` | privado | `{case_id}/{filename}` | INSERT: público (sin login); SELECT: admin |
+| Bucket             | Visibilidad | Path strategy                | Política                                   |
+| ------------------ | ----------- | ---------------------------- | ------------------------------------------ |
+| `post-images`      | público     | `posts/{post_id}/{filename}` | INSERT: solo admin; SELECT: público        |
+| `avatars`          | público     | `{user_id}/{filename}`       | INSERT/UPDATE: self; SELECT: público       |
+| `case-attachments` | privado     | `{case_id}/{filename}`       | INSERT: público (sin login); SELECT: admin |
 
 ```sql
 -- Ejemplo policy storage avatars
@@ -548,14 +548,14 @@ using (bucket_id = 'avatars');
 
 ## Edge Functions
 
-| Función | Trigger | Descripción |
-|---|---|---|
-| `send-comment-notification` | DB trigger en `comments` INSERT | Email al admin con nuevo comentario |
-| `send-case-notification` | DB trigger en `cases` INSERT | Email al admin + email al cliente con código |
-| `send-case-status-update` | DB trigger en `cases` UPDATE de status | Email al cliente |
-| `track-post-view` | RPC desde Next.js | Inserta en post_views, dedupe por hash IP |
-| `case-public-status` | HTTP público | Dado un código + email, devuelve estado del caso |
-| `purge-soft-deleted` | Cron diario | Elimina registros con `deleted_at < now() - 30 days` |
+| Función                     | Trigger                                | Descripción                                          |
+| --------------------------- | -------------------------------------- | ---------------------------------------------------- |
+| `send-comment-notification` | DB trigger en `comments` INSERT        | Email al admin con nuevo comentario                  |
+| `send-case-notification`    | DB trigger en `cases` INSERT           | Email al admin + email al cliente con código         |
+| `send-case-status-update`   | DB trigger en `cases` UPDATE de status | Email al cliente                                     |
+| `track-post-view`           | RPC desde Next.js                      | Inserta en post_views, dedupe por hash IP            |
+| `case-public-status`        | HTTP público                           | Dado un código + email, devuelve estado del caso     |
+| `purge-soft-deleted`        | Cron diario                            | Elimina registros con `deleted_at < now() - 30 days` |
 
 ## Datos iniciales (seeds)
 

@@ -32,9 +32,7 @@ export default async function CategoriasAdmin() {
             {blogCategories.map((cat) => (
               <div key={cat.slug} className="px-5 py-4 flex items-center gap-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-[0.875rem] font-medium text-foreground">
-                    {cat.name}
-                  </h3>
+                  <h3 className="text-[0.875rem] font-medium text-foreground">{cat.name}</h3>
                   <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60 line-clamp-1">
                     {cat.description}
                   </p>
@@ -56,9 +54,7 @@ export default async function CategoriasAdmin() {
 
           {/* New category form */}
           <div className="mt-4 bg-card border border-dashed border-border rounded-xl p-5">
-            <h3 className="text-[0.8125rem] font-medium text-foreground mb-3">
-              Agregar categoría
-            </h3>
+            <h3 className="text-[0.8125rem] font-medium text-foreground mb-3">Agregar categoría</h3>
             <input
               type="text"
               placeholder="Nombre de la categoría"
@@ -105,9 +101,7 @@ export default async function CategoriasAdmin() {
 
           {/* New tag form */}
           <div className="mt-4 bg-card border border-dashed border-border rounded-xl p-5">
-            <h3 className="text-[0.8125rem] font-medium text-foreground mb-3">
-              Agregar etiqueta
-            </h3>
+            <h3 className="text-[0.8125rem] font-medium text-foreground mb-3">Agregar etiqueta</h3>
             <div className="flex items-center gap-2">
               <input
                 type="text"

@@ -5,10 +5,7 @@ import { CalendarClock, Clock, Pencil, Trash2, Eye } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 
 export default async function ProgramadosPage() {
-  const [scheduled, drafts] = await Promise.all([
-    getScheduledPosts(),
-    getDraftPosts(),
-  ]);
+  const [scheduled, drafts] = await Promise.all([getScheduledPosts(), getDraftPosts()]);
 
   return (
     <div>
@@ -49,7 +46,10 @@ export default async function ProgramadosPage() {
                     </span>
                   </div>
                 </div>
-                <Badge variant="outline" className={`text-[0.6875rem] ${postStatusMap.programado.className} shrink-0`}>
+                <Badge
+                  variant="outline"
+                  className={`text-[0.6875rem] ${postStatusMap.programado.className} shrink-0`}
+                >
                   {postStatusMap.programado.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">
@@ -96,7 +96,10 @@ export default async function ProgramadosPage() {
                     <span>{post.category}</span>
                   </div>
                 </div>
-                <Badge variant="outline" className={`text-[0.6875rem] ${postStatusMap.borrador.className} shrink-0`}>
+                <Badge
+                  variant="outline"
+                  className={`text-[0.6875rem] ${postStatusMap.borrador.className} shrink-0`}
+                >
                   {postStatusMap.borrador.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">

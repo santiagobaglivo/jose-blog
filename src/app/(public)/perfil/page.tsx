@@ -24,7 +24,9 @@ export default function PerfilPage() {
                 Contadora independiente — Miembro desde marzo de 2026
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Badge variant="secondary" className="text-[0.75rem]">Usuario</Badge>
+                <Badge variant="secondary" className="text-[0.75rem]">
+                  Usuario
+                </Badge>
               </div>
             </div>
             <button className="h-9 px-4 border border-border text-[0.8125rem] font-medium rounded-lg hover:bg-secondary/60 transition-colors shrink-0">

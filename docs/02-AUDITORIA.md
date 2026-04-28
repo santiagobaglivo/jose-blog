@@ -43,34 +43,35 @@ src/
 
 ### Públicas (9 rutas, todas visuales)
 
-| Ruta | Estado funcional | Lo que es solo visual |
-|---|---|---|
-| `/` Home | Estática | OK estática (landing). Falta hero carousel. |
-| `/sobre-nosotros` | Estática | OK estática. Cliente pidió poder tener páginas adicionales por servicio. |
-| `/blog` | Solo visual | Search input no busca, paginación falsa, categorías no filtran, tags no filtran. |
-| `/blog/[slug]` | Solo visual | Comentarios mock, formulario no envía, sidebar no funcional. |
-| `/foros` | Solo visual | Categorías no enlazan a contenido real, búsqueda visual. |
-| `/foros/[category]` | Solo visual | Hilos hardcoded, paginación falsa, búsqueda visual, botón "nuevo hilo" sin acción. |
-| `/foros/[cat]/[hilo]` | Solo visual | Replies hardcoded, formulario no envía, "útil"/"reportar" sin acción. |
-| `/contacto` | Solo visual | Formulario no envía. Falta WhatsApp button. Falta botón email-action. Sin captcha. |
-| `/perfil` | Solo visual | No hay auth real, datos hardcoded, "guardar cambios" no persiste. |
+| Ruta                  | Estado funcional | Lo que es solo visual                                                              |
+| --------------------- | ---------------- | ---------------------------------------------------------------------------------- |
+| `/` Home              | Estática         | OK estática (landing). Falta hero carousel.                                        |
+| `/sobre-nosotros`     | Estática         | OK estática. Cliente pidió poder tener páginas adicionales por servicio.           |
+| `/blog`               | Solo visual      | Search input no busca, paginación falsa, categorías no filtran, tags no filtran.   |
+| `/blog/[slug]`        | Solo visual      | Comentarios mock, formulario no envía, sidebar no funcional.                       |
+| `/foros`              | Solo visual      | Categorías no enlazan a contenido real, búsqueda visual.                           |
+| `/foros/[category]`   | Solo visual      | Hilos hardcoded, paginación falsa, búsqueda visual, botón "nuevo hilo" sin acción. |
+| `/foros/[cat]/[hilo]` | Solo visual      | Replies hardcoded, formulario no envía, "útil"/"reportar" sin acción.              |
+| `/contacto`           | Solo visual      | Formulario no envía. Falta WhatsApp button. Falta botón email-action. Sin captcha. |
+| `/perfil`             | Solo visual      | No hay auth real, datos hardcoded, "guardar cambios" no persiste.                  |
 
 ### Admin (8 rutas, todas visuales)
 
-| Ruta | Estado | Acciones que NO funcionan |
-|---|---|---|
-| `/admin` | Solo visual | Stats hardcoded, sin auth real, accesible a cualquiera. |
-| `/admin/articulos` | Solo visual | Filtros no filtran, búsqueda visual, acciones (ver/editar/eliminar) sin lógica. |
+| Ruta                     | Estado      | Acciones que NO funcionan                                                                                                                                  |
+| ------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/admin`                 | Solo visual | Stats hardcoded, sin auth real, accesible a cualquiera.                                                                                                    |
+| `/admin/articulos`       | Solo visual | Filtros no filtran, búsqueda visual, acciones (ver/editar/eliminar) sin lógica.                                                                            |
 | `/admin/articulos/nuevo` | Solo visual | Editor no es rich-text real (textarea), upload imagen no funciona, status/categoría/tags no persisten. **Falta ruta `/admin/articulos/[id]` para editar.** |
-| `/admin/programados` | Solo visual | Listado mock, acciones no funcionan. |
-| `/admin/comentarios` | Solo visual | Filtros visuales, aprobar/rechazar/eliminar sin lógica. |
-| `/admin/categorias` | Solo visual | CRUD no funciona, no persiste. |
-| `/admin/foros` | Solo visual | Toda la moderación es visual (pin/lock/eliminar). |
-| `/admin/usuarios` | Solo visual | Lista hardcoded, sin acciones (cambio rol, suspender, etc.). |
+| `/admin/programados`     | Solo visual | Listado mock, acciones no funcionan.                                                                                                                       |
+| `/admin/comentarios`     | Solo visual | Filtros visuales, aprobar/rechazar/eliminar sin lógica.                                                                                                    |
+| `/admin/categorias`      | Solo visual | CRUD no funciona, no persiste.                                                                                                                             |
+| `/admin/foros`           | Solo visual | Toda la moderación es visual (pin/lock/eliminar).                                                                                                          |
+| `/admin/usuarios`        | Solo visual | Lista hardcoded, sin acciones (cambio rol, suspender, etc.).                                                                                               |
 
 ## Componentes globales actuales
 
 ### Reutilizables OK
+
 - `Header` (con menú hamburguesa mobile y motion underline) — buen estado
 - `Footer` — buen estado
 - `Breadcrumbs`, `Pagination`, `SearchBar`, `EmptyState`, `SectionHeader` — buen estado
@@ -78,6 +79,7 @@ src/
 - `PostImage` (next/image con fallback gradiente) — buen estado
 
 ### Faltantes (a crear)
+
 - `<RichTextEditor />` (TipTap)
 - `<ImageUploader />` (Storage)
 - `<CategorySelect />` (server-driven)
@@ -95,25 +97,25 @@ src/
 
 ## Flujos incompletos detectados
 
-| Flujo | Estado | Faltante |
-|---|---|---|
-| Registro | NO existe | Página `/auth/registro`, integración Supabase Auth |
-| Login | NO existe | Página `/auth/login`, OAuth opcional |
-| Recuperar contraseña | NO existe | Página `/auth/recuperar`, flujo email |
-| Verificación de email | NO existe | Confirmación post-registro |
-| Crear comentario en blog | Visual | Validación, anti-spam, persistencia, notificación a admin |
-| Moderar comentario | Visual | Aprobar/rechazar/eliminar persistente |
-| Responder comentario | NO existe | Estructura de threading (1 nivel) |
-| Crear hilo de foro | Visual | Form modal/route, persistencia |
-| Responder hilo | Visual | Persistencia, notificaciones |
-| Buscar artículos | Visual | Full-text search en Supabase |
-| Filtrar por categoría/tag | Visual | Query params + server filter |
-| Crear artículo | Visual | Editor real, upload imagen, persistir, publicar/programar |
-| Programar publicación | Visual | Edge Function + pg_cron |
-| Subir imagen destacada | Visual | Bucket Supabase Storage + signed URLs |
-| Editar perfil | Visual | Persistir nombre, avatar, descripción |
-| Contacto → caso | NO existe | Crear caso con estado, asignación a admin |
-| Seguimiento de caso | NO existe | Vista pública de estado por código o login |
+| Flujo                     | Estado    | Faltante                                                  |
+| ------------------------- | --------- | --------------------------------------------------------- |
+| Registro                  | NO existe | Página `/auth/registro`, integración Supabase Auth        |
+| Login                     | NO existe | Página `/auth/login`, OAuth opcional                      |
+| Recuperar contraseña      | NO existe | Página `/auth/recuperar`, flujo email                     |
+| Verificación de email     | NO existe | Confirmación post-registro                                |
+| Crear comentario en blog  | Visual    | Validación, anti-spam, persistencia, notificación a admin |
+| Moderar comentario        | Visual    | Aprobar/rechazar/eliminar persistente                     |
+| Responder comentario      | NO existe | Estructura de threading (1 nivel)                         |
+| Crear hilo de foro        | Visual    | Form modal/route, persistencia                            |
+| Responder hilo            | Visual    | Persistencia, notificaciones                              |
+| Buscar artículos          | Visual    | Full-text search en Supabase                              |
+| Filtrar por categoría/tag | Visual    | Query params + server filter                              |
+| Crear artículo            | Visual    | Editor real, upload imagen, persistir, publicar/programar |
+| Programar publicación     | Visual    | Edge Function + pg_cron                                   |
+| Subir imagen destacada    | Visual    | Bucket Supabase Storage + signed URLs                     |
+| Editar perfil             | Visual    | Persistir nombre, avatar, descripción                     |
+| Contacto → caso           | NO existe | Crear caso con estado, asignación a admin                 |
+| Seguimiento de caso       | NO existe | Vista pública de estado por código o login                |
 
 ## Inconsistencias detectadas
 
@@ -132,14 +134,14 @@ src/
 
 ## Estados UX faltantes
 
-| Estado | Donde falta |
-|---|---|
+| Estado             | Donde falta                                            |
+| ------------------ | ------------------------------------------------------ |
 | Loading (skeleton) | Todas las listas (articulos, comments, threads, users) |
-| Error | Todas las páginas con fetch |
-| Empty state real | Existe el componente pero no se usa cuando data=0 |
-| Success (toast) | No hay sistema de toasts (sonner) instalado |
-| Form errors | Inputs no muestran errores de validación |
-| Optimistic UI | Acciones de moderación deberían ser optimistas |
+| Error              | Todas las páginas con fetch                            |
+| Empty state real   | Existe el componente pero no se usa cuando data=0      |
+| Success (toast)    | No hay sistema de toasts (sonner) instalado            |
+| Form errors        | Inputs no muestran errores de validación               |
+| Optimistic UI      | Acciones de moderación deberían ser optimistas         |
 
 ## Validaciones faltantes
 
@@ -153,19 +155,19 @@ src/
 
 ## Deuda técnica actual
 
-| Item | Severidad | Acción |
-|---|---|---|
-| Mock data inline en admin/usuarios | Baja | Mover a `mock-data.ts` (corto plazo) |
-| Componente X SVG inline en categorias | Baja | Reemplazar por `<X />` de lucide |
-| Duplicación de statusMap | Media | Crear `lib/status.ts` con mappings centralizados |
-| `Post.slug` como ID en mock | Media | Refactor a `{ id, slug }` antes de conectar Supabase |
-| Sin sistema de toasts | Alta | Instalar sonner antes de Sprint 1 |
-| Sin react-hook-form ni zod | Alta | Instalar antes de Sprint 1 |
-| Sin Supabase client wrapper | Alta | Crear en Sprint 1 |
-| Sin tipado de DB | Alta | Usar `supabase gen types` desde Sprint 1 |
-| Sin tests | Media | Añadir Vitest + Playwright en Sprint 6 |
-| Sin CI/CD | Media | GitHub Actions en Sprint 6 |
-| Sin lint/format estricto | Baja | Añadir prettier + ajustar eslint |
+| Item                                  | Severidad | Acción                                               |
+| ------------------------------------- | --------- | ---------------------------------------------------- |
+| Mock data inline en admin/usuarios    | Baja      | Mover a `mock-data.ts` (corto plazo)                 |
+| Componente X SVG inline en categorias | Baja      | Reemplazar por `<X />` de lucide                     |
+| Duplicación de statusMap              | Media     | Crear `lib/status.ts` con mappings centralizados     |
+| `Post.slug` como ID en mock           | Media     | Refactor a `{ id, slug }` antes de conectar Supabase |
+| Sin sistema de toasts                 | Alta      | Instalar sonner antes de Sprint 1                    |
+| Sin react-hook-form ni zod            | Alta      | Instalar antes de Sprint 1                           |
+| Sin Supabase client wrapper           | Alta      | Crear en Sprint 1                                    |
+| Sin tipado de DB                      | Alta      | Usar `supabase gen types` desde Sprint 1             |
+| Sin tests                             | Media     | Añadir Vitest + Playwright en Sprint 6               |
+| Sin CI/CD                             | Media     | GitHub Actions en Sprint 6                           |
+| Sin lint/format estricto              | Baja      | Añadir prettier + ajustar eslint                     |
 
 ## Inputs adicionales del cliente (de la transcripción del 21/abr)
 
@@ -192,6 +194,7 @@ Aspectos que el prototipo NO contempla y vienen de la reunión:
 ## Dependencias técnicas a sumar
 
 Antes de Sprint 1:
+
 ```bash
 npm i @supabase/supabase-js @supabase/ssr
 npm i react-hook-form @hookform/resolvers zod
@@ -202,6 +205,7 @@ npm i resend
 ```
 
 Para Sprint 6:
+
 ```bash
 npm i -D vitest @testing-library/react @testing-library/jest-dom playwright
 npm i -D prettier

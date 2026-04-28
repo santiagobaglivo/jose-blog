@@ -17,23 +17,16 @@ export default async function ForumCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const cat =
-    (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
+  const cat = (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
   const catThreads = await getThreadsByCategory(category);
   // Show all threads for demo richness
-  const displayThreads =
-    catThreads.length > 0 ? catThreads : (await getRecentThreads(3));
+  const displayThreads = catThreads.length > 0 ? catThreads : await getRecentThreads(3);
 
   return (
     <>
       <section className="bg-gradient-to-b from-secondary/40 to-transparent pt-10 pb-8">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Breadcrumbs
-            items={[
-              { label: "Foros", href: "/foros" },
-              { label: cat.name },
-            ]}
-          />
+          <Breadcrumbs items={[{ label: "Foros", href: "/foros" }, { label: cat.name }]} />
           <div className="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <div>
               <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">

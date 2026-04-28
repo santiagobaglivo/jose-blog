@@ -8,10 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 export default async function BlogPage() {
-  const [published, blogCategories] = await Promise.all([
-    getPublishedPosts(),
-    getCategories(),
-  ]);
+  const [published, blogCategories] = await Promise.all([getPublishedPosts(), getCategories()]);
   const recent = published.slice(0, 4);
 
   return (
@@ -28,8 +25,8 @@ export default async function BlogPage() {
                 Artículos y análisis
               </h1>
               <p className="mt-3 text-[0.9375rem] text-muted-foreground max-w-xl">
-                Publicaciones redactadas por nuestro equipo de profesionales
-                sobre impuestos, contabilidad, empresas y finanzas.
+                Publicaciones redactadas por nuestro equipo de profesionales sobre impuestos,
+                contabilidad, empresas y finanzas.
               </p>
             </div>
             <SearchBar placeholder="Buscar artículos..." className="w-full lg:w-72" />
@@ -64,9 +61,7 @@ export default async function BlogPage() {
             <aside className="lg:w-72 shrink-0 space-y-8">
               {/* Categories */}
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">
-                  Categorías
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">Categorías</h3>
                 <ul className="space-y-2">
                   {blogCategories.map((cat) => (
                     <li key={cat.slug}>
@@ -92,16 +87,11 @@ export default async function BlogPage() {
                 <ul className="space-y-4">
                   {recent.map((post) => (
                     <li key={post.slug}>
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="group block"
-                      >
+                      <Link href={`/blog/${post.slug}`} className="group block">
                         <h4 className="text-[0.8125rem] font-medium text-foreground group-hover:text-primary/80 transition-colors leading-snug line-clamp-2">
                           {post.title}
                         </h4>
-                        <p className="mt-1 text-[0.75rem] text-muted-foreground/70">
-                          {post.date}
-                        </p>
+                        <p className="mt-1 text-[0.75rem] text-muted-foreground/70">{post.date}</p>
                       </Link>
                     </li>
                   ))}
@@ -114,17 +104,23 @@ export default async function BlogPage() {
                   Etiquetas populares
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {["IVA", "Ganancias", "Monotributo", "PyMEs", "AFIP", "Balances", "Facturación"].map(
-                    (tag) => (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="text-[0.75rem] font-normal cursor-pointer hover:bg-secondary/60 transition-colors"
-                      >
-                        {tag}
-                      </Badge>
-                    )
-                  )}
+                  {[
+                    "IVA",
+                    "Ganancias",
+                    "Monotributo",
+                    "PyMEs",
+                    "AFIP",
+                    "Balances",
+                    "Facturación",
+                  ].map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="text-[0.75rem] font-normal cursor-pointer hover:bg-secondary/60 transition-colors"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
               </div>
             </aside>

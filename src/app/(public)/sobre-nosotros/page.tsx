@@ -50,11 +50,10 @@ export default async function SobreNosotrosPage() {
               Un estudio construido sobre la confianza y la excelencia
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Desde 2004, Velázquez & Asociados acompaña a empresas,
-              profesionales y emprendedores con un servicio integral, cercano y
-              de alto nivel técnico. Nuestro equipo multidisciplinario combina
-              experiencia, actualización permanente y un compromiso genuino con
-              cada cliente.
+              Desde 2004, Velázquez & Asociados acompaña a empresas, profesionales y emprendedores
+              con un servicio integral, cercano y de alto nivel técnico. Nuestro equipo
+              multidisciplinario combina experiencia, actualización permanente y un compromiso
+              genuino con cada cliente.
             </p>
           </div>
         </div>
@@ -108,9 +107,7 @@ export default async function SobreNosotrosPage() {
                 <h3 className="mt-5 text-base font-semibold text-foreground font-sans">
                   {member.name}
                 </h3>
-                <p className="mt-1 text-[0.8125rem] font-medium text-warm">
-                  {member.role}
-                </p>
+                <p className="mt-1 text-[0.8125rem] font-medium text-warm">{member.role}</p>
                 <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
                   {member.bio}
                 </p>
@@ -123,26 +120,42 @@ export default async function SobreNosotrosPage() {
       {/* Timeline */}
       <section className="py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Trayectoria"
-            title="Hitos del Estudio"
-          />
+          <SectionHeader eyebrow="Trayectoria" title="Hitos del Estudio" />
           <div className="mt-14 max-w-2xl mx-auto space-y-8">
             {[
-              { year: "2004", text: "Fundación del Estudio por Martín Velázquez como profesional independiente." },
-              { year: "2010", text: "Incorporación del área de consultoría empresarial y expansión del equipo." },
-              { year: "2015", text: "Apertura de la segunda oficina y consolidación de la cartera corporativa." },
-              { year: "2020", text: "Digitalización integral de procesos y lanzamiento del portal de clientes." },
-              { year: "2024", text: "Más de 350 clientes activos y un equipo de 12 profesionales especializados." },
+              {
+                year: "2004",
+                text: "Fundación del Estudio por Martín Velázquez como profesional independiente.",
+              },
+              {
+                year: "2010",
+                text: "Incorporación del área de consultoría empresarial y expansión del equipo.",
+              },
+              {
+                year: "2015",
+                text: "Apertura de la segunda oficina y consolidación de la cartera corporativa.",
+              },
+              {
+                year: "2020",
+                text: "Digitalización integral de procesos y lanzamiento del portal de clientes.",
+              },
+              {
+                year: "2024",
+                text: "Más de 350 clientes activos y un equipo de 12 profesionales especializados.",
+              },
             ].map((item) => (
               <div key={item.year} className="flex gap-6 items-start">
                 <div className="shrink-0 w-16 text-right">
-                  <span className="text-lg font-semibold text-foreground font-serif">{item.year}</span>
+                  <span className="text-lg font-semibold text-foreground font-serif">
+                    {item.year}
+                  </span>
                 </div>
                 <div className="relative pt-1">
                   <div className="absolute top-2 -left-[1.1875rem] h-2.5 w-2.5 rounded-full bg-warm border-2 border-background" />
                   <div className="border-l border-border/60 pl-6 pb-6">
-                    <p className="text-[0.875rem] text-muted-foreground leading-relaxed">{item.text}</p>
+                    <p className="text-[0.875rem] text-muted-foreground leading-relaxed">
+                      {item.text}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -24,7 +24,10 @@ export function ArticleCard({ post, featured = false }: { post: Post; featured?:
           className="group-hover:scale-[1.03] transition-transform duration-500"
         />
         <div className="absolute top-3 left-3 z-10">
-          <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground text-[0.6875rem] font-medium">
+          <Badge
+            variant="secondary"
+            className="bg-white/90 backdrop-blur-sm text-foreground text-[0.6875rem] font-medium"
+          >
             {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
           </Badge>
         </div>

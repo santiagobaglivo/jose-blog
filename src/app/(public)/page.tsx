@@ -1,13 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Scale,
-  BarChart3,
-  Building2,
-  Users,
-  Shield,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowRight, Scale, BarChart3, Building2, Users, Shield, TrendingUp } from "lucide-react";
 import { getPublishedPosts } from "@/lib/queries/posts";
 import { SectionHeader } from "@/components/shared/section-header";
 import { ArticleCard } from "@/components/blog/article-card";
@@ -76,9 +68,9 @@ export default async function HomePage() {
               Soluciones profesionales para cada etapa de su negocio
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl">
-              Más de dos décadas brindando asesoramiento contable, impositivo y
-              empresarial con excelencia, cercanía y compromiso. Acompañamos a
-              empresas y profesionales en la toma de decisiones estratégicas.
+              Más de dos décadas brindando asesoramiento contable, impositivo y empresarial con
+              excelencia, cercanía y compromiso. Acompañamos a empresas y profesionales en la toma
+              de decisiones estratégicas.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -107,9 +99,7 @@ export default async function HomePage() {
                 <div className="text-3xl lg:text-4xl font-semibold text-foreground font-serif">
                   {stat.value}
                 </div>
-                <div className="mt-1.5 text-[0.8125rem] text-muted-foreground">
-                  {stat.label}
-                </div>
+                <div className="mt-1.5 text-[0.8125rem] text-muted-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -190,9 +180,8 @@ export default async function HomePage() {
                 ¿Necesita asesoramiento profesional?
               </h2>
               <p className="mt-4 text-[0.9375rem] leading-relaxed text-primary-foreground/70">
-                Nuestro equipo está preparado para analizar su situación particular
-                y ofrecerle una solución a medida. Coordine una consulta sin
-                compromiso.
+                Nuestro equipo está preparado para analizar su situación particular y ofrecerle una
+                solución a medida. Coordine una consulta sin compromiso.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link

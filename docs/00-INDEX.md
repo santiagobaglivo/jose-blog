@@ -4,16 +4,16 @@ Documentación maestra para transformar el prototipo visual actual en un sistema
 
 ## Documentos
 
-| # | Documento | Descripción |
-|---|---|---|
-| 01 | [Resumen ejecutivo](./01-RESUMEN-EJECUTIVO.md) | Vista general, stack, alcance, estimación, riesgos clave |
-| 02 | [Auditoría del estado actual](./02-AUDITORIA.md) | Pantallas, flujos, deuda técnica detectada |
-| 03 | [Modelo funcional](./03-MODELO-FUNCIONAL.md) | Módulos, roles, entidades, eventos, métricas |
-| 04 | [Arquitectura Supabase](./04-ARQUITECTURA-SUPABASE.md) | Schema SQL completo, RLS, Storage, Edge Functions |
-| 05 | [Preguntas para el cliente](./05-PREGUNTAS-CLIENTE.md) | Bloqueantes y datos a solicitar |
-| 06 | [Plan de sprints](./06-SPRINT-PLAN.md) | Sprints 0-6 con objetivos, tareas, entregables |
-| 07 | [Backlog Jira completo](./07-BACKLOG-JIRA.md) | ~127 tareas con prompts para Claude Code |
-| 08 | [Roadmap, riesgos y orden de ejecución](./08-ROADMAP-Y-RIESGOS.md) | Roadmap funcional/técnico, riesgos, anti-roadmap |
+| #   | Documento                                                          | Descripción                                              |
+| --- | ------------------------------------------------------------------ | -------------------------------------------------------- |
+| 01  | [Resumen ejecutivo](./01-RESUMEN-EJECUTIVO.md)                     | Vista general, stack, alcance, estimación, riesgos clave |
+| 02  | [Auditoría del estado actual](./02-AUDITORIA.md)                   | Pantallas, flujos, deuda técnica detectada               |
+| 03  | [Modelo funcional](./03-MODELO-FUNCIONAL.md)                       | Módulos, roles, entidades, eventos, métricas             |
+| 04  | [Arquitectura Supabase](./04-ARQUITECTURA-SUPABASE.md)             | Schema SQL completo, RLS, Storage, Edge Functions        |
+| 05  | [Preguntas para el cliente](./05-PREGUNTAS-CLIENTE.md)             | Bloqueantes y datos a solicitar                          |
+| 06  | [Plan de sprints](./06-SPRINT-PLAN.md)                             | Sprints 0-6 con objetivos, tareas, entregables           |
+| 07  | [Backlog Jira completo](./07-BACKLOG-JIRA.md)                      | ~127 tareas con prompts para Claude Code                 |
+| 08  | [Roadmap, riesgos y orden de ejecución](./08-ROADMAP-Y-RIESGOS.md) | Roadmap funcional/técnico, riesgos, anti-roadmap         |
 
 ## Resumen rápido
 

@@ -22,12 +22,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       {/* Header */}
       <section className="bg-gradient-to-b from-secondary/40 to-transparent pt-10 pb-8">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Breadcrumbs
-            items={[
-              { label: "Blog", href: "/blog" },
-              { label: post.title },
-            ]}
-          />
+          <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
         </div>
       </section>
 
@@ -74,11 +69,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
               {/* Featured image */}
               <div className="mt-8 rounded-xl overflow-hidden aspect-[2/1] bg-secondary relative">
-                <PostImage
-                  src={post.image}
-                  alt={post.title}
-                  priority
-                />
+                <PostImage src={post.image} alt={post.title} priority />
               </div>
 
               {/* Content */}
@@ -166,9 +157,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <aside className="lg:w-72 shrink-0 space-y-8">
               <SearchBar placeholder="Buscar artículos..." />
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">
-                  Categorías
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">Categorías</h3>
                 <ul className="space-y-2">
                   {blogCategories.map((cat) => (
                     <li key={cat.slug}>

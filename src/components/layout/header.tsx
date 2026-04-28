@@ -42,9 +42,7 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-1">
             {navigation.map((item) => {
               const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
+                item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
@@ -110,9 +108,7 @@ export function Header() {
             <nav className="flex flex-col px-6 py-4 gap-1">
               {navigation.map((item) => {
                 const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
+                  item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
                 return (
                   <Link
                     key={item.href}

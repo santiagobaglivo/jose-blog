@@ -36,8 +36,8 @@ export function Footer() {
               </span>
             </div>
             <p className="text-[0.8125rem] leading-relaxed text-primary-foreground/60 max-w-xs">
-              Más de 20 años brindando soluciones contables, impositivas y de
-              consultoría empresarial con excelencia profesional.
+              Más de 20 años brindando soluciones contables, impositivas y de consultoría
+              empresarial con excelencia profesional.
             </p>
           </div>
 
@@ -45,11 +45,7 @@ export function Footer() {
           {Object.entries(links).map(([title, items]) => (
             <div key={title}>
               <h4 className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/40 mb-4 font-sans">
-                {title === "estudio"
-                  ? "Estudio"
-                  : title === "servicios"
-                  ? "Áreas"
-                  : "Comunidad"}
+                {title === "estudio" ? "Estudio" : title === "servicios" ? "Áreas" : "Comunidad"}
               </h4>
               <ul className="space-y-2.5">
                 {items.map((link) => (

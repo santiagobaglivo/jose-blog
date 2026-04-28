@@ -1,10 +1,4 @@
-import {
-  Receipt,
-  Users,
-  Building2,
-  Calculator,
-  HelpCircle,
-} from "lucide-react";
+import { Receipt, Users, Building2, Calculator, HelpCircle } from "lucide-react";
 import type { Post, Comment } from "@/lib/mock-data";
 
 type StatusEntry = { label: string; className: string };

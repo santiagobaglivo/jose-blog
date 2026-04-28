@@ -1,6 +1,7 @@
 # Backlog Jira — Tareas con prompts para Claude Code
 
 > **Convenciones:**
+>
 > - Las épicas usan keys EPIC-XX
 > - Las tareas usan keys JB-XXX (los IDs reales los asigna Jira al crearse)
 > - **Prioridad:** Highest, High, Medium, Low
@@ -12,36 +13,47 @@
 ## ÉPICAS
 
 ### EPIC-1: Infraestructura & Setup
+
 Preparar el repo y Supabase para conectar todo. Dejar el prototipo en estado coherente para enchufar backend.
 
 ### EPIC-2: Autenticación & Usuarios
+
 Sistema completo de auth, perfiles, roles y guards.
 
 ### EPIC-3: Blog backend
+
 CRUD completo del blog: artículos, editor, categorías, tags, programación, búsqueda.
 
 ### EPIC-4: Comentarios y moderación
+
 Sistema de comentarios con cola de moderación, anti-spam y respuestas.
 
 ### EPIC-5: Foros
+
 Categorías, hilos, respuestas, moderación.
 
 ### EPIC-6: Casos / Contacto
+
 Formulario de contacto que crea casos con seguimiento por código.
 
 ### EPIC-7: Storage & Media
+
 Buckets de imágenes, upload, transformaciones.
 
 ### EPIC-8: Dashboard & Métricas
+
 Dashboard real con datos de la plataforma.
 
 ### EPIC-9: Visual & UX premium (Hero carousel, WhatsApp, servicios)
+
 Cumplir requerimientos visuales del cliente: hero animado, WhatsApp, páginas de servicio.
 
 ### EPIC-10: Deuda técnica & Refactor
+
 Refactorizaciones internas para escalabilidad.
 
 ### EPIC-11: QA, Hardening & Production
+
 Tests, security audit, deploy, observabilidad.
 
 ---
@@ -61,6 +73,7 @@ Tests, security audit, deploy, observabilidad.
 **Objetivo:** Tener un proyecto Supabase listo para recibir migraciones y conexiones desde Next.js.
 
 **Alcance:**
+
 - Crear proyecto en https://supabase.com
 - Anotar `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - Crear `.env.example` y `.env.local`
@@ -71,12 +84,14 @@ Tests, security audit, deploy, observabilidad.
 **Dependencias:** ninguna (manual del dev/cliente)
 
 **Criterios de aceptación:**
+
 - [ ] Proyecto Supabase creado en región adecuada (sa-east-1 si cliente está en LatAm)
 - [ ] `.env.example` documenta todas las variables esperadas
 - [ ] `.env.local` (sin commit) tiene los valores reales
 - [ ] `npm run dev` arranca sin error de variables faltantes
 
 **Prompt Claude Code:**
+
 ```
 Generá `.env.example` en la raíz del proyecto con todas las variables que el sistema va a necesitar:
 - NEXT_PUBLIC_SUPABASE_URL
@@ -99,6 +114,7 @@ Cada variable con un comentario breve. Verificá que `.gitignore` excluya `.env.
 **Descripción:** Instalar Supabase CLI, vincular proyecto local a remoto, crear estructura `supabase/migrations/` y un script npm para correr migraciones.
 
 **Alcance:**
+
 - `supabase init`
 - `supabase link --project-ref <ref>`
 - Agregar scripts `db:push`, `db:reset`, `db:types` al `package.json`
@@ -106,11 +122,13 @@ Cada variable con un comentario breve. Verificá que `.gitignore` excluya `.env.
 **Archivos:** `supabase/config.toml`, `package.json`
 
 **Criterios de aceptación:**
+
 - [ ] `supabase` CLI funciona localmente
 - [ ] `npm run db:types` regenera `src/types/database.ts`
 - [ ] Carpeta `supabase/migrations/` creada y commiteada (con `.gitkeep`)
 
 **Prompt Claude Code:**
+
 ```
 Inicializá Supabase CLI en el proyecto. Asumí que el dev ya corrió `supabase login` y tiene el project ref guardado.
 
@@ -135,6 +153,7 @@ Verificá que `supabase init` no rompa nada. No corras `db:push` todavía.
 **Descripción:** Crear una capa `src/lib/queries/` con funciones async que hoy retornan los datos mock. Las pages las consumen. Cuando llegue Supabase, solo cambia la implementación interna sin tocar las pages.
 
 **Alcance:**
+
 - `lib/queries/posts.ts`: `getPublishedPosts()`, `getPostBySlug()`, `getPostsByCategory()`, etc.
 - `lib/queries/comments.ts`
 - `lib/queries/forums.ts`
@@ -144,11 +163,13 @@ Verificá que `supabase init` no rompa nada. No corras `db:push` todavía.
 **Archivos:** `src/lib/queries/*.ts` (nuevos), todas las `page.tsx` actuales.
 
 **Criterios de aceptación:**
+
 - [ ] Pages no importan más de `@/lib/mock-data`
 - [ ] Build y dev funcionan idénticamente
 - [ ] Cero regresiones visuales
 
 **Prompt Claude Code:**
+
 ```
 Refactorizá las pages para que no consuman `@/lib/mock-data` directamente. Creá `src/lib/queries/` con módulos que devuelven los mismos datos pero vía funciones async (Promise) para que después solo cambiemos su body por queries Supabase sin tocar las pages.
 
@@ -175,11 +196,13 @@ Conservá el diseño y la UI exactos. Después corré `npm run build` para verif
 **Archivos:** `src/lib/status.ts` (nuevo), `src/app/admin/articulos/page.tsx`, `src/app/admin/programados/page.tsx`, `src/app/admin/comentarios/page.tsx`, `src/app/(public)/foros/page.tsx`
 
 **Criterios de aceptación:**
+
 - [ ] `lib/status.ts` exporta `postStatusMap`, `commentStatusMap`, `caseStatusMap` (placeholder), `forumIconMap`
 - [ ] Pages admin importan desde `lib/status.ts`
 - [ ] Cero regresiones visuales
 
 **Prompt Claude Code:**
+
 ```
 Centralizar status maps e icon maps duplicados. Crear `src/lib/status.ts` con:
 
@@ -205,6 +228,7 @@ Y exportar `forumIconMap` desde `lib/status.ts` o `lib/icons.ts`. Reemplazar las
 **Épica:** EPIC-10 · **Tipo:** Task · **Prioridad:** Low · **Estimación:** 0.5 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 En `src/app/admin/usuarios/page.tsx` hay un `const mockUsers = [...]` declarado dentro del archivo. Movelo a `src/lib/mock-data.ts` como `mockUsers` exportado, junto con `roleConfig`. Importarlo desde la page. Cero cambios visuales.
 ```
@@ -216,6 +240,7 @@ En `src/app/admin/usuarios/page.tsx` hay un `const mockUsers = [...]` declarado 
 **Épica:** EPIC-10 · **Tipo:** Task · **Prioridad:** Low · **Estimación:** 0.25 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 En `src/app/admin/categorias/page.tsx` hay un componente `X` definido al final del archivo como SVG inline. Reemplazarlo por `import { X } from "lucide-react"` y eliminar la función local. Verificar que las "X" de los tags se vean igual.
 ```
@@ -227,6 +252,7 @@ En `src/app/admin/categorias/page.tsx` hay un componente `X` definido al final d
 **Épica:** EPIC-1 · **Tipo:** Task · **Prioridad:** Highest · **Estimación:** 0.5 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Instalá las siguientes dependencias en el proyecto:
 
@@ -247,6 +273,7 @@ Verificá que `npm run build` siga pasando. No agregues nada más.
 **Épica:** EPIC-1 · **Tipo:** Task · **Prioridad:** High · **Estimación:** 0.5 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Integrá `<Toaster />` de sonner globalmente. Pasos:
 1. En `src/app/layout.tsx` (root layout) importá `import { Toaster } from "sonner"` y agregalo dentro del body, después de {children}.
@@ -263,6 +290,7 @@ No uses ningún toast todavía — solo dejá el Toaster listo.
 **Épica:** EPIC-10 · **Tipo:** Task · **Prioridad:** Low · **Estimación:** 1 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Endurecé la config de ESLint y agregá Prettier:
 
@@ -293,6 +321,7 @@ Endurecé la config de ESLint y agregá Prettier:
 **Épica:** EPIC-1 · **Tipo:** Task · **Prioridad:** Highest · **Estimación:** 2 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Crear los wrappers de cliente Supabase para Next.js App Router siguiendo el patrón oficial de @supabase/ssr.
 
@@ -314,6 +343,7 @@ Verificá que el build pase. No conectes ninguna page todavía.
 **Épica:** EPIC-1 · **Tipo:** Task · **Prioridad:** Medium · **Estimación:** 1 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Crear páginas de error y 404 alineadas con el diseño premium del prototipo.
 
@@ -333,6 +363,7 @@ Mantener la estética sobria: spacing generoso, tipografía DM Serif para "404",
 **Épica:** EPIC-1 · **Tipo:** Task · **Prioridad:** High · **Estimación:** 0.25 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/types/database.ts` con un placeholder mínimo:
 
@@ -354,6 +385,7 @@ Esto evita errores de tipos hasta que `supabase gen types` lo regenere. No commi
 **Épica:** EPIC-11 · **Tipo:** Task · **Prioridad:** Low · **Estimación:** 1 · **Sprint:** 0
 
 **Prompt Claude Code:**
+
 ```
 Actualizar `README.md` del proyecto con:
 - Descripción del proyecto
@@ -377,6 +409,7 @@ Tono profesional, breve, sin emojis.
 #### JB-101 — Migración 001: extensions y enums
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260501000001_init_extensions_enums.sql` con:
 - create extension uuid-ossp, pg_trgm, pgcrypto
@@ -390,6 +423,7 @@ NO corras `supabase db push` todavía — esa decisión la toma el dev cuando es
 #### JB-102 — Migración 002: profiles + trigger
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260501000002_profiles.sql` con:
 - tabla profiles (ver docs/04-ARQUITECTURA-SUPABASE.md sección Migration 002)
@@ -401,6 +435,7 @@ Después correr `npm run db:push` y luego `npm run db:types` para regenerar `src
 #### JB-103 — Migración 003: categorías y tags + seeds
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260501000003_categories_tags.sql` con tablas categories, tags, post_tags (M:N) y seed inicial de categorías y tags exactamente como en docs/04-ARQUITECTURA-SUPABASE.md.
 
@@ -410,6 +445,7 @@ Aplicar con `npm run db:push`. Regenerar tipos.
 #### JB-104 — RLS policies para profiles, categorías, tags
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260501000004_rls_profiles_taxonomy.sql` con:
 - enable RLS en profiles, categories, tags, post_tags
@@ -423,6 +459,7 @@ Aplicar y regenerar tipos.
 #### JB-105 — Generar types DB
 
 **Prompt Claude Code:**
+
 ```
 Correr `npm run db:types` y commitear el archivo regenerado `src/types/database.ts`. Verificar que TypeScript no tenga errores con `npm run build`.
 ```
@@ -434,6 +471,7 @@ Correr `npm run db:types` y commitear el archivo regenerado `src/types/database.
 **Tipo:** Story · **Prioridad:** Highest · **Estimación:** 2 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/auth/login/page.tsx` con un formulario de login premium alineado al diseño del proyecto.
 
@@ -461,6 +499,7 @@ Diseño: aire, tipografía DM Serif para título "Iniciar sesión", inputs con f
 **Tipo:** Story · **Prioridad:** Highest · **Estimación:** 2 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Mismo patrón que JB-106 pero para registro. Archivo `src/app/auth/registro/page.tsx`.
 
@@ -481,6 +520,7 @@ Manejo de errores: email ya en uso, password débil.
 **Tipo:** Story · **Prioridad:** High · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Implementar flujo de recuperación de contraseña.
 
@@ -497,6 +537,7 @@ En Supabase Dashboard, configurar el email template "Reset password" para que ap
 **Tipo:** Task · **Prioridad:** Highest · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Conectar el middleware con Supabase para refresh automático de sesión.
 
@@ -517,6 +558,7 @@ matcher en `middleware.ts`:
 **Tipo:** Task · **Prioridad:** Highest · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/auth/actions.ts` con server actions reutilizables:
 - signIn(formData)
@@ -535,6 +577,7 @@ Cada una valida con zod, llama Supabase, maneja errores y redirige según corres
 **Tipo:** Task · **Prioridad:** High · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear un context de usuario para Client Components.
 
@@ -553,6 +596,7 @@ No reemplaces el layout existente — agrego al árbol manteniendo el resto inta
 **Tipo:** Story · **Prioridad:** High · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Conectar `src/components/layout/header.tsx` con el context de usuario.
 
@@ -571,6 +615,7 @@ Reusar dropdown-menu de shadcn. Mantener motion underline y todo el resto del He
 **Tipo:** Task · **Prioridad:** Highest · **Estimación:** 0.5 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 En `src/app/admin/layout.tsx` (que es Client Component), agregar verificación server-side adicional usando un AdminGuard:
 
@@ -590,6 +635,7 @@ El middleware ya cubre el caso, pero esto es defense-in-depth.
 **Tipo:** Story · **Prioridad:** High · **Estimación:** 1.5 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/perfil` en Client Component conectado.
 
@@ -614,6 +660,7 @@ Los datos hardcoded de "Laura Giménez" se reemplazan por los reales.
 **Tipo:** Task · **Prioridad:** Medium · **Estimación:** 1.5 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear el bucket `avatars` en Supabase Storage (público) con policies que permiten al usuario subir su propio avatar.
 
@@ -638,6 +685,7 @@ Componente reutilizable (mismo patrón se usará para post-images en Sprint 2).
 **Tipo:** Story · **Prioridad:** Medium · **Estimación:** 1 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Reemplazar mockUsers en `/admin/usuarios` por queries Supabase a profiles + auth.users.
 
@@ -655,6 +703,7 @@ Loading state con skeleton, empty state con `<EmptyState />`.
 **Tipo:** Task · **Prioridad:** Medium · **Estimación:** 0.5 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 En `/admin/usuarios`, agregar opción en el menú "..." de cada fila para "Cambiar a admin" / "Cambiar a usuario". Server Action que actualiza profiles.role.
 
@@ -670,6 +719,7 @@ Validar que un admin no pueda quitarse el rol a sí mismo (UI + server-side).
 **Tipo:** Task · **Prioridad:** Medium · **Estimación:** 0.5 · **Sprint:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/lib/validators/auth.ts` con schemas zod reutilizables:
 - loginSchema (email, password min 8)
@@ -689,6 +739,7 @@ Importarlos desde las pages auth en lugar de duplicar.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260601000001_posts.sql` con la tabla posts completa según docs/04-ARQUITECTURA-SUPABASE.md sección Migration 004 (incluye search_vector generated, indices GIN, post_tags M:N).
 
@@ -700,6 +751,7 @@ Aplicar y regenerar types.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260601000002_rls_posts.sql` con:
 - enable RLS posts, post_tags
@@ -716,6 +768,7 @@ Aplicar y regenerar tipos.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260601000003_storage_post_images.sql`:
 - crear bucket post-images público
@@ -729,6 +782,7 @@ Aplicar.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 3
 
 **Prompt Claude Code:**
+
 ```
 Reemplazar el textarea actual de `/admin/articulos/nuevo` por un editor TipTap real.
 
@@ -750,6 +804,7 @@ El componente expone JSON + HTML al padre.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 En la server action que persiste un post (Sprint 2 JB-210), antes de guardar el HTML aplicar `sanitizeHtml()` con DOMPurify. Configurar whitelist: h2, h3, p, ul, ol, li, blockquote, strong, em, a (href, rel), img (src, alt), br, hr.
 
@@ -761,6 +816,7 @@ Esto protege contra XSS si el editor envía algo malicioso.
 **Sprint:** 2 · **Prioridad:** High · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/shared/ImageUploader.tsx` (Client Component):
 - Props: bucket, path (callback que recibe filename y devuelve la ruta), onUpload(url), maxSizeMB, accept
@@ -779,6 +835,7 @@ Reutilizable para avatar y para post-images. Reemplazar el placeholder visual de
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/admin/CategorySelect.tsx`:
 - Server Component que lee categories desde Supabase
@@ -793,6 +850,7 @@ Usar en `/admin/articulos/nuevo` y `/admin/articulos/[id]`.
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/admin/TagSelector.tsx` (Client Component):
 - Multi-select usando cmdk (shadcn Command)
@@ -809,6 +867,7 @@ Conectar a posts via post_tags M:N en la action de save (JB-210).
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/admin/articulos` en Server Component con datos reales.
 
@@ -828,6 +887,7 @@ Loading state con skeleton de tabla.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 3
 
 **Prompt Claude Code:**
+
 ```
 Conectar el editor con persistencia.
 
@@ -856,6 +916,7 @@ Mantener el diseño actual exactamente.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/admin/articulos/[id]/page.tsx` para editar.
 
@@ -877,6 +938,7 @@ Botones: "Guardar cambios", "Despublicar" (status = draft), "Eliminar" (soft del
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Implementar soft delete en posts. Server action deletePost(id):
 - UPDATE posts SET deleted_at = now() WHERE id = $1
@@ -891,6 +953,7 @@ NO hard delete. Los registros con deleted_at no aparecen por RLS (o filtro en qu
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/lib/utils/text.ts`:
 - slugify(title): string usando regex (lowercase, accents removed, spaces → -)
@@ -905,6 +968,7 @@ Usar en createPost y updatePost.
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/admin/programados` en Server Component con datos reales.
 
@@ -925,6 +989,7 @@ Mantener UI actual.
 **Sprint:** 2 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260601000010_scheduled_publish.sql`:
 - create extension pg_cron
@@ -941,6 +1006,7 @@ Si el plan no lo soporta: alternativa con Edge Function disparada por Vercel Cro
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/blog` en Server Component conectado.
 
@@ -968,6 +1034,7 @@ Mantener UI actual.
 **Sprint:** 2 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/blog/[slug]` en Server Component.
 
@@ -985,6 +1052,7 @@ El form de comentarios queda hasta Sprint 3 (no funcional en este sprint, pero c
 **Sprint:** 2 · **Prioridad:** Low · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear Edge Function `supabase/functions/track-post-view/index.ts`:
 - POST con { post_slug }
@@ -1008,6 +1076,7 @@ Decisión: para no penalizar SSR, hacerlo en Client Component aparte que se mont
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/admin/categorias` en CRUD real para categories y tags.
 
@@ -1034,6 +1103,7 @@ Mantener UI actual exacta.
 **Sprint:** 2 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Implementar metadata para SEO en blog:
 
@@ -1051,6 +1121,7 @@ Implementar metadata para SEO en blog:
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/sitemap.ts` (App Router sitemap convention) que retorna array de:
 - URLs estáticas (/, /sobre-nosotros, /blog, /foros, /contacto)
@@ -1065,6 +1136,7 @@ También crear `src/app/robots.ts` permitiendo todo y apuntando al sitemap.
 **Sprint:** 2 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Implementar variación de color por artículo según pidió el cliente.
 
@@ -1085,6 +1157,7 @@ Subtle, no chillón. Variación visible pero coherente con el diseño premium.
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260701000001_comments.sql` con tabla comments según docs/04. Aplicar y regenerar tipos.
 ```
@@ -1094,6 +1167,7 @@ Crear `supabase/migrations/20260701000001_comments.sql` con tabla comments segú
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260701000002_rls_comments.sql` con policies:
 - comments_select_approved (public approved + admin all + self all)
@@ -1109,6 +1183,7 @@ Aplicar.
 **Sprint:** 3 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/blog/CommentForm.tsx` (Client Component):
 - Si user logueado: form con solo campo content. author_id = user.id.
@@ -1130,6 +1205,7 @@ Crear `src/components/blog/CommentForm.tsx` (Client Component):
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/blog/CommentItem.tsx` que renderiza un comentario y sus replies (1 nivel).
 
@@ -1149,6 +1225,7 @@ Reusar los styles del prototipo (la lista de comentarios ya está, solo organiza
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Reemplazar la lista hardcoded en `/blog/[slug]` por:
 1. getApprovedCommentsByPost(slug) que devuelve solo aprobados, ordenados por fecha asc, con replies anidadas.
@@ -1162,6 +1239,7 @@ Reemplazar la lista hardcoded en `/blog/[slug]` por:
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/admin/comentarios` en Server Component con datos reales.
 
@@ -1175,6 +1253,7 @@ Mantener UI exacta. Los botones de aprobar/rechazar/eliminar conectan a server a
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Server actions:
 - approveComment(id, reason?)
@@ -1197,6 +1276,7 @@ Optimistic UI con useOptimistic en el client.
 **Sprint:** 3 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 En `/admin/comentarios` y `/blog/[slug]` (modo admin), agregar acción "Responder" en cada comentario.
 
@@ -1210,6 +1290,7 @@ UI: botón "Responder" abre dialog con textarea, validación, submit.
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/functions/send-comment-notification/index.ts`:
 - Triggered desde DB trigger en INSERT comments con status=pending
@@ -1226,6 +1307,7 @@ Configurar el trigger DB en migración: AFTER INSERT ON comments → call edge f
 **Sprint:** 3 · **Prioridad:** Low · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Edge Function que envía email al autor del comentario cuando es aprobado.
 
@@ -1243,6 +1325,7 @@ Template: "Tu comentario en [post title] fue aprobado. Verlo en [URL]".
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260701000010_forums.sql` con forum_categories, forum_threads, forum_replies + indices + tsvector según docs/04. Seeds de forum_categories.
 
@@ -1254,6 +1337,7 @@ Aplicar y regenerar tipos.
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260701000011_rls_forums.sql` con policies según docs/04 sección RLS. Aplicar.
 ```
@@ -1263,6 +1347,7 @@ Crear `supabase/migrations/20260701000011_rls_forums.sql` con policies según do
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260701000012_trigger_replies_count.sql` con la función update_thread_reply_stats y el trigger en forum_replies. Ver docs/04 Migration 010.
 ```
@@ -1272,6 +1357,7 @@ Crear `supabase/migrations/20260701000012_trigger_replies_count.sql` con la func
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/foros` en Server Component:
 - Lista de forum_categories con threadCount, replyCount, lastActivity (calculados en queries)
@@ -1285,6 +1371,7 @@ Mantener UI exacta.
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Convertir `/foros/[category]` en Server Component con paginación + búsqueda.
 
@@ -1299,6 +1386,7 @@ Botón "Nuevo hilo" abre modal/sheet con `<NewThreadForm />` (JB-317).
 **Sprint:** 3 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Convertir el detalle de hilo en Server Component:
 - Thread + replies ordenados asc
@@ -1313,6 +1401,7 @@ Mantener UI.
 **Sprint:** 3 · **Prioridad:** High · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Componente Client que muestra form en Sheet (shadcn) con:
 - title (5-200 chars)
@@ -1334,6 +1423,7 @@ Solo accesible si user logueado, sino redirect a /auth/login con redirectedFrom.
 **Sprint:** 3 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Componente con textarea + botón Publicar. Server action createReply(thread_id, content). Validación min 2 chars max 5000. Rate limit 30 seg. Anti-spam básico.
 
@@ -1345,6 +1435,7 @@ UI: aparece al final del thread si user logueado y thread no locked. Sino mensaj
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Convertir admin de foros:
 - CRUD de forum_categories (igual que blog categorías)
@@ -1358,6 +1449,7 @@ Mantener UI.
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Server actions de moderación de threads:
 - pinThread(id) / unpinThread(id)
@@ -1374,6 +1466,7 @@ Cada una loguea en moderation_logs.
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Conectar la barra de búsqueda en /foros y /foros/[category] con search_vector @@ plainto_tsquery. Resultados con highlight (ts_headline opcional). Paginación.
 ```
@@ -1383,6 +1476,7 @@ Conectar la barra de búsqueda en /foros y /foros/[category] con search_vector @
 **Sprint:** 3 · **Prioridad:** Medium · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 En createThread y createReply:
 - Rate limit por user_id: max 5 posts/hora, max 3 threads/día
@@ -1401,6 +1495,7 @@ Honeypot en forms.
 **Sprint:** 4 · **Prioridad:** Highest · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260801000001_cases.sql` con cases y case_messages según docs/04. Incluye sequence case_code_seq.
 
@@ -1412,6 +1507,7 @@ Aplicar.
 **Sprint:** 4 · **Prioridad:** Highest · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 RLS según docs/04: insert público, select admin, update admin. case_messages all admin.
 ```
@@ -1421,6 +1517,7 @@ RLS según docs/04: insert público, select admin, update admin. case_messages a
 **Sprint:** 4 · **Prioridad:** Highest · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Convertir el form de `/contacto` en funcional. Server action createCase(formData):
 - Validación zod (name, email, subject, message; phone opcional)
@@ -1437,6 +1534,7 @@ Mantener UI del form actual exacta.
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/(public)/seguimiento/page.tsx`:
 - Form con campos: código, email
@@ -1452,6 +1550,7 @@ Diseño premium consistente con el resto.
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Edge Function que valida code + email matchean y devuelve datos del caso (sin notas internas, solo public).
 
@@ -1463,6 +1562,7 @@ Rate limit por IP para evitar enumeración.
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 1.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/admin/casos/page.tsx`:
 - Listado con filtros (status, prioridad, asignado, búsqueda)
@@ -1477,6 +1577,7 @@ Estilo coherente con /admin/articulos.
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/admin/casos/[id]/page.tsx`:
 - Header con código, nombre, status badge, prioridad
@@ -1492,6 +1593,7 @@ Crear `src/app/admin/casos/[id]/page.tsx`:
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Server actions:
 - updateCaseStatus(id, status, message?)
@@ -1513,6 +1615,7 @@ Cada cambio de status no internal envía email al cliente.
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear:
 - `supabase/functions/send-case-notification/index.ts`: en INSERT cases, envía 2 emails — uno al admin, otro al cliente con su código.
@@ -1530,6 +1633,7 @@ Templates HTML simples con branding. Disparados por DB triggers o por server act
 **Sprint:** 4 · **Prioridad:** High · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Crear `supabase/migrations/20260801000010_views_modlogs.sql` con post_views y moderation_logs según docs/04.
 ```
@@ -1539,6 +1643,7 @@ Crear `supabase/migrations/20260801000010_views_modlogs.sql` con post_views y mo
 **Sprint:** 4 · **Prioridad:** Highest · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Reemplazar dashboardStats hardcoded por queries reales:
 - count posts publicados, borradores, programados
@@ -1559,6 +1664,7 @@ Comentarios pendientes (sección): ya existe, conectar query real.
 **Sprint:** 4 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Agregar componente `<ViewsChart />` en /admin con line chart de visitas últimos 30 días.
 
@@ -1572,6 +1678,7 @@ Diseño minimalista, mismo color principal que el resto del admin.
 **Sprint:** 4 · **Prioridad:** Low · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Card "Más leídos" en dashboard con top 5 posts por view_count.
 ```
@@ -1591,6 +1698,7 @@ Card "Más leídos" en dashboard con top 5 posts por view_count.
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/shared/WhatsAppButton.tsx`:
 - Variante "floating": fixed bottom-right, círculo verde con icono WhatsApp, hover sutil
@@ -1608,6 +1716,7 @@ Insertar la variante floating en el layout público (`(public)/layout.tsx`) salv
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 0.5
 
 **Prompt Claude Code:**
+
 ```
 Insertar `<WhatsAppButton variant="inline" />` en:
 - /contacto (al lado del botón submit)
@@ -1622,6 +1731,7 @@ Mensajes pre-rellenados según contexto (ej. "Hola, quiero hacer una consulta so
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/components/home/HeroCarousel.tsx` Client Component:
 - Recibe array de slides ({ image, headline, subheadline, cta })
@@ -1637,6 +1747,7 @@ Crear `src/components/home/HeroCarousel.tsx` Client Component:
 **Sprint:** 5 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear migración tabla `home_slides`:
 - id, headline, subheadline, image_url, cta_text, cta_href, display_order, is_active, created_at, updated_at
@@ -1653,6 +1764,7 @@ Conectar HeroCarousel con queryHomeSlides() server-side.
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Aplicar feedback del cliente: en la home, reducir bloques de texto, agregar más iconografía y espacio visual.
 
@@ -1671,6 +1783,7 @@ Mantener identidad premium. Sin emojis. No exagerar.
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/(public)/servicios/[slug]/page.tsx` Server Component:
 - Hero con título del servicio + imagen
@@ -1687,6 +1800,7 @@ Diseño consistente con /sobre-nosotros pero más enfocado en un servicio espec�
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Migración con tabla services:
 - id, slug, name, description, hero_image, content (jsonb), display_order, is_active, related_category, accent_color, seo_title, seo_description, created_at, updated_at
@@ -1707,6 +1821,7 @@ Seeds con 1-3 servicios placeholder.
 **Sprint:** 5 · **Prioridad:** High · **Estimación:** 2
 
 **Prompt Claude Code:**
+
 ```
 Crear `/admin/servicios` con CRUD igual que blog:
 - Listado
@@ -1727,6 +1842,7 @@ Consistente con admin/articulos.
 **Sprint:** 5 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 En el TipTap editor, el botón "Insertar imagen" debe:
 1. Abrir un dialog
@@ -1741,6 +1857,7 @@ Browse de imágenes existentes: query del bucket con signed URL para preview.
 **Sprint:** 5 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `/buscar` global con resultados de blog + foros + servicios.
 
@@ -1760,6 +1877,7 @@ Las barras de búsqueda del header redirigen a /buscar?q=.
 **Sprint:** 5 · **Prioridad:** Medium · **Estimación:** 1
 
 **Prompt Claude Code:**
+
 ```
 Crear `src/app/blog/[slug]/opengraph-image.tsx` (App Router OG image generation con next/og).
 
@@ -1777,6 +1895,7 @@ Genera una imagen 1200x630 con título del post, autor, fecha y branding. Inspir
 #### JB-601 — Suite Vitest unit
 
 **Prompt:**
+
 ```
 Setup Vitest + Testing Library. Crear tests unitarios para:
 - src/lib/utils/text.ts (slugify, ensureUniqueSlug, estimateReadTime)
@@ -1789,6 +1908,7 @@ Configurar `npm test` y `npm test:watch`.
 #### JB-602 — Playwright E2E
 
 **Prompt:**
+
 ```
 Setup Playwright. Crear test E2E del flujo crítico:
 1. Visitor crea cuenta
@@ -1804,6 +1924,7 @@ Correr en CI.
 #### JB-603 — Auditoría RLS
 
 **Prompt:**
+
 ```
 Crear script `scripts/audit-rls.ts` que:
 1. Crea cuenta test no-admin
@@ -1816,6 +1937,7 @@ Crear script `scripts/audit-rls.ts` que:
 #### JB-604 — Auditoría XSS
 
 **Prompt:**
+
 ```
 Test que inserta payload XSS clásico (script, onerror, javascript:) en editor y verifica que el HTML persistido NO contiene esos vectores. Usar el sanitizeHtml directamente en unit tests.
 ```
@@ -1823,6 +1945,7 @@ Test que inserta payload XSS clásico (script, onerror, javascript:) en editor y
 #### JB-605 — Auditoría rate-limit
 
 **Prompt:**
+
 ```
 Script que envía 100 requests al endpoint createComment desde la misma IP en 60 seg. Verifica que solo los primeros pasen y el resto retorne 429.
 ```
@@ -1830,6 +1953,7 @@ Script que envía 100 requests al endpoint createComment desde la misma IP en 60
 #### JB-606 — Optimización imágenes
 
 **Prompt:**
+
 ```
 Audit de imágenes:
 - Verificar que todas las imágenes en pages usen next/image
@@ -1841,6 +1965,7 @@ Audit de imágenes:
 #### JB-607 — Lighthouse target
 
 **Prompt:**
+
 ```
 Correr Lighthouse CI en home y blog. Objetivo: ≥90 perf, ≥95 a11y, ≥100 SEO.
 
@@ -1850,6 +1975,7 @@ Si no llega: optimizar imágenes, lazy load components below fold, reducir JS bu
 #### JB-608 — Resend setup
 
 **Prompt:**
+
 ```
 Configurar Resend:
 1. Crear cuenta o usar existente del cliente
@@ -1862,6 +1988,7 @@ Configurar Resend:
 #### JB-609 — Deploy Vercel
 
 **Prompt:**
+
 ```
 Conectar repo a Vercel:
 1. Importar proyecto desde GitHub
@@ -1877,6 +2004,7 @@ Conectar repo a Vercel:
 #### JB-611 — Dominio + SSL
 
 **Prompt:**
+
 ```
 Configurar dominio del cliente en Vercel. Verificar DNS. SSL automático. Redirect www → root o viceversa según preferencia.
 ```
@@ -1884,6 +2012,7 @@ Configurar dominio del cliente en Vercel. Verificar DNS. SSL automático. Redire
 #### JB-612 — Supabase backups
 
 **Prompt:**
+
 ```
 Habilitar Point-in-Time Recovery en Supabase (requiere plan Pro). Documentar política de backups: diarios a S3 (Edge Function) o usar el feature nativo.
 ```
@@ -1891,6 +2020,7 @@ Habilitar Point-in-Time Recovery en Supabase (requiere plan Pro). Documentar pol
 #### JB-613 — Vercel Analytics
 
 **Prompt:**
+
 ```
 Habilitar @vercel/analytics y @vercel/speed-insights en el root layout.
 ```
@@ -1898,6 +2028,7 @@ Habilitar @vercel/analytics y @vercel/speed-insights en el root layout.
 #### JB-614 — Runbook incidentes
 
 **Prompt:**
+
 ```
 Crear `docs/RUNBOOK.md` con procedimientos para:
 - Site caído → revisar Vercel status, Supabase status, logs
@@ -1915,6 +2046,7 @@ Cada uno con pasos paso a paso.
 #### JB-616 — Página mantenimiento
 
 **Prompt:**
+
 ```
 Crear `public/maintenance.html` estática para activar manualmente cuando haya rollouts. Estética premium consistente.
 ```
@@ -1922,6 +2054,7 @@ Crear `public/maintenance.html` estática para activar manualmente cuando haya r
 #### JB-617 — Smoke tests post-deploy
 
 **Prompt:**
+
 ```
 GitHub Action que después de deploy a producción ejecuta smoke tests:
 - /  → 200
@@ -1933,6 +2066,7 @@ GitHub Action que después de deploy a producción ejecuta smoke tests:
 #### JB-618 — Capacitación cliente
 
 **Prompt:**
+
 ```
 Preparar:
 1. Video screen-recording del panel admin (15-20 min) cubriendo: login, crear artículo, programar, moderar comentarios, gestionar casos.
@@ -1943,6 +2077,7 @@ Preparar:
 #### JB-619 — Plan de rollback
 
 **Prompt:**
+
 ```
 Documentar en `docs/ROLLBACK.md` cómo revertir:
 - Deploy: Vercel → previous deployment con un clic
@@ -1953,6 +2088,7 @@ Documentar en `docs/ROLLBACK.md` cómo revertir:
 #### JB-620 — GitHub Actions CI
 
 **Prompt:**
+
 ```
 Crear `.github/workflows/ci.yml`:
 - triggered on PR
@@ -1970,19 +2106,19 @@ Status checks obligatorios para mergear.
 
 ## Resumen del backlog
 
-| Epic | # Tasks | Esfuerzo (puntos) |
-|---|---|---|
-| EPIC-1 Infra & Setup | 14 | 14 |
-| EPIC-2 Auth | 18 | 24 |
-| EPIC-3 Blog backend | 24 | 36 |
-| EPIC-4 Comentarios | 10 | 12 |
-| EPIC-5 Foros | 12 | 16 |
-| EPIC-6 Casos | 10 | 14 |
-| EPIC-7 Storage | (transversal) | — |
-| EPIC-8 Dashboard | 5 | 6 |
-| EPIC-9 Visual UX | 14 | 20 |
-| EPIC-10 Deuda técnica | (incorporado en sprints) | — |
-| EPIC-11 QA & Production | 20 | 24 |
-| **Total** | **~127 tareas** | **~166 pts (~330-500h)** |
+| Epic                    | # Tasks                  | Esfuerzo (puntos)        |
+| ----------------------- | ------------------------ | ------------------------ |
+| EPIC-1 Infra & Setup    | 14                       | 14                       |
+| EPIC-2 Auth             | 18                       | 24                       |
+| EPIC-3 Blog backend     | 24                       | 36                       |
+| EPIC-4 Comentarios      | 10                       | 12                       |
+| EPIC-5 Foros            | 12                       | 16                       |
+| EPIC-6 Casos            | 10                       | 14                       |
+| EPIC-7 Storage          | (transversal)            | —                        |
+| EPIC-8 Dashboard        | 5                        | 6                        |
+| EPIC-9 Visual UX        | 14                       | 20                       |
+| EPIC-10 Deuda técnica   | (incorporado en sprints) | —                        |
+| EPIC-11 QA & Production | 20                       | 24                       |
+| **Total**               | **~127 tareas**          | **~166 pts (~330-500h)** |
 
 > Estimación total: 8-12 semanas para 1 dev senior trabajando dedicado.

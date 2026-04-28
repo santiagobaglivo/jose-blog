@@ -64,18 +64,18 @@
   --secondary: oklch(0.965 0.004 260);
   --secondary-foreground: oklch(0.25 0.04 260);
   --muted: oklch(0.96 0.004 260);
-  --muted-foreground: oklch(0.50 0.02 260);
+  --muted-foreground: oklch(0.5 0.02 260);
   --accent: oklch(0.96 0.004 260);
   --accent-foreground: oklch(0.25 0.04 260);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.91 0.004 260);
   --input: oklch(0.91 0.004 260);
-  --ring: oklch(0.50 0.04 260);
+  --ring: oklch(0.5 0.04 260);
   --warm: oklch(0.75 0.12 65);
-  --warm-foreground: oklch(0.30 0.08 65);
+  --warm-foreground: oklch(0.3 0.08 65);
   --chart-1: oklch(0.75 0.12 65);
-  --chart-2: oklch(0.50 0.04 260);
-  --chart-3: oklch(0.40 0.04 260);
+  --chart-2: oklch(0.5 0.04 260);
+  --chart-3: oklch(0.4 0.04 260);
   --chart-4: oklch(0.35 0.04 260);
   --chart-5: oklch(0.25 0.04 260);
   --radius: 0.5rem;
@@ -86,7 +86,7 @@
   --sidebar-accent: oklch(0.96 0.004 260);
   --sidebar-accent-foreground: oklch(0.25 0.04 260);
   --sidebar-border: oklch(0.91 0.004 260);
-  --sidebar-ring: oklch(0.50 0.04 260);
+  --sidebar-ring: oklch(0.5 0.04 260);
 }
 
 @layer base {
@@ -99,7 +99,10 @@
   html {
     @apply font-sans scroll-smooth;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-serif), Georgia, serif;
     letter-spacing: -0.015em;
     font-weight: 400;
@@ -110,7 +113,7 @@
 .prose-premium {
   font-size: 1.0625rem;
   line-height: 1.8;
-  color: oklch(0.30 0.02 260);
+  color: oklch(0.3 0.02 260);
 }
 .prose-premium h2 {
   font-family: var(--font-serif), Georgia, serif;
@@ -126,12 +129,13 @@
   font-weight: 400;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
-  color: oklch(0.20 0.02 260);
+  color: oklch(0.2 0.02 260);
 }
 .prose-premium p {
   margin-bottom: 1.25rem;
 }
-.prose-premium ul, .prose-premium ol {
+.prose-premium ul,
+.prose-premium ol {
   margin-bottom: 1.25rem;
   padding-left: 1.5rem;
 }
@@ -147,7 +151,7 @@
   color: oklch(0.35 0.02 260);
 }
 .prose-premium a {
-  color: oklch(0.40 0.08 260);
+  color: oklch(0.4 0.08 260);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -156,6 +160,6 @@
   margin: 2rem 0;
 }
 .prose-premium strong {
-  color: oklch(0.20 0.02 260);
+  color: oklch(0.2 0.02 260);
   font-weight: 600;
 }

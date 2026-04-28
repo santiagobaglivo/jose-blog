@@ -106,7 +106,8 @@ export default async function AdminDashboard() {
               </div>
             </div>
           );
-          const cls = "group bg-card border border-border/50 rounded-xl p-5 hover:border-border hover:shadow-sm transition-all duration-300";
+          const cls =
+            "group bg-card border border-border/50 rounded-xl p-5 hover:border-border hover:shadow-sm transition-all duration-300";
           return stat.href ? (
             <Link key={stat.label} href={stat.href} className={cls}>
               {cardContent}
@@ -142,16 +143,17 @@ export default async function AdminDashboard() {
                     <span className="text-[0.8125rem] font-medium text-foreground">
                       {comment.author}
                     </span>
-                    <Badge variant="outline" className="text-[0.6875rem] text-orange-600 border-orange-200">
+                    <Badge
+                      variant="outline"
+                      className="text-[0.6875rem] text-orange-600 border-orange-200"
+                    >
                       Pendiente
                     </Badge>
                   </div>
                   <p className="text-[0.8125rem] text-muted-foreground line-clamp-2">
                     {comment.content}
                   </p>
-                  <p className="mt-1.5 text-[0.75rem] text-muted-foreground/60">
-                    {comment.date}
-                  </p>
+                  <p className="mt-1.5 text-[0.75rem] text-muted-foreground/60">{comment.date}</p>
                 </div>
               ))
             ) : (

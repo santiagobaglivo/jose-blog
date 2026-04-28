@@ -16,11 +16,9 @@ export default async function ThreadPage({
   params: Promise<{ category: string; thread: string }>;
 }) {
   const { category, thread: threadSlug } = await params;
-  const cat =
-    (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
+  const cat = (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
   const threadData =
-    (await getThreadBySlug(category, threadSlug)) ??
-    (await getRecentThreads(1))[0];
+    (await getThreadBySlug(category, threadSlug)) ?? (await getRecentThreads(1))[0];
   const replies = await getRepliesByThread(threadData.slug);
 
   return (
@@ -50,7 +48,9 @@ export default async function ThreadPage({
           {/* Thread header */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-3">
-              <Badge variant="secondary" className="text-[0.75rem]">{cat.name}</Badge>
+              <Badge variant="secondary" className="text-[0.75rem]">
+                {cat.name}
+              </Badge>
               {threadData.pinned && (
                 <Badge variant="secondary" className="text-[0.6875rem] gap-1">
                   <Pin className="h-3 w-3" />
@@ -88,7 +88,9 @@ export default async function ThreadPage({
                   <span className="text-[0.875rem] font-medium text-foreground">
                     {threadData.author}
                   </span>
-                  <Badge variant="secondary" className="text-[0.6875rem]">Autor</Badge>
+                  <Badge variant="secondary" className="text-[0.6875rem]">
+                    Autor
+                  </Badge>
                 </div>
                 <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">{threadData.date}</p>
                 <div className="mt-4 text-[0.875rem] text-muted-foreground leading-relaxed">
@@ -114,9 +116,7 @@ export default async function ThreadPage({
               <div
                 key={reply.id}
                 className={`bg-card border rounded-xl p-6 ${
-                  reply.isAuthor
-                    ? "border-warm/30 bg-warm/[0.02]"
-                    : "border-border/50"
+                  reply.isAuthor ? "border-warm/30 bg-warm/[0.02]" : "border-border/50"
                 }`}
               >
                 <div className="flex gap-4">
@@ -131,7 +131,9 @@ export default async function ThreadPage({
                         {reply.author}
                       </span>
                       {reply.isAuthor && (
-                        <Badge variant="secondary" className="text-[0.6875rem]">Autor</Badge>
+                        <Badge variant="secondary" className="text-[0.6875rem]">
+                          Autor
+                        </Badge>
                       )}
                     </div>
                     <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">{reply.date}</p>

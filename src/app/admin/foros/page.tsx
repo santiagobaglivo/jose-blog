@@ -1,16 +1,7 @@
 import { getAllThreadsAdmin, getForumCategories } from "@/lib/queries/forums";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Eye,
-  EyeOff,
-  Pin,
-  MessageSquare,
-  Lock,
-} from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Pin, MessageSquare, Lock } from "lucide-react";
 
 export default async function ForosAdmin() {
   const [forumCategories, threads] = await Promise.all([
@@ -43,22 +34,24 @@ export default async function ForosAdmin() {
           {forumCategories.map((cat) => (
             <div key={cat.slug} className="px-5 py-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
-                <h3 className="text-[0.875rem] font-medium text-foreground">
-                  {cat.name}
-                </h3>
-                <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">
-                  {cat.description}
-                </p>
+                <h3 className="text-[0.875rem] font-medium text-foreground">{cat.name}</h3>
+                <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">{cat.description}</p>
               </div>
               <div className="hidden sm:flex items-center gap-4 text-[0.75rem] text-muted-foreground/60 shrink-0">
                 <span>{cat.threadCount} hilos</span>
                 <span>{cat.replyCount} respuestas</span>
               </div>
               <div className="flex items-center gap-1 shrink-0">
-                <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Editar">
+                <button
+                  className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                  title="Editar"
+                >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors" title="Eliminar">
+                <button
+                  className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors"
+                  title="Eliminar"
+                >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -70,9 +63,7 @@ export default async function ForosAdmin() {
       {/* Recent threads */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-foreground font-sans">
-            Hilos recientes
-          </h2>
+          <h2 className="text-sm font-semibold text-foreground font-sans">Hilos recientes</h2>
           <SearchBar placeholder="Buscar hilos..." className="w-64" />
         </div>
         <div className="bg-card border border-border/50 rounded-xl overflow-hidden">
@@ -118,16 +109,28 @@ export default async function ForosAdmin() {
                   </td>
                   <td className="px-3 py-4">
                     <div className="flex items-center gap-1">
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Fijar">
+                      <button
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                        title="Fijar"
+                      >
                         <Pin className="h-3.5 w-3.5" />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Bloquear">
+                      <button
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                        title="Bloquear"
+                      >
                         <Lock className="h-3.5 w-3.5" />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Ocultar">
+                      <button
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                        title="Ocultar"
+                      >
                         <EyeOff className="h-3.5 w-3.5" />
                       </button>
-                      <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors" title="Eliminar">
+                      <button
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors"
+                        title="Eliminar"
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>

@@ -56,9 +56,7 @@ export default async function NuevoArticuloPage() {
             <div className="h-12 w-12 rounded-xl bg-secondary/60 flex items-center justify-center text-muted-foreground/50 mb-3">
               <Image className="h-6 w-6" />
             </div>
-            <p className="text-[0.875rem] font-medium text-foreground">
-              Imagen destacada
-            </p>
+            <p className="text-[0.875rem] font-medium text-foreground">Imagen destacada</p>
             <p className="text-[0.8125rem] text-muted-foreground/60 mt-1">
               Arrastrá una imagen o hacé clic para seleccionar
             </p>
@@ -120,7 +118,9 @@ Utilice la barra de herramientas para dar formato al texto, agregar títulos, li
                     className="mt-0.5 accent-primary"
                   />
                   <div>
-                    <span className="text-[0.8125rem] font-medium text-foreground">{opt.label}</span>
+                    <span className="text-[0.8125rem] font-medium text-foreground">
+                      {opt.label}
+                    </span>
                     <p className="text-[0.75rem] text-muted-foreground/60">{opt.desc}</p>
                   </div>
                 </label>
@@ -141,9 +141,7 @@ Utilice la barra de herramientas para dar formato al texto, agregar títulos, li
 
           {/* Category */}
           <div className="bg-card border border-border/50 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">
-              Categoría
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">Categoría</h3>
             <select className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all appearance-none">
               <option value="">Seleccionar categoría</option>
               {blogCategories.map((cat) => (
@@ -156,9 +154,7 @@ Utilice la barra de herramientas para dar formato al texto, agregar títulos, li
 
           {/* Tags */}
           <div className="bg-card border border-border/50 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">
-              Etiquetas
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">Etiquetas</h3>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <button
@@ -173,9 +169,7 @@ Utilice la barra de herramientas para dar formato al texto, agregar títulos, li
 
           {/* Author */}
           <div className="bg-card border border-border/50 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">
-              Autor
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground font-sans mb-4">Autor</h3>
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground text-[0.6875rem] font-semibold">MV</span>

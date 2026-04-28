@@ -10,25 +10,26 @@
 
 ## Stack productivo
 
-| Capa | Tecnología | Justificación |
-|---|---|---|
-| Front | Next.js 16 (App Router) + TS | Ya implementado |
-| UI | Tailwind 4 + shadcn/ui + Framer Motion | Ya implementado |
-| Backend | Supabase | DB + Auth + Storage + Realtime + Edge Functions en una sola plataforma |
-| DB | PostgreSQL 15+ (managed) | RLS para autorización |
-| Auth | Supabase Auth (email/pass + magic link) | Sin OAuth en MVP |
-| Storage | Supabase Storage | Imágenes destacadas, avatares |
-| Editor blog | TipTap | Editor visual moderno con extensiones (rich text, links, imágenes) |
-| Email | Resend (vía Edge Function) | Notificaciones moderación + casos |
-| Anti-spam | Honeypot + rate-limit + (futuro) Turnstile | MVP simple |
-| Validación | Zod | En cliente y servidor |
-| Forms | react-hook-form | Mejor DX y UX |
-| Deploy | Vercel | Integración nativa Next.js |
-| Observabilidad | Vercel Analytics + Supabase logs | MVP |
+| Capa           | Tecnología                                 | Justificación                                                          |
+| -------------- | ------------------------------------------ | ---------------------------------------------------------------------- |
+| Front          | Next.js 16 (App Router) + TS               | Ya implementado                                                        |
+| UI             | Tailwind 4 + shadcn/ui + Framer Motion     | Ya implementado                                                        |
+| Backend        | Supabase                                   | DB + Auth + Storage + Realtime + Edge Functions en una sola plataforma |
+| DB             | PostgreSQL 15+ (managed)                   | RLS para autorización                                                  |
+| Auth           | Supabase Auth (email/pass + magic link)    | Sin OAuth en MVP                                                       |
+| Storage        | Supabase Storage                           | Imágenes destacadas, avatares                                          |
+| Editor blog    | TipTap                                     | Editor visual moderno con extensiones (rich text, links, imágenes)     |
+| Email          | Resend (vía Edge Function)                 | Notificaciones moderación + casos                                      |
+| Anti-spam      | Honeypot + rate-limit + (futuro) Turnstile | MVP simple                                                             |
+| Validación     | Zod                                        | En cliente y servidor                                                  |
+| Forms          | react-hook-form                            | Mejor DX y UX                                                          |
+| Deploy         | Vercel                                     | Integración nativa Next.js                                             |
+| Observabilidad | Vercel Analytics + Supabase logs           | MVP                                                                    |
 
 ## Alcance del trabajo
 
 ### En scope (MVP productivo)
+
 - Sistema de autenticación (registro, login, perfil)
 - CRUD de artículos del blog (admin) + vista pública
 - Editor visual rich-text con upload de imágenes a Storage
@@ -50,6 +51,7 @@
 - Performance + accesibilidad básica
 
 ### Fuera de scope (fase 2)
+
 - Pasarela de pagos (Stripe/MercadoPago — discutido pero no parte del MVP)
 - Sistema de notificaciones in-app
 - Multi-idioma
@@ -60,16 +62,16 @@
 
 ## Estimación global
 
-| Sprint | Duración | Esfuerzo |
-|---|---|---|
-| Sprint 0 — Auditoría & setup | 3-5 días | 16h |
-| Sprint 1 — Auth & cimientos | 5-7 días | 32h |
-| Sprint 2 — Blog backend + editor | 8-10 días | 60h |
-| Sprint 3 — Comentarios + Foros | 7-10 días | 50h |
-| Sprint 4 — Casos + Dashboard | 5-7 días | 32h |
-| Sprint 5 — Pulido visual + WhatsApp + servicios extra | 4-6 días | 24h |
-| Sprint 6 — QA, hardening, deploy | 4-6 días | 24h |
-| **Total** | **~6-8 semanas (1 dev)** | **~238h** |
+| Sprint                                                | Duración                 | Esfuerzo  |
+| ----------------------------------------------------- | ------------------------ | --------- |
+| Sprint 0 — Auditoría & setup                          | 3-5 días                 | 16h       |
+| Sprint 1 — Auth & cimientos                           | 5-7 días                 | 32h       |
+| Sprint 2 — Blog backend + editor                      | 8-10 días                | 60h       |
+| Sprint 3 — Comentarios + Foros                        | 7-10 días                | 50h       |
+| Sprint 4 — Casos + Dashboard                          | 5-7 días                 | 32h       |
+| Sprint 5 — Pulido visual + WhatsApp + servicios extra | 4-6 días                 | 24h       |
+| Sprint 6 — QA, hardening, deploy                      | 4-6 días                 | 24h       |
+| **Total**                                             | **~6-8 semanas (1 dev)** | **~238h** |
 
 ## Hitos clave
 
@@ -93,15 +95,15 @@
 
 ## Riesgos principales
 
-| Riesgo | Impacto | Mitigación |
-|---|---|---|
-| RLS mal configurado expone datos privados | Alto | Test exhaustivo de policies, dual-account testing |
-| Editor rich-text con XSS | Alto | Sanitizado server-side con DOMPurify antes de persistir |
-| Spam masivo en comentarios/foros | Medio | Honeypot + rate-limit + moderación obligatoria + futuro Turnstile |
-| Búsqueda lenta sin índices | Medio | Índices GIN sobre tsvector desde Sprint 2 |
-| Imágenes pesadas degradan Lighthouse | Medio | next/image + Storage transformaciones + límites de upload |
-| Cron de publicación falla silenciosamente | Medio | Logging + alertas + monitoreo de Edge Function |
-| Costos Supabase escalan inesperadamente | Bajo | Tier Free hasta cierto límite; alertas de uso |
+| Riesgo                                    | Impacto | Mitigación                                                        |
+| ----------------------------------------- | ------- | ----------------------------------------------------------------- |
+| RLS mal configurado expone datos privados | Alto    | Test exhaustivo de policies, dual-account testing                 |
+| Editor rich-text con XSS                  | Alto    | Sanitizado server-side con DOMPurify antes de persistir           |
+| Spam masivo en comentarios/foros          | Medio   | Honeypot + rate-limit + moderación obligatoria + futuro Turnstile |
+| Búsqueda lenta sin índices                | Medio   | Índices GIN sobre tsvector desde Sprint 2                         |
+| Imágenes pesadas degradan Lighthouse      | Medio   | next/image + Storage transformaciones + límites de upload         |
+| Cron de publicación falla silenciosamente | Medio   | Logging + alertas + monitoreo de Edge Function                    |
+| Costos Supabase escalan inesperadamente   | Bajo    | Tier Free hasta cierto límite; alertas de uso                     |
 
 ## Pregunta crítica al cliente (bloqueante)
 

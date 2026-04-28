@@ -101,13 +101,22 @@ export default async function ArticulosAdmin() {
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex items-center gap-1">
-                        <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Ver">
+                        <button
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                          title="Ver"
+                        >
                           <Eye className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors" title="Editar">
+                        <button
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                          title="Editar"
+                        >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors" title="Eliminar">
+                        <button
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors"
+                          title="Eliminar"
+                        >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>

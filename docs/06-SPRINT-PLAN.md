@@ -11,6 +11,7 @@
 **Objetivo:** Sentar bases de infra y refactor mínimo del proyecto para enchufar Supabase sin romper el prototipo.
 
 **Tareas incluidas:**
+
 - JB-001 Configurar proyecto Supabase (cuentas, env, secretos)
 - JB-002 Setup Supabase CLI + estructura `supabase/migrations`
 - JB-003 Refactor: extraer mock-data a `src/lib/queries/` con interfaces que reemplazaremos por Supabase queries
@@ -27,12 +28,14 @@
 - JB-014 Documentar arquitectura en `README.md` técnico
 
 **Entregable:**
+
 - Proyecto Supabase conectable
 - Prototipo refactorizado con queries abstractas listas para reemplazar
 - CI lint pasa
 - Toasts funcionando globalmente
 
 **Criterio de finalización:**
+
 - `npm run build` y `npm run lint` ✅
 - Cliente Supabase exportado y funcional (test conexión)
 - Cero regresiones visuales en el prototipo
@@ -45,6 +48,7 @@
 **Objetivo:** Migraciones base + auth funcional. Cualquier persona puede registrarse y loguearse. Admin protegido.
 
 **Tareas incluidas:**
+
 - JB-101 Migración 001 Extensions & enums
 - JB-102 Migración 002 Profiles + trigger handle_new_user
 - JB-103 Migración 003 Categories & tags + seeds
@@ -65,6 +69,7 @@
 - JB-118 Validaciones zod de auth forms
 
 **Entregable:**
+
 - Sistema de auth completo
 - Profile auto-creado al registrarse
 - Header reactivo a sesión
@@ -72,6 +77,7 @@
 - Perfil editable con avatar real
 
 **Criterio de finalización:**
+
 - Hilos de QA: registrar → recibir verificación → loguear → editar perfil → ver admin (si admin) → logout
 - RLS testeado con cuenta no-admin: no ve datos sensibles
 - Lighthouse ≥ 90 en pages auth
@@ -84,6 +90,7 @@
 **Objetivo:** Blog 100% funcional de punta a punta — admin crea, edita, programa, publica; público lee, busca, filtra.
 
 **Tareas incluidas:**
+
 - JB-201 Migración 004 Posts + post_tags + indices
 - JB-202 RLS policies posts
 - JB-203 Migración Storage bucket `post-images` + policies
@@ -110,12 +117,14 @@
 - JB-224 Soporte de `accent_color` por artículo (variación visual)
 
 **Entregable:**
+
 - Admin gestiona el blog completamente desde la UI
 - Público accede a blog dinámico, busca y filtra
 - Programación automática funcionando
 - Imágenes en Storage
 
 **Criterio de finalización:**
+
 - Crear artículo desde admin → publicar → verlo en `/blog` → buscar → filtrar
 - Programar artículo a 5 min en el futuro → confirmar publicación automática
 - RLS verificado: usuario no-admin no puede ver borradores
@@ -128,6 +137,7 @@
 **Objetivo:** Interacción comunitaria activa. Comentarios con moderación. Foros completos.
 
 **Tareas incluidas:**
+
 - JB-301 Migración 005 Comments
 - JB-302 RLS comments
 - JB-303 Componente `<CommentForm />` con honeypot + rate-limit
@@ -152,12 +162,14 @@
 - JB-322 Anti-spam básico en hilos y replies (rate-limit + min-chars)
 
 **Entregable:**
+
 - Comentarios funcionando con moderación
 - Foros operativos con threads y replies
 - Anti-spam básico activo
 - Notificaciones email funcionando
 
 **Criterio de finalización:**
+
 - Visitante puede dejar comentario → admin recibe email → modera → comentario aparece en sitio
 - Usuario logueado puede crear hilo → otros usuarios responden → admin puede moderar
 - RLS testeado: contenido oculto/borrado no visible para no-admin
@@ -170,6 +182,7 @@
 **Objetivo:** Contacto se transforma en caso con código de seguimiento. Dashboard refleja estado real.
 
 **Tareas incluidas:**
+
 - JB-401 Migración 007 Cases + case_messages
 - JB-402 RLS cases (insert público, select admin)
 - JB-403 Página `/contacto` con formulario que crea caso
@@ -187,11 +200,13 @@
 - JB-415 Card de casos abiertos en dashboard
 
 **Entregable:**
+
 - Sistema de casos operativo end-to-end
 - Cliente recibe email con código y puede consultar estado
 - Dashboard con métricas reales
 
 **Criterio de finalización:**
+
 - Visitante completa contacto → recibe email con código → consulta estado → admin avanza estado → cliente recibe email
 - Dashboard muestra contadores correctos
 
@@ -203,6 +218,7 @@
 **Objetivo:** Cumplir requerimientos visuales del cliente. Hero carousel, WhatsApp, servicios.
 
 **Tareas incluidas:**
+
 - JB-501 Componente `<WhatsAppButton />` floating + variante inline
 - JB-502 Insertar WhatsApp en formularios contacto + caso + footer
 - JB-503 Componente `<HeroCarousel />` con transiciones (Framer Motion)
@@ -219,12 +235,14 @@
 - JB-514 Open Graph dinámico para artículos (og-image)
 
 **Entregable:**
+
 - Home con hero animado y menos texto
 - WhatsApp omnipresente
 - Páginas de servicio individuales
 - Landing visualmente más rica
 
 **Criterio de finalización:**
+
 - Cliente revisa visualmente: hero gira, WhatsApp en todas las CTAs, "consultas tributarias" tiene su propia página
 - Variación de color visible en blog y categorías
 
@@ -236,6 +254,7 @@
 **Objetivo:** Pasar de "funciona en dev" a "funciona en producción de forma confiable".
 
 **Tareas incluidas:**
+
 - JB-601 Suite básica Vitest (unit) para utilities críticas (slug gen, rate-limit, sanitización)
 - JB-602 Suite Playwright (E2E) flujo crítico: registro → comentar → moderar → publicar
 - JB-603 Auditoría RLS: script que crea usuario test no-admin y verifica que no accede a borradores, casos ajenos, etc.
@@ -258,11 +277,13 @@
 - JB-620 GitHub Actions: lint + typecheck + tests en PR
 
 **Entregable:**
+
 - Sistema en producción accesible por dominio
 - Backups y monitoreo activos
 - Cliente capacitado
 
 **Criterio de finalización:**
+
 - URL pública accesible
 - Lighthouse OK en pages clave
 - Cliente puede crear un artículo desde el admin sin asistencia
