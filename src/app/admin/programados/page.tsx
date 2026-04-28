@@ -1,11 +1,13 @@
-import { posts } from "@/lib/mock-data";
+import { getDraftPosts, getScheduledPosts } from "@/lib/queries/posts";
 import { Badge } from "@/components/ui/badge";
 import { CalendarClock, Clock, Pencil, Trash2, Eye } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 
-export default function ProgramadosPage() {
-  const scheduled = posts.filter((p) => p.status === "programado");
-  const drafts = posts.filter((p) => p.status === "borrador");
+export default async function ProgramadosPage() {
+  const [scheduled, drafts] = await Promise.all([
+    getScheduledPosts(),
+    getDraftPosts(),
+  ]);
 
   return (
     <div>

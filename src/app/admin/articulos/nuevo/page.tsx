@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowLeft, Image, Bold, Italic, List, Link2, Heading2, Quote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { blogCategories, tags } from "@/lib/mock-data";
+import { getCategories, getTags } from "@/lib/queries/categories";
 
-export default function NuevoArticuloPage() {
+export default async function NuevoArticuloPage() {
+  const [blogCategories, tags] = await Promise.all([getCategories(), getTags()]);
   return (
     <div>
       <div className="flex items-center justify-between mb-8">

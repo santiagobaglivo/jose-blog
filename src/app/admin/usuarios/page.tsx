@@ -1,96 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Shield, MoreHorizontal, UserCheck, UserX } from "lucide-react";
-
-const mockUsers = [
-  {
-    name: "Martín Velázquez",
-    email: "martin@velazquezyasociados.com",
-    avatar: "MV",
-    role: "admin",
-    joined: "Enero 2024",
-    lastActive: "Hace 5 minutos",
-    comments: 12,
-    threads: 0,
-  },
-  {
-    name: "Carolina Méndez",
-    email: "carolina@velazquezyasociados.com",
-    avatar: "CM",
-    role: "admin",
-    joined: "Febrero 2024",
-    lastActive: "Hace 1 hora",
-    comments: 8,
-    threads: 0,
-  },
-  {
-    name: "Laura Giménez",
-    email: "laura.g@email.com",
-    avatar: "LG",
-    role: "usuario",
-    joined: "Marzo 2026",
-    lastActive: "Hoy",
-    comments: 3,
-    threads: 2,
-  },
-  {
-    name: "Federico Ruiz",
-    email: "fruiz@empresa.com",
-    avatar: "FR",
-    role: "usuario",
-    joined: "Marzo 2026",
-    lastActive: "Ayer",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Ana Rosales",
-    email: "ana.r@email.com",
-    avatar: "AR",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 3 días",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Gonzalo Ortega",
-    email: "gortega@mail.com",
-    avatar: "GO",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 5 días",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Silvia Pacheco",
-    email: "silvia.p@correo.com",
-    avatar: "SP",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hoy",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Diego Martínez",
-    email: "diego.m@email.com",
-    avatar: "DM",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 2 días",
-    comments: 1,
-    threads: 1,
-  },
-];
+import { getAllUsersAdmin } from "@/lib/queries/users";
 
 const roleConfig = {
   admin: { label: "Admin", className: "bg-primary/10 text-primary border-primary/20" },
   usuario: { label: "Usuario", className: "bg-secondary text-muted-foreground border-border/50" },
 };
 
-export default function UsuariosAdmin() {
+export default async function UsuariosAdmin() {
+  const users = await getAllUsersAdmin();
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -104,7 +23,7 @@ export default function UsuariosAdmin() {
         </div>
         <div className="flex items-center gap-2 text-[0.8125rem] text-muted-foreground">
           <Shield className="h-4 w-4" />
-          <span>{mockUsers.length} usuarios registrados</span>
+          <span>{users.length} usuarios registrados</span>
         </div>
       </div>
 
@@ -152,7 +71,7 @@ export default function UsuariosAdmin() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {mockUsers.map((user) => {
+              {users.map((user) => {
                 const role = roleConfig[user.role as keyof typeof roleConfig];
                 return (
                   <tr key={user.email} className="hover:bg-secondary/20 transition-colors">

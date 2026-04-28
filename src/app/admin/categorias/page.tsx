@@ -1,10 +1,9 @@
-"use client";
-
-import { blogCategories, tags } from "@/lib/mock-data";
+import { getCategories, getTags } from "@/lib/queries/categories";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Tag, FolderOpen } from "lucide-react";
 
-export default function CategoriasAdmin() {
+export default async function CategoriasAdmin() {
+  const [blogCategories, tags] = await Promise.all([getCategories(), getTags()]);
   return (
     <div>
       <div className="mb-8">

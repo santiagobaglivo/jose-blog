@@ -1,4 +1,4 @@
-import { forumCategories, threads } from "@/lib/mock-data";
+import { getAllThreadsAdmin, getForumCategories } from "@/lib/queries/forums";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import {
@@ -12,7 +12,11 @@ import {
   Lock,
 } from "lucide-react";
 
-export default function ForosAdmin() {
+export default async function ForosAdmin() {
+  const [forumCategories, threads] = await Promise.all([
+    getForumCategories(),
+    getAllThreadsAdmin(),
+  ]);
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

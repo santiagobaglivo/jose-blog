@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { forumCategories, threads } from "@/lib/mock-data";
+import { getForumCategories, getRecentThreads } from "@/lib/queries/forums";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SearchBar } from "@/components/shared/search-bar";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -23,8 +23,11 @@ const iconMap: Record<string, React.ElementType> = {
   "help-circle": HelpCircle,
 };
 
-export default function ForosPage() {
-  const recentThreads = threads.slice(0, 4);
+export default async function ForosPage() {
+  const [forumCategories, recentThreads] = await Promise.all([
+    getForumCategories(),
+    getRecentThreads(4),
+  ]);
 
   return (
     <>

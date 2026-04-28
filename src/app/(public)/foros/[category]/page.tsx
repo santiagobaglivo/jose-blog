@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { forumCategories, threads } from "@/lib/mock-data";
+import {
+  getForumCategories,
+  getForumCategoryBySlug,
+  getThreadsByCategory,
+  getRecentThreads,
+} from "@/lib/queries/forums";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Badge } from "@/components/ui/badge";
@@ -12,10 +17,12 @@ export default async function ForumCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const cat = forumCategories.find((c) => c.slug === category) ?? forumCategories[0];
-  const catThreads = threads.filter((t) => t.category === category);
+  const cat =
+    (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
+  const catThreads = await getThreadsByCategory(category);
   // Show all threads for demo richness
-  const displayThreads = catThreads.length > 0 ? catThreads : threads.slice(0, 3);
+  const displayThreads =
+    catThreads.length > 0 ? catThreads : (await getRecentThreads(3));
 
   return (
     <>

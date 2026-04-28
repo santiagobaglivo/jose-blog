@@ -1,4 +1,4 @@
-import { posts } from "@/lib/mock-data";
+import { getAllPostsAdmin } from "@/lib/queries/posts";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Plus, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
@@ -10,7 +10,8 @@ const statusMap = {
   programado: { label: "Programado", className: "bg-blue-50 text-blue-700 border-blue-200" },
 };
 
-export default function ArticulosAdmin() {
+export default async function ArticulosAdmin() {
+  const posts = await getAllPostsAdmin();
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

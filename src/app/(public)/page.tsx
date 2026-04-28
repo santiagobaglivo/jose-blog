@@ -8,7 +8,7 @@ import {
   Shield,
   TrendingUp,
 } from "lucide-react";
-import { posts } from "@/lib/mock-data";
+import { getPublishedPosts } from "@/lib/queries/posts";
 import { SectionHeader } from "@/components/shared/section-header";
 import { ArticleCard } from "@/components/blog/article-card";
 
@@ -58,8 +58,9 @@ const stats = [
   { value: "98%", label: "Tasa de retención" },
 ];
 
-export default function HomePage() {
-  const recentPosts = posts.filter((p) => p.status === "publicado").slice(0, 3);
+export default async function HomePage() {
+  const published = await getPublishedPosts();
+  const recentPosts = published.slice(0, 3);
 
   return (
     <>

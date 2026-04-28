@@ -1,6 +1,5 @@
-"use client";
-
-import { comments, posts } from "@/lib/mock-data";
+import { getAllCommentsAdmin } from "@/lib/queries/comments";
+import { getAllPostsAdmin } from "@/lib/queries/posts";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Check, X, Trash2, Shield } from "lucide-react";
@@ -11,7 +10,11 @@ const statusConfig = {
   rechazado: { label: "Rechazado", className: "bg-red-50 text-red-600 border-red-200" },
 };
 
-export default function ComentariosAdmin() {
+export default async function ComentariosAdmin() {
+  const [comments, posts] = await Promise.all([
+    getAllCommentsAdmin(),
+    getAllPostsAdmin(),
+  ]);
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

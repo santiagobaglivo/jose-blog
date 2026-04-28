@@ -1,6 +1,6 @@
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SectionHeader } from "@/components/shared/section-header";
-import { authors } from "@/lib/mock-data";
+import { getTeamMembers } from "@/lib/queries/users";
 import { Award, Target, Handshake } from "lucide-react";
 
 const values = [
@@ -24,22 +24,18 @@ const values = [
   },
 ];
 
-const team = [
-  {
-    ...authors[0],
-    bio: "Contador Público (UBA). Más de 25 años de experiencia en asesoramiento impositivo y consultoría empresarial. Especialista en planificación fiscal para empresas medianas y grandes.",
-  },
-  {
-    ...authors[1],
-    bio: "Contadora Pública (UCA). Especialista en tributación y procedimiento fiscal. Directora del área impositiva del Estudio con foco en régimen de retenciones y percepciones.",
-  },
-  {
-    ...authors[2],
-    bio: "Licenciado en Administración (UTDT). MBA (IAE). Consultor en gestión empresarial, reestructuraciones corporativas y procesos de due diligence.",
-  },
+const memberBios = [
+  "Contador Público (UBA). Más de 25 años de experiencia en asesoramiento impositivo y consultoría empresarial. Especialista en planificación fiscal para empresas medianas y grandes.",
+  "Contadora Pública (UCA). Especialista en tributación y procedimiento fiscal. Directora del área impositiva del Estudio con foco en régimen de retenciones y percepciones.",
+  "Licenciado en Administración (UTDT). MBA (IAE). Consultor en gestión empresarial, reestructuraciones corporativas y procesos de due diligence.",
 ];
 
-export default function SobreNosotrosPage() {
+export default async function SobreNosotrosPage() {
+  const authors = await getTeamMembers();
+  const team = authors.map((author, i) => ({
+    ...author,
+    bio: memberBios[i],
+  }));
   return (
     <>
       {/* Hero */}

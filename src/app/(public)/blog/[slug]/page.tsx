@@ -1,4 +1,6 @@
-import { posts, comments, blogCategories } from "@/lib/mock-data";
+import { getPostBySlug, getRelatedPosts, getPublishedPosts } from "@/lib/queries/posts";
+import { getApprovedCommentsByPost } from "@/lib/queries/comments";
+import { getCategories } from "@/lib/queries/categories";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
@@ -8,11 +10,12 @@ import Link from "next/link";
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = posts.find((p) => p.slug === slug) ?? posts[0];
-  const postComments = comments.filter(
-    (c) => c.postSlug === post.slug && c.status === "aprobado"
-  );
-  const recent = posts.filter((p) => p.status === "publicado" && p.slug !== post.slug).slice(0, 4);
+  const post = (await getPostBySlug(slug)) ?? (await getPublishedPosts())[0];
+  const [postComments, recent, blogCategories] = await Promise.all([
+    getApprovedCommentsByPost(post.slug),
+    getRelatedPosts(post.slug, 4),
+    getCategories(),
+  ]);
 
   return (
     <>

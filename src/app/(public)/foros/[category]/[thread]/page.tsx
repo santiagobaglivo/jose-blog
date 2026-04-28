@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { threads, replies, forumCategories } from "@/lib/mock-data";
+import {
+  getForumCategories,
+  getForumCategoryBySlug,
+  getThreadBySlug,
+  getRecentThreads,
+  getRepliesByThread,
+} from "@/lib/queries/forums";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Eye, MessageSquare, ArrowLeft, Pin, ThumbsUp, Flag } from "lucide-react";
@@ -10,8 +16,12 @@ export default async function ThreadPage({
   params: Promise<{ category: string; thread: string }>;
 }) {
   const { category, thread: threadSlug } = await params;
-  const cat = forumCategories.find((c) => c.slug === category) ?? forumCategories[0];
-  const threadData = threads.find((t) => t.slug === threadSlug) ?? threads[0];
+  const cat =
+    (await getForumCategoryBySlug(category)) ?? (await getForumCategories())[0];
+  const threadData =
+    (await getThreadBySlug(category, threadSlug)) ??
+    (await getRecentThreads(1))[0];
+  const replies = await getRepliesByThread(threadData.slug);
 
   return (
     <>

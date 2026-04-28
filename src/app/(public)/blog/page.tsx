@@ -1,4 +1,5 @@
-import { posts, blogCategories } from "@/lib/mock-data";
+import { getPublishedPosts } from "@/lib/queries/posts";
+import { getCategories } from "@/lib/queries/categories";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ArticleCard } from "@/components/blog/article-card";
 import { SearchBar } from "@/components/shared/search-bar";
@@ -6,8 +7,11 @@ import { Pagination } from "@/components/shared/pagination";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
-export default function BlogPage() {
-  const published = posts.filter((p) => p.status === "publicado");
+export default async function BlogPage() {
+  const [published, blogCategories] = await Promise.all([
+    getPublishedPosts(),
+    getCategories(),
+  ]);
   const recent = published.slice(0, 4);
 
   return (

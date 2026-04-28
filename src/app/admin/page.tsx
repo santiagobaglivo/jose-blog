@@ -1,4 +1,5 @@
-import { dashboardStats, posts, comments, threads } from "@/lib/mock-data";
+import { getDashboardStats, getPublishedPosts } from "@/lib/queries/posts";
+import { getAllCommentsAdmin } from "@/lib/queries/comments";
 import {
   FileText,
   MessageSquare,
@@ -12,49 +13,55 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
-const statCards = [
-  {
-    label: "Artículos publicados",
-    value: dashboardStats.publishedPosts,
-    icon: FileText,
-    href: "/admin/articulos",
-  },
-  {
-    label: "Comentarios pendientes",
-    value: dashboardStats.pendingComments,
-    icon: MessageSquare,
-    href: "/admin/comentarios",
-    alert: true,
-  },
-  {
-    label: "Hilos en foros",
-    value: dashboardStats.totalThreads,
-    icon: MessagesSquare,
-    href: "/admin/foros",
-  },
-  {
-    label: "Usuarios registrados",
-    value: dashboardStats.totalUsers,
-    icon: Users,
-    href: "/admin/usuarios",
-  },
-  {
-    label: "Visitas del mes",
-    value: dashboardStats.monthlyViews.toLocaleString(),
-    icon: Eye,
-    trend: dashboardStats.viewsTrend,
-  },
-  {
-    label: "Publicaciones programadas",
-    value: dashboardStats.scheduledPosts,
-    icon: CalendarClock,
-    href: "/admin/programados",
-  },
-];
+export default async function AdminDashboard() {
+  const [dashboardStats, allComments, published] = await Promise.all([
+    getDashboardStats(),
+    getAllCommentsAdmin(),
+    getPublishedPosts(),
+  ]);
 
-export default function AdminDashboard() {
-  const recentComments = comments.filter((c) => c.status === "pendiente");
-  const recentPosts = posts.filter((p) => p.status === "publicado").slice(0, 5);
+  const statCards = [
+    {
+      label: "Artículos publicados",
+      value: dashboardStats.publishedPosts,
+      icon: FileText,
+      href: "/admin/articulos",
+    },
+    {
+      label: "Comentarios pendientes",
+      value: dashboardStats.pendingComments,
+      icon: MessageSquare,
+      href: "/admin/comentarios",
+      alert: true,
+    },
+    {
+      label: "Hilos en foros",
+      value: dashboardStats.totalThreads,
+      icon: MessagesSquare,
+      href: "/admin/foros",
+    },
+    {
+      label: "Usuarios registrados",
+      value: dashboardStats.totalUsers,
+      icon: Users,
+      href: "/admin/usuarios",
+    },
+    {
+      label: "Visitas del mes",
+      value: dashboardStats.monthlyViews.toLocaleString(),
+      icon: Eye,
+      trend: dashboardStats.viewsTrend,
+    },
+    {
+      label: "Publicaciones programadas",
+      value: dashboardStats.scheduledPosts,
+      icon: CalendarClock,
+      href: "/admin/programados",
+    },
+  ];
+
+  const recentComments = allComments.filter((c) => c.status === "pendiente");
+  const recentPosts = published.slice(0, 5);
 
   return (
     <div>
