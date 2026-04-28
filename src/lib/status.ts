@@ -1,12 +1,16 @@
 import { Receipt, Users, Building2, Calculator, HelpCircle } from "lucide-react";
-import type { Post, Comment } from "@/lib/mock-data";
+import type { Comment } from "@/lib/mock-data";
 
 type StatusEntry = { label: string; className: string };
 
-export const postStatusMap: Record<Post["status"], StatusEntry> = {
+export const postStatusMap: Record<string, StatusEntry> = {
   publicado: { label: "Publicado", className: "bg-green-50 text-green-700 border-green-200" },
   borrador: { label: "Borrador", className: "bg-gray-50 text-gray-600 border-gray-200" },
   programado: { label: "Programado", className: "bg-blue-50 text-blue-700 border-blue-200" },
+  published: { label: "Publicado", className: "bg-green-50 text-green-700 border-green-200" },
+  draft: { label: "Borrador", className: "bg-gray-50 text-gray-600 border-gray-200" },
+  scheduled: { label: "Programado", className: "bg-blue-50 text-blue-700 border-blue-200" },
+  archived: { label: "Archivado", className: "bg-amber-50 text-amber-700 border-amber-200" },
 };
 
 export const commentStatusMap: Record<Comment["status"], StatusEntry> = {

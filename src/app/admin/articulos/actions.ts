@@ -24,6 +24,8 @@ const UNAUTHENTICATED_ERROR = "Tu sesión expiró. Volvé a iniciar sesión.";
 const FORBIDDEN_ERROR = "No tenés permisos para crear etiquetas.";
 const DUPLICATE_ERROR = "Ya existe una etiqueta con ese nombre.";
 const INVALID_SLUG_ERROR = "El nombre debe contener al menos un carácter alfanumérico.";
+const DELETE_GENERIC_ERROR = "No pudimos eliminar el artículo. Intentá nuevamente.";
+const DELETE_FORBIDDEN_ERROR = "No tenés permisos para eliminar artículos.";
 
 function slugify(value: string): string {
   return value
@@ -81,4 +83,54 @@ export async function createTag(input: CreateTagInput): Promise<CreateTagResult>
 
   revalidatePath("/admin/articulos");
   return { ok: true, tag: data };
+}
+
+const deletePostSchema = z.object({
+  postId: z.string().uuid("ID de artículo inválido"),
+});
+
+export type DeletePostInput = z.infer<typeof deletePostSchema>;
+export type DeletePostResult = { ok: true } | { ok: false; error: string };
+
+export async function deletePost(input: DeletePostInput): Promise<DeletePostResult> {
+  const parsed = deletePostSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? DELETE_GENERIC_ERROR };
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: UNAUTHENTICATED_ERROR };
+  }
+
+  const { data: callerProfile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (callerProfile?.role !== "admin") {
+    return { ok: false, error: DELETE_FORBIDDEN_ERROR };
+  }
+
+  const { error } = await supabase
+    .from("posts")
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", parsed.data.postId)
+    .is("deleted_at", null);
+
+  if (error) {
+    return { ok: false, error: DELETE_GENERIC_ERROR };
+  }
+
+  revalidatePath("/admin/articulos");
+  revalidatePath("/blog");
+  return { ok: true };
 }
