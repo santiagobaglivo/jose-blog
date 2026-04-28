@@ -10,7 +10,7 @@ import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import { resetPassword } from "./actions";
+import { updatePassword } from "../actions";
 
 const formSchema = z
   .object({
@@ -52,7 +52,7 @@ export function ResetPasswordForm() {
   const onSubmit = (values: FormValues) => {
     setServerError(null);
     startTransition(async () => {
-      const result = await resetPassword(values);
+      const result = await updatePassword(values);
       if (!result.ok) {
         setServerError(result.error);
         return;

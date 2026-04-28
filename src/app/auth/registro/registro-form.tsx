@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { signUp } from "./actions";
+import { signUp } from "../actions";
 
 const formSchema = z
   .object({

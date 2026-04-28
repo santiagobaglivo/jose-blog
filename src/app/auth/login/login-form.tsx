@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { signIn } from "./actions";
+import { signIn } from "../actions";
 
 const formSchema = z.object({
   email: z.string().min(1, "Ingresá tu email").email("Email inválido"),

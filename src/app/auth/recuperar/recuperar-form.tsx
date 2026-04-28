@@ -7,7 +7,7 @@ import { z } from "zod";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { requestPasswordReset } from "./actions";
+import { resetPassword } from "../actions";
 
 const formSchema = z.object({
   email: z.string().min(1, "Ingresá tu email").email("Email inválido"),
@@ -32,7 +32,7 @@ export function RecuperarForm() {
   const onSubmit = (values: FormValues) => {
     setServerError(null);
     startTransition(async () => {
-      const result = await requestPasswordReset(values);
+      const result = await resetPassword(values);
       if (!result.ok) {
         setServerError(result.error);
         return;
