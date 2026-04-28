@@ -1,27 +1,16 @@
 import Link from "next/link";
 import { getForumCategories, getRecentThreads } from "@/lib/queries/forums";
+import { forumIconMap } from "@/lib/status";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { SearchBar } from "@/components/shared/search-bar";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Badge } from "@/components/ui/badge";
 import {
-  Receipt,
-  Users,
-  Building2,
-  Calculator,
   HelpCircle,
   MessageSquare,
   Eye,
   Pin,
 } from "lucide-react";
-
-const iconMap: Record<string, React.ElementType> = {
-  receipt: Receipt,
-  users: Users,
-  building: Building2,
-  calculator: Calculator,
-  "help-circle": HelpCircle,
-};
 
 export default async function ForosPage() {
   const [forumCategories, recentThreads] = await Promise.all([
@@ -61,7 +50,7 @@ export default async function ForosPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {forumCategories.map((cat) => {
-                const Icon = iconMap[cat.icon] ?? HelpCircle;
+                const Icon = forumIconMap[cat.icon] ?? HelpCircle;
                 return (
                   <Link
                     key={cat.slug}

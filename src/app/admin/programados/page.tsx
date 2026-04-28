@@ -1,4 +1,5 @@
 import { getDraftPosts, getScheduledPosts } from "@/lib/queries/posts";
+import { postStatusMap } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { CalendarClock, Clock, Pencil, Trash2, Eye } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -48,8 +49,8 @@ export default async function ProgramadosPage() {
                     </span>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[0.6875rem] bg-blue-50 text-blue-700 border-blue-200 shrink-0">
-                  Programado
+                <Badge variant="outline" className={`text-[0.6875rem] ${postStatusMap.programado.className} shrink-0`}>
+                  {postStatusMap.programado.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">
                   <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">
@@ -95,8 +96,8 @@ export default async function ProgramadosPage() {
                     <span>{post.category}</span>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[0.6875rem] shrink-0">
-                  Borrador
+                <Badge variant="outline" className={`text-[0.6875rem] ${postStatusMap.borrador.className} shrink-0`}>
+                  {postStatusMap.borrador.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">
                   <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">

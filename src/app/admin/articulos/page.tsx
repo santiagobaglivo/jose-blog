@@ -1,14 +1,9 @@
 import { getAllPostsAdmin } from "@/lib/queries/posts";
+import { postStatusMap } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Plus, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-
-const statusMap = {
-  publicado: { label: "Publicado", className: "bg-green-50 text-green-700 border-green-200" },
-  borrador: { label: "Borrador", className: "bg-gray-50 text-gray-600 border-gray-200" },
-  programado: { label: "Programado", className: "bg-blue-50 text-blue-700 border-blue-200" },
-};
 
 export default async function ArticulosAdmin() {
   const posts = await getAllPostsAdmin();
@@ -77,7 +72,7 @@ export default async function ArticulosAdmin() {
             </thead>
             <tbody className="divide-y divide-border/50">
               {posts.map((post) => {
-                const status = statusMap[post.status];
+                const status = postStatusMap[post.status];
                 return (
                   <tr key={post.slug} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-5 py-4">

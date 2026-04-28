@@ -1,14 +1,9 @@
 import { getAllCommentsAdmin } from "@/lib/queries/comments";
 import { getAllPostsAdmin } from "@/lib/queries/posts";
+import { commentStatusMap } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Check, X, Trash2, Shield } from "lucide-react";
-
-const statusConfig = {
-  aprobado: { label: "Aprobado", className: "bg-green-50 text-green-700 border-green-200" },
-  pendiente: { label: "Pendiente", className: "bg-orange-50 text-orange-600 border-orange-200" },
-  rechazado: { label: "Rechazado", className: "bg-red-50 text-red-600 border-red-200" },
-};
 
 export default async function ComentariosAdmin() {
   const [comments, posts] = await Promise.all([
@@ -54,7 +49,7 @@ export default async function ComentariosAdmin() {
       {/* Comments list */}
       <div className="space-y-3">
         {comments.map((comment) => {
-          const status = statusConfig[comment.status];
+          const status = commentStatusMap[comment.status];
           const post = posts.find((p) => p.slug === comment.postSlug);
           return (
             <div
