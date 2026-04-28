@@ -2,11 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Shield, MoreHorizontal, UserCheck, UserX } from "lucide-react";
 import { getAllUsersAdmin } from "@/lib/queries/users";
-
-const roleConfig = {
-  admin: { label: "Admin", className: "bg-primary/10 text-primary border-primary/20" },
-  usuario: { label: "Usuario", className: "bg-secondary text-muted-foreground border-border/50" },
-};
+import { roleConfig } from "@/lib/mock-data";
 
 export default async function UsuariosAdmin() {
   const users = await getAllUsersAdmin();

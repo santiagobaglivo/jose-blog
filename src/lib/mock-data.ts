@@ -586,6 +586,12 @@ export const replies: Reply[] = [
   },
 ];
 
+// --- Admin user role config ---
+export const roleConfig = {
+  admin: { label: "Admin", className: "bg-primary/10 text-primary border-primary/20" },
+  usuario: { label: "Usuario", className: "bg-secondary text-muted-foreground border-border/50" },
+};
+
 // --- Stats for admin dashboard ---
 export const dashboardStats = {
   totalPosts: 9,
