@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Shield, MoreHorizontal, Users } from "lucide-react";
+import { Shield, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchBar } from "@/components/shared/search-bar";
 import { roleConfig } from "@/lib/mock-data";
 import { getAllUsersAdmin, type AdminUserRoleFilter } from "@/lib/queries/users";
+import { createClient } from "@/lib/supabase/server";
+import { UserRowActions } from "./user-row-actions";
 
 const FILTERS: { label: string; value: AdminUserRoleFilter; href: string }[] = [
   { label: "Todos", value: "all", href: "/admin/usuarios" },
@@ -25,7 +27,12 @@ export default async function UsuariosAdmin({
 }) {
   const { role } = await searchParams;
   const activeFilter = parseRoleFilter(role);
-  const users = await getAllUsersAdmin(activeFilter);
+  const supabase = await createClient();
+  const [users, currentUserResult] = await Promise.all([
+    getAllUsersAdmin(activeFilter),
+    supabase.auth.getUser(),
+  ]);
+  const currentUser = currentUserResult.data.user;
 
   return (
     <div>
@@ -137,9 +144,12 @@ export default async function UsuariosAdmin({
                         </span>
                       </td>
                       <td className="px-3 py-4">
-                        <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </button>
+                        <UserRowActions
+                          userId={user.id}
+                          userName={user.name}
+                          currentRole={user.role === "admin" ? "admin" : "user"}
+                          isSelf={user.id === currentUser?.id}
+                        />
                       </td>
                     </tr>
                   );
