@@ -4,52 +4,20 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
+import {
+  loginSchema,
+  signupSchema,
+  resetEmailSchema,
+  updatePasswordSchema,
+} from "@/lib/validators/auth";
 
-const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+const signInSchema = loginSchema.extend({
   redirectedFrom: z.string().optional(),
 });
 
-const signUpSchema = z
-  .object({
-    display_name: z
-      .string()
-      .trim()
-      .min(2, "El nombre debe tener al menos 2 caracteres")
-      .max(80, "El nombre no puede superar 80 caracteres"),
-    email: z.string().email("Email inválido"),
-    password: z
-      .string()
-      .min(8, "La contraseña debe tener al menos 8 caracteres")
-      .regex(/[0-9]/, "La contraseña debe incluir al menos un número"),
-    password_confirm: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirm, {
-    path: ["password_confirm"],
-    message: "Las contraseñas no coinciden",
-  });
-
-const resetPasswordSchema = z.object({
-  email: z.string().email(),
-});
-
-const updatePasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "La contraseña debe tener al menos 8 caracteres")
-      .regex(/[0-9]/, "La contraseña debe incluir al menos un número"),
-    password_confirm: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirm, {
-    path: ["password_confirm"],
-    message: "Las contraseñas no coinciden",
-  });
-
 export type SignInInput = z.infer<typeof signInSchema>;
-export type SignUpInput = z.infer<typeof signUpSchema>;
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type SignUpInput = z.infer<typeof signupSchema>;
+export type ResetPasswordInput = z.infer<typeof resetEmailSchema>;
 export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
 
 export type SignInResult = { ok: true; redirectTo: string } | { ok: false; error: string };
@@ -103,7 +71,7 @@ export async function signIn(input: SignInInput): Promise<SignInResult> {
 }
 
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {
-  const parsed = signUpSchema.safeParse(input);
+  const parsed = signupSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? SIGN_UP_GENERIC_ERROR };
   }
@@ -147,7 +115,7 @@ export async function signOut(): Promise<SignOutResult> {
 }
 
 export async function resetPassword(input: ResetPasswordInput): Promise<ResetPasswordResult> {
-  const parsed = resetPasswordSchema.safeParse(input);
+  const parsed = resetEmailSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: RESET_INVALID_EMAIL_ERROR };
   }

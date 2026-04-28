@@ -4,28 +4,15 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { updatePasswordSchema, type UpdatePasswordInput } from "@/lib/validators/auth";
 import { updatePassword } from "../actions";
 
-const formSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Mínimo 8 caracteres")
-      .regex(/[0-9]/, "Debe incluir al menos un número"),
-    password_confirm: z.string().min(1, "Confirmá tu contraseña"),
-  })
-  .refine((data) => data.password === data.password_confirm, {
-    path: ["password_confirm"],
-    message: "Las contraseñas no coinciden",
-  });
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = UpdatePasswordInput;
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -45,7 +32,7 @@ export function ResetPasswordForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: { password: "", password_confirm: "" },
   });
 

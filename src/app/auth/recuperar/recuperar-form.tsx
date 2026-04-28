@@ -3,17 +3,13 @@
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { resetEmailSchema, type ResetEmailInput } from "@/lib/validators/auth";
 import { resetPassword } from "../actions";
 
-const formSchema = z.object({
-  email: z.string().min(1, "Ingresá tu email").email("Email inválido"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = ResetEmailInput;
 
 export function RecuperarForm() {
   const [isPending, startTransition] = useTransition();
@@ -25,7 +21,7 @@ export function RecuperarForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(resetEmailSchema),
     defaultValues: { email: "" },
   });
 

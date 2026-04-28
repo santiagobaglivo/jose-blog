@@ -4,19 +4,14 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { loginSchema, type LoginInput } from "@/lib/validators/auth";
 import { signIn } from "../actions";
 
-const formSchema = z.object({
-  email: z.string().min(1, "Ingresá tu email").email("Email inválido"),
-  password: z.string().min(8, "Mínimo 8 caracteres"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = LoginInput;
 
 export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
   const router = useRouter();
@@ -28,7 +23,7 @@ export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
