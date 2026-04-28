@@ -1,6 +1,14 @@
+import { format, formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+
 import { authors, type Author } from "@/lib/mock-data";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+
+export type AdminUserRoleFilter = "all" | "admin" | "user";
 
 export interface AdminUser {
+  id: string;
   name: string;
   email: string;
   avatar: string;
@@ -11,91 +19,60 @@ export interface AdminUser {
   threads: number;
 }
 
-const adminUsers: AdminUser[] = [
-  {
-    name: "Martín Velázquez",
-    email: "martin@velazquezyasociados.com",
-    avatar: "MV",
-    role: "admin",
-    joined: "Enero 2024",
-    lastActive: "Hace 5 minutos",
-    comments: 12,
-    threads: 0,
-  },
-  {
-    name: "Carolina Méndez",
-    email: "carolina@velazquezyasociados.com",
-    avatar: "CM",
-    role: "admin",
-    joined: "Febrero 2024",
-    lastActive: "Hace 1 hora",
-    comments: 8,
-    threads: 0,
-  },
-  {
-    name: "Laura Giménez",
-    email: "laura.g@email.com",
-    avatar: "LG",
-    role: "usuario",
-    joined: "Marzo 2026",
-    lastActive: "Hoy",
-    comments: 3,
-    threads: 2,
-  },
-  {
-    name: "Federico Ruiz",
-    email: "fruiz@empresa.com",
-    avatar: "FR",
-    role: "usuario",
-    joined: "Marzo 2026",
-    lastActive: "Ayer",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Ana Rosales",
-    email: "ana.r@email.com",
-    avatar: "AR",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 3 días",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Gonzalo Ortega",
-    email: "gortega@mail.com",
-    avatar: "GO",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 5 días",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Silvia Pacheco",
-    email: "silvia.p@correo.com",
-    avatar: "SP",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hoy",
-    comments: 1,
-    threads: 1,
-  },
-  {
-    name: "Diego Martínez",
-    email: "diego.m@email.com",
-    avatar: "DM",
-    role: "usuario",
-    joined: "Abril 2026",
-    lastActive: "Hace 2 días",
-    comments: 1,
-    threads: 1,
-  },
-];
+function getInitials(name: string, fallbackEmail: string | null | undefined) {
+  const source = name.trim() || fallbackEmail?.split("@")[0] || "";
+  if (!source) return "U";
+  const parts = source.split(/\s+/).filter(Boolean);
+  const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}` : source.slice(0, 2);
+  return initials.toUpperCase();
+}
 
-export async function getAllUsersAdmin(): Promise<AdminUser[]> {
-  return adminUsers;
+function formatJoined(createdAt: string) {
+  return format(new Date(createdAt), "MMMM yyyy", { locale: es }).replace(/^./, (c) =>
+    c.toUpperCase()
+  );
+}
+
+function formatLastActive(lastSignInAt: string | null | undefined) {
+  if (!lastSignInAt) return "Nunca";
+  return formatDistanceToNow(new Date(lastSignInAt), { locale: es, addSuffix: true });
+}
+
+export async function getAllUsersAdmin(
+  roleFilter: AdminUserRoleFilter = "all"
+): Promise<AdminUser[]> {
+  const supabase = await createClient();
+  let query = supabase
+    .from("profiles")
+    .select("id, display_name, role, created_at")
+    .order("created_at", { ascending: false });
+
+  if (roleFilter !== "all") {
+    query = query.eq("role", roleFilter);
+  }
+
+  const { data: profiles, error } = await query;
+  if (error || !profiles) return [];
+
+  const adminClient = createAdminClient();
+  const { data: authData } = await adminClient.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  const authById = new Map(authData?.users.map((u) => [u.id, u]) ?? []);
+
+  return profiles.map((profile) => {
+    const authUser = authById.get(profile.id);
+    const email = authUser?.email ?? "";
+    return {
+      id: profile.id,
+      name: profile.display_name,
+      email,
+      avatar: getInitials(profile.display_name, email),
+      role: profile.role === "admin" ? "admin" : "usuario",
+      joined: formatJoined(profile.created_at),
+      lastActive: formatLastActive(authUser?.last_sign_in_at),
+      comments: 0,
+      threads: 0,
+    };
+  });
 }
 
 export async function getTeamMembers(): Promise<Author[]> {
