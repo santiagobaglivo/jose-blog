@@ -1,11 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, LogOut, User as UserIcon, LayoutDashboard } from "lucide-react";
+import { toast } from "sonner";
+
 import { cn } from "@/lib/utils";
+import { useUser, type Profile } from "@/lib/auth/UserProvider";
+import { signOut } from "@/app/auth/actions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navigation = [
   { name: "Inicio", href: "/" },
@@ -15,12 +28,39 @@ const navigation = [
   { name: "Contacto", href: "/contacto" },
 ];
 
+function getInitials(profile: Profile | null, email: string | null | undefined) {
+  const source = profile?.display_name?.trim() || email?.split("@")[0] || "";
+  if (!source) return "U";
+  const parts = source.split(/\s+/).filter(Boolean);
+  const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}` : source.slice(0, 2);
+  return initials.toUpperCase();
+}
+
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSigningOut, startSignOut] = useTransition();
+  const { user, profile, isAdmin } = useUser();
 
-  const isAdmin = pathname.startsWith("/admin");
-  if (isAdmin) return null;
+  const inAdminArea = pathname.startsWith("/admin");
+  if (inAdminArea) return null;
+
+  const handleSignOut = () => {
+    startSignOut(async () => {
+      const result = await signOut();
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      setMobileOpen(false);
+      router.refresh();
+      router.push("/");
+    });
+  };
+
+  const initials = getInitials(profile, user?.email);
+  const displayName = profile?.display_name?.trim() || user?.email || "Mi cuenta";
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border/50">
@@ -76,12 +116,73 @@ export function Header() {
             >
               <Search className="h-4 w-4" />
             </Link>
-            <Link
-              href="/admin"
-              className="hidden lg:inline-flex h-9 px-4 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.8125rem] font-medium hover:bg-primary/90 transition-colors"
-            >
-              Panel
-            </Link>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className="hidden lg:inline-flex outline-none rounded-full ring-offset-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label="Abrir menú de usuario"
+                >
+                  <Avatar size="sm" className="size-9">
+                    {profile?.avatar_url ? (
+                      <AvatarImage src={profile.avatar_url} alt={displayName} />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={8} className="min-w-56">
+                  <DropdownMenuLabel className="px-2 py-1.5">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-medium text-foreground truncate">
+                        {displayName}
+                      </span>
+                      {user.email && profile?.display_name ? (
+                        <span className="text-xs text-muted-foreground truncate">
+                          {user.email}
+                        </span>
+                      ) : null}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    render={<Link href="/perfil" />}
+                    className="gap-2"
+                  >
+                    <UserIcon className="size-4" />
+                    Mi perfil
+                  </DropdownMenuItem>
+                  {isAdmin ? (
+                    <DropdownMenuItem
+                      render={<Link href="/admin" />}
+                      className="gap-2"
+                    >
+                      <LayoutDashboard className="size-4" />
+                      Panel admin
+                    </DropdownMenuItem>
+                  ) : null}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    disabled={isSigningOut}
+                    onClick={handleSignOut}
+                    closeOnClick={false}
+                    className="gap-2"
+                  >
+                    <LogOut className="size-4" />
+                    {isSigningOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="hidden lg:inline-flex h-9 px-4 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.8125rem] font-medium hover:bg-primary/90 transition-colors"
+              >
+                Ingresar
+              </Link>
+            )}
 
             {/* Mobile toggle */}
             <button
@@ -126,13 +227,65 @@ export function Header() {
                 );
               })}
               <div className="border-t border-border/50 mt-2 pt-3">
-                <Link
-                  href="/admin"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex h-10 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.875rem] font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Acceder al Panel
-                </Link>
+                {user ? (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3 px-4 py-2">
+                      <Avatar size="sm" className="size-9">
+                        {profile?.avatar_url ? (
+                          <AvatarImage src={profile.avatar_url} alt={displayName} />
+                        ) : null}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[0.875rem] font-medium text-foreground truncate">
+                          {displayName}
+                        </span>
+                        {user.email && profile?.display_name ? (
+                          <span className="text-xs text-muted-foreground truncate">
+                            {user.email}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                    <Link
+                      href="/perfil"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors"
+                    >
+                      <UserIcon className="size-4" />
+                      Mi perfil
+                    </Link>
+                    {isAdmin ? (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors"
+                      >
+                        <LayoutDashboard className="size-4" />
+                        Panel admin
+                      </Link>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                      className="flex items-center gap-2 px-4 py-2.5 text-[0.875rem] font-medium rounded-md text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      <LogOut className="size-4" />
+                      {isSigningOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex h-10 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.875rem] font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    Ingresar
+                  </Link>
+                )}
               </div>
             </nav>
           </motion.div>
