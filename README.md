@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# jose-blog
 
-## Getting Started
+Plataforma de contenido y comunidad para una firma profesional: blog editorial, foros con moderación y panel administrativo. El proyecto convierte un prototipo visual en un sistema productivo respaldado por Supabase.
 
-First, run the development server:
+La documentación funcional, arquitectónica y de planificación vive en [`docs/`](./docs/00-INDEX.md).
+
+## Stack técnico
+
+- **Framework:** Next.js 16 (App Router) + React 19
+- **Lenguaje:** TypeScript estricto
+- **UI:** Tailwind CSS v4, shadcn/ui, Base UI, Framer Motion
+- **Editor:** TipTap
+- **Forms y validación:** React Hook Form + Zod
+- **Backend:** Supabase (Postgres, Auth, Storage, RLS, Edge Functions)
+- **Email transaccional:** Resend
+- **Tooling:** ESLint 9, Prettier 3, Supabase CLI
+
+> Esta versión de Next.js incluye breaking changes respecto a versiones previas. Consultar `node_modules/next/dist/docs/` antes de modificar APIs del framework.
+
+## Setup local
+
+### Requisitos
+
+- Node.js 20+
+- npm 10+
+- [Supabase CLI](https://supabase.com/docs/guides/cli)
+- Cuenta en Supabase y Resend
+
+### Instalación
+
+```bash
+npm install
+cp .env.example .env
+```
+
+Completar `.env` con las credenciales reales:
+
+| Variable                        | Origen                                          |
+| ------------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase → Project Settings → API               |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API               |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Supabase → Project Settings → API (server-only) |
+| `RESEND_API_KEY`                | Resend → API Keys                               |
+| `RESEND_FROM`                   | Remitente verificado en Resend                  |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER`   | Número de contacto, código país sin `+`         |
+| `NEXT_PUBLIC_SITE_URL`          | URL pública del sitio en producción             |
+
+### Base de datos
+
+Vincular el proyecto local con Supabase y aplicar migrations:
+
+```bash
+supabase link --project-ref <project-ref>
+npm run db:push
+npm run db:types
+```
+
+### Desarrollo
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Servidor disponible en [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandos disponibles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando                | Descripción                                                     |
+| ---------------------- | --------------------------------------------------------------- |
+| `npm run dev`          | Servidor de desarrollo                                          |
+| `npm run build`        | Build de producción                                             |
+| `npm run start`        | Servidor de producción tras `build`                             |
+| `npm run lint`         | ESLint sobre todo el repo                                       |
+| `npm run format`       | Prettier en modo escritura                                      |
+| `npm run format:check` | Prettier en modo verificación (CI)                              |
+| `npm run db:push`      | Aplica las migrations pendientes al proyecto Supabase vinculado |
+| `npm run db:reset`     | Reset destructivo de la base remota vinculada                   |
+| `npm run db:types`     | Genera `src/types/database.ts` desde el schema remoto           |
 
-## Learn More
+## Estructura de carpetas
 
-To learn more about Next.js, take a look at the following resources:
+```
+jose-blog/
+├── docs/              Documentación del proyecto (ver docs/00-INDEX.md)
+├── public/            Assets estáticos
+├── scripts/           Utilidades de mantenimiento (Jira, etc.)
+├── src/
+│   ├── app/           Rutas App Router
+│   │   ├── (public)/  Sitio público: blog, foros, perfil, contacto
+│   │   └── admin/     Panel administrativo
+│   ├── components/    Componentes UI agrupados por dominio
+│   │   ├── admin/
+│   │   ├── blog/
+│   │   ├── forum/
+│   │   ├── layout/
+│   │   ├── shared/
+│   │   └── ui/        Primitivas shadcn/ui
+│   ├── lib/
+│   │   ├── queries/   Acceso a datos por entidad
+│   │   └── supabase/  Clientes browser, server y middleware
+│   └── types/         Tipos generados y manuales
+└── supabase/
+    ├── config.toml
+    └── migrations/    Migrations versionadas
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentación adicional
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Para profundizar en alcance, modelo funcional, arquitectura Supabase, plan de sprints, backlog y roadmap, ver el índice de documentación en [`docs/00-INDEX.md`](./docs/00-INDEX.md).
