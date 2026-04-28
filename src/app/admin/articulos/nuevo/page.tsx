@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft, Image } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { getCategories, getTags } from "@/lib/queries/categories";
+import { getTags } from "@/lib/queries/categories";
 import { RichTextEditor } from "@/components/editor/RichTextEditor";
+import { CategorySelect } from "@/components/admin/CategorySelect";
 
 export default async function NuevoArticuloPage() {
-  const [blogCategories, tags] = await Promise.all([getCategories(), getTags()]);
+  const tags = await getTags();
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -116,14 +117,7 @@ export default async function NuevoArticuloPage() {
           {/* Category */}
           <div className="bg-card border border-border/50 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-foreground font-sans mb-4">Categoría</h3>
-            <select className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all appearance-none">
-              <option value="">Seleccionar categoría</option>
-              {blogCategories.map((cat) => (
-                <option key={cat.slug} value={cat.slug}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <CategorySelect name="category_id" required />
           </div>
 
           {/* Tags */}
