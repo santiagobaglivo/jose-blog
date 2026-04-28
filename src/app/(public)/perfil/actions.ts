@@ -17,20 +17,21 @@ const updateProfileSchema = z.object({
     .max(500, "La descripción no puede superar 500 caracteres")
     .optional()
     .or(z.literal("")),
-  avatar_url: z
-    .string()
-    .trim()
-    .url("Debe ser una URL válida")
-    .max(500, "La URL no puede superar 500 caracteres")
-    .optional()
-    .or(z.literal("")),
 });
+
+const avatarUrlSchema = z
+  .string()
+  .trim()
+  .url("URL de avatar inválida")
+  .max(500, "La URL no puede superar 500 caracteres")
+  .nullable();
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type UpdateProfileResult = { ok: true } | { ok: false; error: string };
 
 const UPDATE_GENERIC_ERROR = "No pudimos actualizar tu perfil. Intentá nuevamente.";
 const UPDATE_UNAUTHENTICATED_ERROR = "Tu sesión expiró. Volvé a iniciar sesión.";
+const UPDATE_AVATAR_ERROR = "No pudimos actualizar tu avatar. Intentá nuevamente.";
 
 export async function updateProfile(input: UpdateProfileInput): Promise<UpdateProfileResult> {
   const parsed = updateProfileSchema.safeParse(input);
@@ -52,13 +53,46 @@ export async function updateProfile(input: UpdateProfileInput): Promise<UpdatePr
     .update({
       display_name: parsed.data.display_name,
       bio: parsed.data.bio ? parsed.data.bio : null,
-      avatar_url: parsed.data.avatar_url ? parsed.data.avatar_url : null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
 
   if (error) {
     return { ok: false, error: UPDATE_GENERIC_ERROR };
+  }
+
+  revalidatePath("/perfil");
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function updateAvatarUrl(
+  avatarUrl: string | null
+): Promise<UpdateProfileResult> {
+  const parsed = avatarUrlSchema.safeParse(avatarUrl);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? UPDATE_AVATAR_ERROR };
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: UPDATE_UNAUTHENTICATED_ERROR };
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      avatar_url: parsed.data,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", user.id);
+
+  if (error) {
+    return { ok: false, error: UPDATE_AVATAR_ERROR };
   }
 
   revalidatePath("/perfil");

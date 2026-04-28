@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { ImageUploader } from "@/components/shared/ImageUploader";
 import type { Profile } from "@/lib/auth/UserProvider";
-import { updateProfile } from "./actions";
+import { updateAvatarUrl, updateProfile } from "./actions";
 
 const formSchema = z.object({
   display_name: z
@@ -22,13 +23,6 @@ const formSchema = z.object({
     .string()
     .trim()
     .max(500, "La descripción no puede superar 500 caracteres")
-    .optional()
-    .or(z.literal("")),
-  avatar_url: z
-    .string()
-    .trim()
-    .url("Debe ser una URL válida")
-    .max(500, "La URL no puede superar 500 caracteres")
     .optional()
     .or(z.literal("")),
 });
@@ -50,7 +44,6 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
     defaultValues: {
       display_name: profile.display_name ?? "",
       bio: profile.bio ?? "",
-      avatar_url: profile.avatar_url ?? "",
     },
   });
 
@@ -66,6 +59,26 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
       reset(values);
       router.refresh();
     });
+  };
+
+  const handleAvatarUpload = async (url: string) => {
+    const result = await updateAvatarUrl(url);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success("Avatar actualizado");
+    router.refresh();
+  };
+
+  const handleAvatarRemove = async () => {
+    const result = await updateAvatarUrl(null);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success("Avatar eliminado");
+    router.refresh();
   };
 
   return (
@@ -87,6 +100,21 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
       )}
 
       <div className="space-y-5">
+        <ImageUploader
+          bucket="avatars"
+          path={(file) => {
+            const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+            return `${profile.id}/avatar.${ext}`;
+          }}
+          onUpload={handleAvatarUpload}
+          onRemove={handleAvatarRemove}
+          initialUrl={profile.avatar_url}
+          maxSizeMB={1}
+          accept={["image/jpeg", "image/png", "image/webp"]}
+          label="Foto de perfil"
+          disabled={isPending}
+        />
+
         <div>
           <label
             htmlFor="display_name"
@@ -125,32 +153,6 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
           <p className="mt-1 text-[0.75rem] text-muted-foreground">
             El email no se puede modificar desde aquí.
           </p>
-        </div>
-
-        <div>
-          <label
-            htmlFor="avatar_url"
-            className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-          >
-            URL del avatar
-          </label>
-          <input
-            id="avatar_url"
-            type="url"
-            autoComplete="off"
-            disabled={isPending}
-            aria-invalid={!!errors.avatar_url}
-            {...register("avatar_url")}
-            className={cn(
-              "w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all disabled:opacity-60",
-              errors.avatar_url &&
-                "border-destructive/50 focus:ring-destructive/20 focus:border-destructive/50"
-            )}
-            placeholder="https://…"
-          />
-          {errors.avatar_url && (
-            <p className="mt-1 text-[0.75rem] text-destructive">{errors.avatar_url.message}</p>
-          )}
         </div>
 
         <div>
