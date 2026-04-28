@@ -64,6 +64,118 @@ export type Database = {
         }
         Relationships: []
       }
+      post_tags: {
+        Row: {
+          post_id: string
+          tag_id: string
+        }
+        Insert: {
+          post_id: string
+          tag_id: string
+        }
+        Update: {
+          post_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          accent_color: string | null
+          author_id: string
+          category_id: string | null
+          content: Json
+          content_html: string
+          created_at: string
+          deleted_at: string | null
+          excerpt: string
+          featured_image: string | null
+          id: string
+          published_at: string | null
+          read_time_minutes: number | null
+          scheduled_for: string | null
+          search_vector: unknown | null
+          slug: string
+          status: Database["public"]["Enums"]["post_status"]
+          subtitle: string | null
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          accent_color?: string | null
+          author_id: string
+          category_id?: string | null
+          content: Json
+          content_html: string
+          created_at?: string
+          deleted_at?: string | null
+          excerpt: string
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          read_time_minutes?: number | null
+          scheduled_for?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["post_status"]
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          accent_color?: string | null
+          author_id?: string
+          category_id?: string | null
+          content?: Json
+          content_html?: string
+          created_at?: string
+          deleted_at?: string | null
+          excerpt?: string
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          read_time_minutes?: number | null
+          scheduled_for?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["post_status"]
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
