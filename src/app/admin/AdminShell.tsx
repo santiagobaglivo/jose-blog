@@ -8,8 +8,10 @@ import {
   FileText,
   CalendarClock,
   MessageSquare,
+  Mail,
   Tag,
   MessagesSquare,
+  Sparkles,
   Users,
   ArrowLeft,
   Menu,
@@ -17,19 +19,57 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import { useUser } from "@/lib/auth/UserProvider";
+
 const nav = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Marcas", href: "/admin/marcas", icon: Sparkles },
   { name: "Artículos", href: "/admin/articulos", icon: FileText },
   { name: "Programados", href: "/admin/programados", icon: CalendarClock },
   { name: "Comentarios", href: "/admin/comentarios", icon: MessageSquare },
   { name: "Categorías & Tags", href: "/admin/categorias", icon: Tag },
   { name: "Foros", href: "/admin/foros", icon: MessagesSquare },
+  { name: "Consultas", href: "/admin/consultas", icon: Mail },
   { name: "Usuarios", href: "/admin/usuarios", icon: Users },
 ];
 
-export default function AdminShell({ children }: { children: React.ReactNode }) {
+function getInitials(name: string | null | undefined, email: string | null | undefined): string {
+  const source = (name?.trim() || email?.split("@")[0] || "").trim();
+  if (!source) return "AD";
+  const parts = source.split(/\s+/).filter(Boolean);
+  const initials = parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}` : source.slice(0, 2);
+  return initials.toUpperCase();
+}
+
+type ScopeBrand = { id: string; slug: string; name: string } | null;
+
+export default function AdminShell({
+  children,
+  scopeKind,
+  scopeBrand,
+}: {
+  children: React.ReactNode;
+  scopeKind: "super" | "local" | "none";
+  scopeBrand: ScopeBrand;
+}) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, profile } = useUser();
+  const adminName = profile?.display_name?.trim() || user?.email || "Admin";
+  const adminInitials = getInitials(profile?.display_name, user?.email);
+
+  // Admin local no gestiona la lista de marcas: en su lugar, "Mi marca" lo lleva
+  // directo a la pantalla de edición de su brand. Super-admin ve "Marcas".
+  const visibleNav = nav.map((item) => {
+    if (item.href === "/admin/marcas" && scopeKind === "local" && scopeBrand) {
+      return {
+        ...item,
+        name: "Mi marca",
+        href: `/admin/marcas/${scopeBrand.id}`,
+      };
+    }
+    return item;
+  });
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -52,9 +92,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="h-16 flex items-center justify-between px-5 border-b border-border/50">
           <Link href="/admin" className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-serif font-bold text-xs">V</span>
+              <Sparkles className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-[0.8125rem] font-semibold text-foreground">Panel Editorial</span>
+            <span className="text-[0.8125rem] font-semibold text-foreground">Panel admin</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -64,9 +104,21 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </div>
 
+        {/* Brand/scope hint */}
+        {scopeBrand && (
+          <div className="px-5 py-3 border-b border-border/50 bg-secondary/30">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-widest text-muted-foreground/70">
+              {scopeKind === "super" ? "Gestionando marca" : "Tu marca"}
+            </p>
+            <p className="mt-0.5 text-[0.8125rem] font-medium text-foreground truncate">
+              {scopeBrand.name}
+            </p>
+          </div>
+        )}
+
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
-          {nav.map((item) => {
+          {visibleNav.map((item) => {
             const isActive =
               item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
             return (
@@ -113,10 +165,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div className="hidden lg:block" />
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-[0.6875rem] font-semibold">MV</span>
+              <span className="text-primary-foreground text-[0.6875rem] font-semibold">
+                {adminInitials}
+              </span>
             </div>
             <span className="text-[0.8125rem] font-medium text-foreground hidden sm:block">
-              Martín Velázquez
+              {adminName}
             </span>
           </div>
         </header>

@@ -4,7 +4,7 @@ import { Shield, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchBar } from "@/components/shared/search-bar";
-import { roleConfig } from "@/lib/mock-data";
+import { roleConfig } from "@/lib/status";
 import { getAllUsersAdmin, type AdminUserRoleFilter } from "@/lib/queries/users";
 import { createClient } from "@/lib/supabase/server";
 import { UserRowActions } from "./user-row-actions";

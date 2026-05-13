@@ -1,11 +1,54 @@
-import { getDraftPosts, getScheduledPosts } from "@/lib/queries/posts";
-import { postStatusMap } from "@/lib/status";
+import Link from "next/link";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { Pencil, CalendarClock, Clock } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
-import { CalendarClock, Clock, Pencil, Trash2, Eye } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
+import { postStatusMap } from "@/lib/status";
+import { getAdminScope } from "@/lib/auth/admin-scope";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { PostRowActions } from "../articulos/post-row-actions";
+
+type Row = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "draft" | "scheduled" | "published" | "archived";
+  scheduled_for: string | null;
+  author: { display_name: string | null } | null;
+  category: { name: string | null } | null;
+};
 
 export default async function ProgramadosPage() {
-  const [scheduled, drafts] = await Promise.all([getScheduledPosts(), getDraftPosts()]);
+  const scope = await getAdminScope();
+  if (scope.kind === "none") return null;
+  const supabase = createAdminClient();
+  const brandId = scope.brand?.id ?? null;
+
+  const baseSelect =
+    "id, slug, title, status, scheduled_for, author:profiles!posts_author_id_fkey(display_name), category:categories(name)";
+
+  const draftsQuery = supabase
+    .from("posts")
+    .select(baseSelect)
+    .eq("status", "draft")
+    .is("deleted_at", null)
+    .order("updated_at", { ascending: false });
+  const scheduledQuery = supabase
+    .from("posts")
+    .select(baseSelect)
+    .eq("status", "scheduled")
+    .is("deleted_at", null)
+    .order("scheduled_for", { ascending: true });
+
+  const [{ data: draftsRaw }, { data: scheduledRaw }] = await Promise.all([
+    brandId ? draftsQuery.eq("brand_id", brandId) : draftsQuery,
+    brandId ? scheduledQuery.eq("brand_id", brandId) : scheduledQuery,
+  ]);
+
+  const drafts = (draftsRaw ?? []) as unknown as Row[];
+  const scheduled = (scheduledRaw ?? []) as unknown as Row[];
 
   return (
     <div>
@@ -28,7 +71,7 @@ export default async function ProgramadosPage() {
           <div className="space-y-3">
             {scheduled.map((post) => (
               <div
-                key={post.slug}
+                key={post.id}
                 className="bg-card border border-border/50 rounded-xl p-5 flex items-center gap-4"
               >
                 <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
@@ -39,26 +82,33 @@ export default async function ProgramadosPage() {
                     {post.title}
                   </h3>
                   <div className="mt-1 flex items-center gap-3 text-[0.75rem] text-muted-foreground/60">
-                    <span>{post.author.name}</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Se publicará el {post.scheduledDate}
-                    </span>
+                    <span>{post.author?.display_name ?? "—"}</span>
+                    {post.scheduled_for && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        Se publicará el{" "}
+                        {format(new Date(post.scheduled_for), "d 'de' MMMM yyyy 'a las' HH:mm", {
+                          locale: es,
+                        })}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <Badge
                   variant="outline"
-                  className={`text-[0.6875rem] ${postStatusMap.programado.className} shrink-0`}
+                  className={`text-[0.6875rem] ${postStatusMap.scheduled.className} shrink-0`}
                 >
-                  {postStatusMap.programado.label}
+                  {postStatusMap.scheduled.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">
+                  <Link
+                    href={`/admin/articulos/${post.id}`}
+                    className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                    title="Editar"
+                  >
                     <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </Link>
+                  <PostRowActions postId={post.id} postTitle={post.title} />
                 </div>
               </div>
             ))}
@@ -81,7 +131,7 @@ export default async function ProgramadosPage() {
           <div className="space-y-3">
             {drafts.map((post) => (
               <div
-                key={post.slug}
+                key={post.id}
                 className="bg-card border border-border/50 rounded-xl p-5 flex items-center gap-4"
               >
                 <div className="h-12 w-12 rounded-lg bg-secondary/60 flex items-center justify-center text-muted-foreground/50 shrink-0">
@@ -92,23 +142,25 @@ export default async function ProgramadosPage() {
                     {post.title}
                   </h3>
                   <div className="mt-1 flex items-center gap-3 text-[0.75rem] text-muted-foreground/60">
-                    <span>{post.author.name}</span>
-                    <span>{post.category}</span>
+                    <span>{post.author?.display_name ?? "—"}</span>
+                    <span>{post.category?.name ?? "Sin categoría"}</span>
                   </div>
                 </div>
                 <Badge
                   variant="outline"
-                  className={`text-[0.6875rem] ${postStatusMap.borrador.className} shrink-0`}
+                  className={`text-[0.6875rem] ${postStatusMap.draft.className} shrink-0`}
                 >
-                  {postStatusMap.borrador.label}
+                  {postStatusMap.draft.label}
                 </Badge>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors">
+                  <Link
+                    href={`/admin/articulos/${post.id}`}
+                    className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                    title="Editar"
+                  >
                     <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-red-50 transition-colors">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </Link>
+                  <PostRowActions postId={post.id} postTitle={post.title} />
                 </div>
               </div>
             ))}

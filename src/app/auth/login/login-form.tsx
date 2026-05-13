@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,15 @@ import { signIn } from "../actions";
 
 type FormValues = LoginInput;
 
-export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
+export function LoginForm({
+  redirectedFrom,
+  localAdminEmail,
+  brandName,
+}: {
+  redirectedFrom?: string;
+  localAdminEmail?: string | null;
+  brandName?: string | null;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -21,11 +30,18 @@ export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "admin@demo.com", password: "Admin1234!" },
   });
+
+  const fillDemo = (email: string, password: string) => {
+    setValue("email", email);
+    setValue("password", password);
+    setServerError(null);
+  };
 
   const onSubmit = (values: FormValues) => {
     setServerError(null);
@@ -80,12 +96,12 @@ export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
           <label htmlFor="password" className="block text-[0.8125rem] font-medium text-foreground">
             Contraseña
           </label>
-          <a
+          <Link
             href="/auth/recuperar"
             className="text-[0.75rem] text-muted-foreground hover:text-foreground transition-colors"
           >
             ¿Olvidaste tu contraseña?
-          </a>
+          </Link>
         </div>
         <input
           id="password"
@@ -120,6 +136,47 @@ export function LoginForm({ redirectedFrom }: { redirectedFrom?: string }) {
           "Iniciar sesión"
         )}
       </button>
+
+      <div className="rounded-lg border border-dashed border-border/60 bg-secondary/30 px-4 py-3">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-widest text-muted-foreground/80">
+          Cuentas de demo
+        </p>
+        <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => fillDemo("admin@demo.com", "Admin1234!")}
+            className="text-left rounded-md border border-border/40 bg-background px-3 py-2 hover:border-border hover:bg-secondary/50 transition-colors"
+          >
+            <p className="text-[0.75rem] font-semibold text-foreground">Super-admin</p>
+            <p className="text-[0.6875rem] text-muted-foreground/80">admin@demo.com</p>
+          </button>
+          {localAdminEmail && (
+            <button
+              type="button"
+              onClick={() => fillDemo(localAdminEmail, "Demo1234!")}
+              className="text-left rounded-md border border-border/40 bg-background px-3 py-2 hover:border-border hover:bg-secondary/50 transition-colors"
+            >
+              <p className="text-[0.75rem] font-semibold text-foreground">
+                Admin {brandName ?? "marca"}
+              </p>
+              <p className="text-[0.6875rem] text-muted-foreground/80 truncate">
+                {localAdminEmail}
+              </p>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => fillDemo("user@demo.com", "Demo1234!")}
+            className="text-left rounded-md border border-border/40 bg-background px-3 py-2 hover:border-border hover:bg-secondary/50 transition-colors"
+          >
+            <p className="text-[0.75rem] font-semibold text-foreground">Usuario</p>
+            <p className="text-[0.6875rem] text-muted-foreground/80">user@demo.com</p>
+          </button>
+        </div>
+        <p className="mt-2 text-[0.6875rem] text-muted-foreground/60">
+          Clickeá una cuenta para autocompletar y después &ldquo;Iniciar sesión&rdquo;.
+        </p>
+      </div>
     </form>
   );
 }

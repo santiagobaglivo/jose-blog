@@ -28,7 +28,19 @@ export function UserProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [profile, setProfile] = useState<Profile | null>(initialProfile);
+  const [serverUserId, setServerUserId] = useState<string | null>(initialUser?.id ?? null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sincronizar con los props cuando el server-side cambia el usuario
+  // (típicamente después de un login/logout server-action + router.refresh()).
+  // Pattern recomendado por React docs: ajustar state during render cuando un prop cambia.
+  // Comparamos por id para evitar disparar en cada nueva referencia de objeto.
+  const incomingId = initialUser?.id ?? null;
+  if (incomingId !== serverUserId) {
+    setServerUserId(incomingId);
+    setUser(initialUser);
+    setProfile(initialProfile);
+  }
 
   useEffect(() => {
     const supabase = createClient();
@@ -63,7 +75,7 @@ export function UserProvider({
     () => ({
       user,
       profile,
-      isAdmin: profile?.role === "admin",
+      isAdmin: profile?.role === "admin" || profile?.role === "superadmin",
       isLoading,
     }),
     [user, profile, isLoading]

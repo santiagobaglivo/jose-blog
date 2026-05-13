@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
@@ -57,7 +58,7 @@ export async function signIn(input: SignInInput): Promise<SignInResult> {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
@@ -67,7 +68,27 @@ export async function signIn(input: SignInInput): Promise<SignInResult> {
   }
 
   revalidatePath("/", "layout");
-  return { ok: true, redirectTo: safeRedirect(parsed.data.redirectedFrom) };
+
+  // Si redirectedFrom es explícito, lo respetamos.
+  if (parsed.data.redirectedFrom) {
+    return { ok: true, redirectTo: safeRedirect(parsed.data.redirectedFrom) };
+  }
+
+  // Sin redirectedFrom: admins van a /admin (el middleware se ocupa de mandar al host
+  // correcto). Users regulares van a la home.
+  const userId = signInData.user?.id;
+  if (userId) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+    if (profile?.role === "admin" || profile?.role === "superadmin") {
+      return { ok: true, redirectTo: "/admin" };
+    }
+  }
+
+  return { ok: true, redirectTo: "/" };
 }
 
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {
@@ -76,12 +97,22 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     return { ok: false, error: parsed.error.issues[0]?.message ?? SIGN_UP_GENERIC_ERROR };
   }
 
+  // Resolver brand_id desde el host (lo setea el middleware en x-brand-id).
+  // Un signup desde escudotributario.pe queda asociado a esa marca; si el host
+  // no resuelve marca (ej. dominio neutral), brand_id queda NULL y el usuario
+  // es global (típicamente: alta de admin desde el dominio del panel).
+  const h = await headers();
+  const brandId = h.get("x-brand-id") ?? "";
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      data: { display_name: parsed.data.display_name },
+      data: {
+        display_name: parsed.data.display_name,
+        brand_id: brandId,
+      },
     },
   });
 

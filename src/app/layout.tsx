@@ -21,9 +21,8 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Estudio Jurídico & Contable | Velázquez & Asociados",
-  description:
-    "Firma profesional de servicios contables, impositivos y de consultoría empresarial. Más de 20 años de experiencia acompañando a empresas y particulares.",
+  title: { default: "Estudio profesional", template: "%s" },
+  description: "Asesoría profesional integral.",
 };
 
 export default async function RootLayout({

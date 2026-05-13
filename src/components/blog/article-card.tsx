@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Post } from "@/lib/mock-data";
+import type { Post } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MessageSquare } from "lucide-react";
 import { PostImage } from "@/components/shared/post-image";

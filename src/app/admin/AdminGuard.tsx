@@ -18,7 +18,7 @@ export default async function AdminGuard({ children }: { children: React.ReactNo
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "superadmin") {
     redirect("/");
   }
 

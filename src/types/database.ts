@@ -34,35 +34,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      categories: {
+      brands: {
         Row: {
+          id: string
+          slug: string
+          domain: string | null
+          name: string
+          tagline: string | null
+          hero_image: string | null
+          accent_color: string | null
+          display_order: number
+          is_active: boolean
+          about_text: string
+          asesoria_text: string | null
+          seo_title: string | null
+          seo_description: string | null
           created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          slug: string
+          domain?: string | null
+          name: string
+          tagline?: string | null
+          hero_image?: string | null
+          accent_color?: string | null
+          display_order?: number
+          is_active?: boolean
+          about_text?: string
+          asesoria_text?: string | null
+          seo_title?: string | null
+          seo_description?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          slug?: string
+          domain?: string | null
+          name?: string
+          tagline?: string | null
+          hero_image?: string | null
+          accent_color?: string | null
+          display_order?: number
+          is_active?: boolean
+          about_text?: string
+          asesoria_text?: string | null
+          seo_title?: string | null
+          seo_description?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Relationships: []
+      }
+      brand_services: {
+        Row: {
+          id: string
+          brand_id: string
+          name: string
           description: string | null
           display_order: number
-          id: string
-          name: string
-          slug: string
+          is_active: boolean
+          created_at: string
           updated_at: string
         }
         Insert: {
-          created_at?: string
+          id?: string
+          brand_id: string
+          name: string
           description?: string | null
           display_order?: number
-          id?: string
-          name: string
-          slug: string
+          is_active?: boolean
+          created_at?: string
           updated_at?: string
         }
         Update: {
-          created_at?: string
+          id?: string
+          brand_id?: string
+          name?: string
           description?: string | null
           display_order?: number
-          id?: string
-          name?: string
-          slug?: string
+          is_active?: boolean
+          created_at?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "brand_services_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          id: string
+          brand_id: string
+          slug: string
+          name: string
+          description: string | null
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          slug: string
+          name: string
+          description?: string | null
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          slug?: string
+          name?: string
+          description?: string | null
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          id: string
+          brand_id: string
+          slug: string
+          name: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          slug: string
+          name: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          slug?: string
+          name?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tags_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       post_tags: {
         Row: {
@@ -96,68 +237,71 @@ export type Database = {
       }
       posts: {
         Row: {
+          id: string
+          brand_id: string
+          slug: string
+          title: string
+          subtitle: string | null
+          excerpt: string
+          content: Json
+          content_html: string
+          featured_image: string | null
           accent_color: string | null
           author_id: string
           category_id: string | null
-          content: Json
-          content_html: string
-          created_at: string
-          deleted_at: string | null
-          excerpt: string
-          featured_image: string | null
-          id: string
-          published_at: string | null
-          read_time_minutes: number | null
-          scheduled_for: string | null
-          search_vector: unknown | null
-          slug: string
           status: Database["public"]["Enums"]["post_status"]
-          subtitle: string | null
-          title: string
-          updated_at: string
+          published_at: string | null
+          scheduled_for: string | null
+          read_time_minutes: number | null
           view_count: number
+          search_vector: unknown | null
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
         }
         Insert: {
+          id?: string
+          brand_id: string
+          slug: string
+          title: string
+          subtitle?: string | null
+          excerpt: string
+          content: Json
+          content_html: string
+          featured_image?: string | null
           accent_color?: string | null
           author_id: string
           category_id?: string | null
-          content: Json
-          content_html: string
-          created_at?: string
-          deleted_at?: string | null
-          excerpt: string
-          featured_image?: string | null
-          id?: string
-          published_at?: string | null
-          read_time_minutes?: number | null
-          scheduled_for?: string | null
-          slug: string
           status?: Database["public"]["Enums"]["post_status"]
-          subtitle?: string | null
-          title: string
-          updated_at?: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          read_time_minutes?: number | null
           view_count?: number
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
+          id?: string
+          brand_id?: string
+          slug?: string
+          title?: string
+          subtitle?: string | null
+          excerpt?: string
+          content?: Json
+          content_html?: string
+          featured_image?: string | null
           accent_color?: string | null
           author_id?: string
           category_id?: string | null
-          content?: Json
-          content_html?: string
-          created_at?: string
-          deleted_at?: string | null
-          excerpt?: string
-          featured_image?: string | null
-          id?: string
-          published_at?: string | null
-          read_time_minutes?: number | null
-          scheduled_for?: string | null
-          slug?: string
           status?: Database["public"]["Enums"]["post_status"]
-          subtitle?: string | null
-          title?: string
-          updated_at?: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          read_time_minutes?: number | null
           view_count?: number
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
         }
         Relationships: [
           {
@@ -165,6 +309,13 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
             referencedColumns: ["id"]
           },
           {
@@ -178,54 +329,324 @@ export type Database = {
       }
       profiles: {
         Row: {
+          id: string
+          display_name: string
           avatar_url: string | null
           bio: string | null
-          created_at: string
-          display_name: string
-          id: string
           role: Database["public"]["Enums"]["user_role"]
+          brand_id: string | null
+          created_at: string
           updated_at: string
         }
         Insert: {
+          id: string
+          display_name: string
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string
-          display_name: string
-          id: string
           role?: Database["public"]["Enums"]["user_role"]
+          brand_id?: string | null
+          created_at?: string
           updated_at?: string
         }
         Update: {
+          id?: string
+          display_name?: string
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string
-          display_name?: string
-          id?: string
           role?: Database["public"]["Enums"]["user_role"]
+          brand_id?: string | null
+          created_at?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      tags: {
+      comments: {
         Row: {
-          created_at: string
           id: string
-          name: string
-          slug: string
+          post_id: string
+          brand_id: string
+          author_id: string
+          content: string
+          status: Database["public"]["Enums"]["comment_status"]
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
         }
         Insert: {
-          created_at?: string
           id?: string
-          name: string
-          slug: string
+          post_id: string
+          brand_id: string
+          author_id: string
+          content: string
+          status?: Database["public"]["Enums"]["comment_status"]
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
-          created_at?: string
           id?: string
-          name?: string
-          slug?: string
+          post_id?: string
+          brand_id?: string
+          author_id?: string
+          content?: string
+          status?: Database["public"]["Enums"]["comment_status"]
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_categories: {
+        Row: {
+          id: string
+          brand_id: string
+          slug: string
+          name: string
+          description: string | null
+          icon: string | null
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          slug: string
+          name: string
+          description?: string | null
+          icon?: string | null
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          slug?: string
+          name?: string
+          description?: string | null
+          icon?: string | null
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_categories_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_threads: {
+        Row: {
+          id: string
+          brand_id: string
+          category_id: string
+          author_id: string
+          slug: string
+          title: string
+          content: string
+          pinned: boolean
+          view_count: number
+          reply_count: number
+          last_reply_at: string | null
+          last_reply_by: string | null
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          category_id: string
+          author_id: string
+          slug: string
+          title: string
+          content: string
+          pinned?: boolean
+          view_count?: number
+          reply_count?: number
+          last_reply_at?: string | null
+          last_reply_by?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          category_id?: string
+          author_id?: string
+          slug?: string
+          title?: string
+          content?: string
+          pinned?: boolean
+          view_count?: number
+          reply_count?: number
+          last_reply_at?: string | null
+          last_reply_by?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_threads_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_threads_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_threads_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "forum_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_threads_last_reply_by_fkey"
+            columns: ["last_reply_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_messages: {
+        Row: {
+          id: string
+          brand_id: string
+          full_name: string
+          email: string
+          phone: string | null
+          subject: string
+          message: string
+          status: Database["public"]["Enums"]["contact_message_status"]
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          full_name: string
+          email: string
+          phone?: string | null
+          subject: string
+          message: string
+          status?: Database["public"]["Enums"]["contact_message_status"]
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          full_name?: string
+          email?: string
+          phone?: string | null
+          subject?: string
+          message?: string
+          status?: Database["public"]["Enums"]["contact_message_status"]
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_replies: {
+        Row: {
+          id: string
+          thread_id: string
+          author_id: string
+          content: string
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          thread_id: string
+          author_id: string
+          content: string
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          thread_id?: string
+          author_id?: string
+          content?: string
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_replies_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_replies_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "forum_threads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -239,7 +660,8 @@ export type Database = {
     Enums: {
       case_priority: "low" | "medium" | "high"
       case_status: "new" | "in_review" | "in_progress" | "resolved" | "closed"
-      comment_status: "pending" | "approved" | "rejected" | "spam"
+      comment_status: "pending" | "approved" | "rejected"
+      contact_message_status: "nuevo" | "leido" | "respondido"
       moderation_action:
         | "approve"
         | "reject"
@@ -250,7 +672,7 @@ export type Database = {
         | "suspend"
       moderation_target: "comment" | "thread" | "reply" | "user"
       post_status: "draft" | "scheduled" | "published" | "archived"
-      user_role: "admin" | "user"
+      user_role: "admin" | "user" | "superadmin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -383,7 +805,8 @@ export const Constants = {
     Enums: {
       case_priority: ["low", "medium", "high"],
       case_status: ["new", "in_review", "in_progress", "resolved", "closed"],
-      comment_status: ["pending", "approved", "rejected", "spam"],
+      comment_status: ["pending", "approved", "rejected"],
+      contact_message_status: ["nuevo", "leido", "respondido"],
       moderation_action: [
         "approve",
         "reject",
@@ -395,8 +818,7 @@ export const Constants = {
       ],
       moderation_target: ["comment", "thread", "reply", "user"],
       post_status: ["draft", "scheduled", "published", "archived"],
-      user_role: ["admin", "user"],
+      user_role: ["admin", "user", "superadmin"],
     },
   },
 } as const
-

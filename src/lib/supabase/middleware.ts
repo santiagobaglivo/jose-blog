@@ -1,10 +1,86 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import {
+  resolveBrandFromHost,
+  resolveBrandFromLocalhostSubdomain,
+  resolveBrandFromSlug,
+} from "@/lib/brand-domains";
 import type { Database } from "@/types/database";
 
+const GLOBAL_PATH_PREFIXES = ["/admin", "/auth", "/api", "/_next"];
+
+function isGlobalPath(pathname: string): boolean {
+  return GLOBAL_PATH_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
+function firstPathSegment(pathname: string): string | null {
+  const seg = pathname.split("/").filter(Boolean)[0];
+  return seg ?? null;
+}
+
+function cleanHost(host: string | null | undefined): string {
+  return (host ?? "").toLowerCase().replace(/:\d+$/, "");
+}
+
+/**
+ * Devuelve el `domain` que se debe setear en las cookies de auth para que
+ * la sesión sea válida cross-subdomain.
+ *
+ * - Dev: cualquier `*.localhost` o `localhost` → ".localhost" (Chrome/Firefox modernos).
+ * - Prod: si `NEXT_PUBLIC_COOKIE_DOMAIN` está seteado, lo respetamos
+ *   (ej. ".dominio.com"). Si no, devolvemos undefined (cookie queda por host).
+ */
+function authCookieDomain(host: string | null | undefined): string | undefined {
+  const configured = process.env.NEXT_PUBLIC_COOKIE_DOMAIN;
+  if (configured) return configured;
+  const h = cleanHost(host);
+  if (h === "localhost" || h.endsWith(".localhost")) return ".localhost";
+  return undefined;
+}
+
+// Dev: admin.localhost(.lan) / localhost (sin subdomain).
+// Prod: hostname configurado en NEXT_PUBLIC_ADMIN_HOST (ej. admin.estudio.com).
+// Si no se setea NEXT_PUBLIC_ADMIN_HOST, `admin.<base>` o `admin.localhost` cuentan.
+function isAdminHost(host: string | null | undefined): boolean {
+  const h = cleanHost(host);
+  if (!h) return false;
+  const configured = process.env.NEXT_PUBLIC_ADMIN_HOST?.toLowerCase().replace(/:\d+$/, "");
+  if (configured && h === configured) return true;
+  if (h === "localhost" || h === "127.0.0.1") return true;
+  if (h.startsWith("admin.")) return true;
+  return false;
+}
+
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  const host = request.headers.get("host");
+  let brand = await resolveBrandFromHost(host).catch(() => null);
+
+  // Dev: matchear subdominios de localhost (escudotributario.localhost:3000 → brand).
+  if (!brand) {
+    brand = await resolveBrandFromLocalhostSubdomain(host).catch(() => null);
+  }
+
+  // Fallback dev: si el host no resuelve marca pero el path empieza con /<slug>,
+  // resolvemos por slug para setear los headers x-brand-*.
+  if (!brand && !isGlobalPath(request.nextUrl.pathname)) {
+    const slug = firstPathSegment(request.nextUrl.pathname);
+    if (slug) brand = await resolveBrandFromSlug(slug).catch(() => null);
+  }
+
+  const requestHeaders = new Headers(request.headers);
+  if (brand) {
+    requestHeaders.set("x-brand-id", brand.id);
+    requestHeaders.set("x-brand-slug", brand.slug);
+    requestHeaders.set("x-brand-name", brand.name);
+    if (brand.accent_color) {
+      requestHeaders.set("x-brand-accent", brand.accent_color);
+    }
+  }
+
+  let supabaseResponse = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,10 +91,16 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          const domain = authCookieDomain(host);
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = NextResponse.next({
+            request: { headers: requestHeaders },
+          });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              ...(domain ? { domain } : {}),
+            })
           );
         },
       },
@@ -44,15 +126,84 @@ export async function updateSession(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, brand_id")
       .eq("id", user.id)
       .maybeSingle();
 
-    if (profile?.role !== "admin") {
+    const role = profile?.role;
+    if (role !== "admin" && role !== "superadmin") {
       const homeUrl = request.nextUrl.clone();
       homeUrl.pathname = "/";
       homeUrl.search = "";
       return NextResponse.redirect(homeUrl);
+    }
+
+    // Gating por host:
+    // - superadmin: solo desde admin host (admin.* o localhost neutral).
+    // - admin local: solo desde su propio brand subdomain.
+    if (role === "superadmin" && !isAdminHost(host)) {
+      const adminUrl = request.nextUrl.clone();
+      const configuredAdmin = process.env.NEXT_PUBLIC_ADMIN_HOST;
+      if (configuredAdmin) {
+        adminUrl.host = configuredAdmin;
+      } else {
+        // Dev: forzar admin.localhost manteniendo puerto.
+        const port = request.nextUrl.port || "3000";
+        adminUrl.host = `admin.localhost:${port}`;
+      }
+      adminUrl.pathname = pathname;
+      adminUrl.search = "";
+      return NextResponse.redirect(adminUrl);
+    }
+
+    if (role === "admin") {
+      // Admin local: el host debe matchear su brand_id.
+      if (!brand || brand.id !== profile?.brand_id) {
+        if (!profile?.brand_id) {
+          const homeUrl = request.nextUrl.clone();
+          homeUrl.pathname = "/";
+          homeUrl.search = "";
+          return NextResponse.redirect(homeUrl);
+        }
+        // Buscar el slug de su brand para redirigir.
+        const { data: ownBrand } = await supabase
+          .from("brands")
+          .select("slug, domain")
+          .eq("id", profile.brand_id)
+          .maybeSingle();
+        if (ownBrand) {
+          const redirectUrl = request.nextUrl.clone();
+          const port = request.nextUrl.port || "3000";
+          // En prod usaría ownBrand.domain; en dev usa <slug-sin-guiones>.localhost.
+          const targetHost =
+            ownBrand.domain || `${ownBrand.slug.replace(/-/g, "")}.localhost:${port}`;
+          redirectUrl.host = targetHost;
+          redirectUrl.pathname = pathname;
+          redirectUrl.search = "";
+          return NextResponse.redirect(redirectUrl);
+        }
+      }
+    }
+  }
+
+  // Rewrite por marca: el host resuelve a una marca y el path no es global.
+  // escudotributario.pe/blog → ruta interna /escudo-tributario/blog
+  // (matchea (brand)/[brand]/blog/page.tsx con params.brand="escudo-tributario").
+  // Idempotente: si el path ya empieza con /<slug>, no doble-rewrite.
+  if (brand && !isGlobalPath(pathname)) {
+    const slugPrefix = `/${brand.slug}`;
+    const alreadyRewritten =
+      pathname === slugPrefix || pathname.startsWith(`${slugPrefix}/`);
+    if (!alreadyRewritten) {
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = `${slugPrefix}${pathname === "/" ? "" : pathname}`;
+      const rewritten = NextResponse.rewrite(rewriteUrl, {
+        request: { headers: requestHeaders },
+      });
+      supabaseResponse.cookies.getAll().forEach((c) => {
+        rewritten.cookies.set(c.name, c.value);
+      });
+      return rewritten;
     }
   }
 

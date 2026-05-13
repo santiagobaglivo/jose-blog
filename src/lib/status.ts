@@ -1,5 +1,5 @@
 import { Receipt, Users, Building2, Calculator, HelpCircle } from "lucide-react";
-import type { Comment } from "@/lib/mock-data";
+import type { Comment } from "@/types/blog";
 
 type StatusEntry = { label: string; className: string };
 
@@ -25,4 +25,9 @@ export const forumIconMap: Record<string, React.ElementType> = {
   building: Building2,
   calculator: Calculator,
   "help-circle": HelpCircle,
+};
+
+export const roleConfig = {
+  admin: { label: "Admin", className: "bg-primary/10 text-primary border-primary/20" },
+  usuario: { label: "Usuario", className: "bg-secondary text-muted-foreground border-border/50" },
 };

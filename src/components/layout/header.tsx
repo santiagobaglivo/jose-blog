@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -22,11 +23,17 @@ import {
 
 const navigation = [
   { name: "Inicio", href: "/" },
-  { name: "Sobre el Estudio", href: "/sobre-nosotros" },
+  { name: "Sobre nosotros", href: "/sobre-nosotros" },
   { name: "Blog", href: "/blog" },
   { name: "Foros", href: "/foros" },
   { name: "Contacto", href: "/contacto" },
 ];
+
+export interface HeaderBrand {
+  name: string;
+  slug: string;
+  accentColor: string | null;
+}
 
 function getInitials(profile: Profile | null, email: string | null | undefined) {
   const source = profile?.display_name?.trim() || email?.split("@")[0] || "";
@@ -36,7 +43,7 @@ function getInitials(profile: Profile | null, email: string | null | undefined) 
   return initials.toUpperCase();
 }
 
-export function Header() {
+export function Header({ brand }: { brand?: HeaderBrand }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -45,6 +52,10 @@ export function Header() {
 
   const inAdminArea = pathname.startsWith("/admin");
   if (inAdminArea) return null;
+
+  const brandName = brand?.name ?? "Estudio";
+  const brandInitial = brand?.name?.charAt(0).toUpperCase() ?? "E";
+  const brandAccent = brand?.accentColor ?? undefined;
 
   const handleSignOut = () => {
     startSignOut(async () => {
@@ -62,18 +73,27 @@ export function Header() {
   const initials = getInitials(profile, user?.email);
   const displayName = profile?.display_name?.trim() || user?.email || "Mi cuenta";
 
+  // Para que al loguearte vuelvas a donde estabas (especialmente útil en dominios de marca).
+  const loginHref =
+    pathname && pathname !== "/" && !pathname.startsWith("/auth")
+      ? `/auth/login?redirectedFrom=${encodeURIComponent(pathname)}`
+      : "/auth/login";
+
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border/50">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between lg:h-18">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="text-primary-foreground font-serif font-bold text-sm">V</span>
+            <div
+              className="h-9 w-9 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
+              style={{ backgroundColor: brandAccent ?? "var(--primary)" }}
+            >
+              <span className="text-white font-serif font-bold text-sm">{brandInitial}</span>
             </div>
             <div className="hidden sm:block">
               <span className="text-[0.9375rem] font-semibold tracking-tight text-foreground">
-                Velázquez & Asociados
+                {brandName}
               </span>
             </div>
           </Link>
@@ -133,18 +153,20 @@ export function Header() {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" sideOffset={8} className="min-w-56">
-                  <DropdownMenuLabel className="px-2 py-1.5">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium text-foreground truncate">
-                        {displayName}
-                      </span>
-                      {user.email && profile?.display_name ? (
-                        <span className="text-xs text-muted-foreground truncate">
-                          {user.email}
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="px-2 py-1.5">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-medium text-foreground truncate">
+                          {displayName}
                         </span>
-                      ) : null}
-                    </div>
-                  </DropdownMenuLabel>
+                        {user.email && profile?.display_name ? (
+                          <span className="text-xs text-muted-foreground truncate">
+                            {user.email}
+                          </span>
+                        ) : null}
+                      </div>
+                    </DropdownMenuLabel>
+                  </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     render={<Link href="/perfil" />}
@@ -177,7 +199,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <Link
-                href="/auth/login"
+                href={loginHref}
                 className="hidden lg:inline-flex h-9 px-4 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.8125rem] font-medium hover:bg-primary/90 transition-colors"
               >
                 Ingresar
@@ -279,7 +301,7 @@ export function Header() {
                   </div>
                 ) : (
                   <Link
-                    href="/auth/login"
+                    href={loginHref}
                     onClick={() => setMobileOpen(false)}
                     className="flex h-10 items-center justify-center rounded-md bg-primary text-primary-foreground text-[0.875rem] font-medium hover:bg-primary/90 transition-colors"
                   >

@@ -1,23 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { getBrandContext } from "@/lib/auth/brand-context";
 import { ResetPasswordForm } from "./reset-password-form";
 
-export const metadata: Metadata = {
-  title: "Nueva contraseña | Velázquez & Asociados",
-  description: "Definí una nueva contraseña para tu cuenta.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrandContext();
+  return {
+    title: brand ? `Nueva contraseña | ${brand.name}` : "Nueva contraseña",
+    description: "Definí una nueva contraseña para tu cuenta.",
+  };
+}
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage() {
+  const brand = await getBrandContext();
+  const initial = brand?.name?.charAt(0).toUpperCase() ?? "E";
+
   return (
     <div className="w-full max-w-md">
       <div className="flex flex-col items-center text-center mb-8">
         <Link
           href="/"
           aria-label="Volver al inicio"
-          className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center transition-transform hover:scale-105"
+          className="h-12 w-12 rounded-xl flex items-center justify-center transition-transform hover:scale-105"
+          style={{ backgroundColor: brand?.accentColor ?? "var(--primary)" }}
         >
-          <span className="text-primary-foreground font-serif font-bold text-lg">V</span>
+          <span className="text-white font-serif font-bold text-lg">{initial}</span>
         </Link>
         <h1 className="mt-6 font-serif text-3xl text-foreground tracking-tight">
           Nueva contraseña

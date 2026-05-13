@@ -1,4 +1,7 @@
-import { getDashboardStats, getPublishedPosts } from "@/lib/queries/posts";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+
+import { getAllPostsAdmin, getDashboardStats } from "@/lib/queries/posts";
 import { getAllCommentsAdmin } from "@/lib/queries/comments";
 import {
   FileText,
@@ -14,11 +17,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
-  const [dashboardStats, allComments, published] = await Promise.all([
+  const [dashboardStats, allComments, publishedAdmin] = await Promise.all([
     getDashboardStats(),
     getAllCommentsAdmin(),
-    getPublishedPosts(),
+    getAllPostsAdmin({ status: "published" }),
   ]);
+  const recentPosts = publishedAdmin.slice(0, 5);
 
   const statCards = [
     {
@@ -61,7 +65,6 @@ export default async function AdminDashboard() {
   ];
 
   const recentComments = allComments.filter((c) => c.status === "pendiente");
-  const recentPosts = published.slice(0, 5);
 
   return (
     <div>
@@ -178,23 +181,35 @@ export default async function AdminDashboard() {
             </Link>
           </div>
           <div className="divide-y divide-border/50">
-            {recentPosts.map((post) => (
-              <div key={post.slug} className="px-5 py-4 flex items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[0.8125rem] font-medium text-foreground truncate">
-                    {post.title}
-                  </h3>
-                  <div className="mt-1 flex items-center gap-2 text-[0.75rem] text-muted-foreground/60">
-                    <span>{post.author.name}</span>
-                    <span>·</span>
-                    <span>{post.date}</span>
-                  </div>
-                </div>
-                <Badge variant="secondary" className="text-[0.6875rem] shrink-0">
-                  {post.category}
-                </Badge>
+            {recentPosts.length === 0 ? (
+              <div className="px-5 py-8 text-center text-[0.8125rem] text-muted-foreground/60">
+                No hay artículos publicados todavía.
               </div>
-            ))}
+            ) : (
+              recentPosts.map((post) => (
+                <div key={post.id} className="px-5 py-4 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[0.8125rem] font-medium text-foreground truncate">
+                      {post.title}
+                    </h3>
+                    <div className="mt-1 flex items-center gap-2 text-[0.75rem] text-muted-foreground/60">
+                      <span>{post.author.name}</span>
+                      <span>·</span>
+                      <span>
+                        {post.publishedAt
+                          ? format(new Date(post.publishedAt), "d 'de' MMMM yyyy", { locale: es })
+                          : ""}
+                      </span>
+                    </div>
+                  </div>
+                  {post.category && (
+                    <Badge variant="secondary" className="text-[0.6875rem] shrink-0">
+                      {post.category.name}
+                    </Badge>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

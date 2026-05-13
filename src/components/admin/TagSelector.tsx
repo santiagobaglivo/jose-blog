@@ -20,6 +20,7 @@ export type TagOption = { id: string; name: string; slug?: string };
 
 type TagSelectorProps = {
   tags: TagOption[];
+  brandId: string;
   defaultTags?: string[];
   onChange?: (tagIds: string[]) => void;
   name?: string;
@@ -28,6 +29,7 @@ type TagSelectorProps = {
 
 export function TagSelector({
   tags: initialTags,
+  brandId,
   defaultTags = [],
   onChange,
   name,
@@ -67,7 +69,7 @@ export function TagSelector({
   const handleCreate = () => {
     if (!trimmed || isPending) return;
     startTransition(async () => {
-      const result = await createTag({ name: trimmed });
+      const result = await createTag({ brandId, name: trimmed });
       if (!result.ok) {
         toast.error(result.error);
         return;
