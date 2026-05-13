@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import type { BrandDetail } from "@/lib/queries/brands";
 import type { BrandInput } from "@/lib/validators/brand";
 import { createBrand, updateBrand } from "./actions";
+import { LogoUploader } from "./logo-uploader";
 import { ServicesEditor, type ServiceDraft } from "./services-editor";
 
 interface BrandFormProps {
@@ -186,11 +187,19 @@ export function BrandForm({ initial, mode }: BrandFormProps) {
           </div>
 
           <div>
-            <label className={labelClass} htmlFor="hero_image">Imagen hero (URL)</label>
+            <label className={labelClass}>Imagen / Logo</label>
+            <LogoUploader
+              brandId={initial?.id}
+              currentUrl={heroImage || null}
+              onUploaded={(url) => setHeroImage(url)}
+            />
+            <p className="mt-2 text-[0.75rem] text-muted-foreground/70">
+              O pegá una URL externa si la imagen ya está hosteada en otro lado:
+            </p>
             <input
               id="hero_image"
               type="url"
-              className={inputClass}
+              className={`${inputClass} mt-1`}
               value={heroImage}
               onChange={(e) => setHeroImage(e.target.value)}
               placeholder="https://..."

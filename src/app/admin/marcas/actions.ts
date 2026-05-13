@@ -257,3 +257,71 @@ export async function toggleBrandActive(
   revalidateBrand(brand.slug);
   return { ok: true };
 }
+
+// ============================================================================
+// Upload de imagen (logo / hero) de una marca al bucket brand-assets.
+// ============================================================================
+
+const MAX_LOGO_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_MIME = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml"];
+
+export type UploadLogoResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string };
+
+export async function uploadBrandLogo(formData: FormData): Promise<UploadLogoResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { ok: false, error: auth.error };
+
+  const brandId = String(formData.get("brandId") ?? "");
+  const file = formData.get("file");
+  if (!brandId || !(file instanceof File)) {
+    return { ok: false, error: "Datos inválidos" };
+  }
+  if (file.size === 0) return { ok: false, error: "Archivo vacío" };
+  if (file.size > MAX_LOGO_BYTES) {
+    return { ok: false, error: "La imagen supera 5MB" };
+  }
+  if (!ALLOWED_MIME.includes(file.type)) {
+    return { ok: false, error: "Formato no soportado (PNG/JPG/WEBP/SVG)" };
+  }
+
+  const supabase = await createClient();
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("slug")
+    .eq("id", brandId)
+    .maybeSingle();
+  if (!brand) return { ok: false, error: NOT_FOUND_ERROR };
+
+  // Extension limpia.
+  const ext = (file.name.match(/\.([a-z0-9]+)$/i)?.[1] ?? "png").toLowerCase();
+  const path = `${brand.slug}/logo-${Date.now()}.${ext}`;
+
+  const { error: upErr } = await supabase.storage
+    .from("brand-assets")
+    .upload(path, file, {
+      contentType: file.type,
+      cacheControl: "3600",
+      upsert: false,
+    });
+  if (upErr) {
+    return { ok: false, error: `No pudimos subir la imagen: ${upErr.message}` };
+  }
+
+  const { data: pub } = supabase.storage.from("brand-assets").getPublicUrl(path);
+  const publicUrl = pub.publicUrl;
+
+  // Persistir en la columna hero_image.
+  const { error: updErr } = await supabase
+    .from("brands")
+    .update({ hero_image: publicUrl, updated_at: new Date().toISOString() })
+    .eq("id", brandId);
+  if (updErr) {
+    return { ok: false, error: GENERIC_ERROR };
+  }
+
+  revalidateBrand(brand.slug);
+  return { ok: true, url: publicUrl };
+}

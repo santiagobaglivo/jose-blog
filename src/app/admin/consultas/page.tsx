@@ -4,7 +4,9 @@ import { Mail, Phone, Building, Inbox } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Pagination } from "@/components/shared/pagination";
 import { getAdminScope } from "@/lib/auth/admin-scope";
+import { paginate } from "@/lib/paginate";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type ContactRow = {
@@ -31,7 +33,12 @@ const statusMap: Record<string, { label: string; className: string }> = {
   },
 };
 
-export default async function ConsultasAdmin() {
+export default async function ConsultasAdmin({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string | string[] }>;
+}) {
+  const { page: pageParam } = await searchParams;
   const scope = await getAdminScope();
   if (scope.kind === "none") return null;
   const supabase = createAdminClient();
@@ -45,7 +52,8 @@ export default async function ConsultasAdmin() {
   if (scope.brand) query = query.eq("brand_id", scope.brand.id);
   const { data } = await query;
 
-  const rows = (data ?? []) as unknown as ContactRow[];
+  const allRows = (data ?? []) as unknown as ContactRow[];
+  const { items: rows, total, page, totalPages } = paginate(allRows, pageParam, 12);
 
   return (
     <div>
@@ -125,6 +133,15 @@ export default async function ConsultasAdmin() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {rows.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between text-[0.75rem] text-muted-foreground">
+          <span>
+            Mostrando {(page - 1) * 12 + 1}–{Math.min(page * 12, total)} de {total}
+          </span>
+          <Pagination current={page} total={totalPages} />
         </div>
       )}
     </div>

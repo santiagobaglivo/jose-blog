@@ -5,7 +5,9 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Pagination } from "@/components/shared/pagination";
 import { SearchBar } from "@/components/shared/search-bar";
+import { paginate } from "@/lib/paginate";
 import { createClient } from "@/lib/supabase/server";
 import { getAllPostsAdmin, type AdminPostStatus } from "@/lib/queries/posts";
 import { postStatusMap } from "@/lib/status";
@@ -47,15 +49,20 @@ function formatDate(iso: string | null) {
 export default async function ArticulosAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; category?: string | string[]; q?: string | string[] }>;
+  searchParams: Promise<{
+    status?: string | string[];
+    category?: string | string[];
+    q?: string | string[];
+    page?: string | string[];
+  }>;
 }) {
-  const { status, category, q } = await searchParams;
+  const { status, category, q, page: pageParam } = await searchParams;
   const activeStatus = parseStatus(status);
   const activeCategory = parseString(category);
   const activeQuery = parseString(q);
 
   const supabase = await createClient();
-  const [posts, categoriesResult] = await Promise.all([
+  const [allPosts, categoriesResult] = await Promise.all([
     getAllPostsAdmin({
       status: activeStatus,
       category: activeCategory,
@@ -65,6 +72,7 @@ export default async function ArticulosAdmin({
   ]);
   const categories = categoriesResult.data ?? [];
 
+  const { items: posts, total, page, totalPages } = paginate(allPosts, pageParam, 15);
   const hasActiveFilters = Boolean(activeStatus || activeCategory || activeQuery);
 
   return (
@@ -265,6 +273,15 @@ export default async function ArticulosAdmin({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {posts.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between text-[0.75rem] text-muted-foreground">
+          <span>
+            Mostrando {(page - 1) * 15 + 1}–{Math.min(page * 15, total)} de {total}
+          </span>
+          <Pagination current={page} total={totalPages} />
         </div>
       )}
     </div>

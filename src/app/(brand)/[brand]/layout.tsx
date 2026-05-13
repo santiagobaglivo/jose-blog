@@ -50,8 +50,19 @@ export default async function BrandLayout({
 
   const accent = resolved.accentColor ?? "#1e3a5f";
 
+  // Pisamos las CSS variables globales del theme con el accent de la brand.
+  // Así todos los `bg-primary`, `text-primary`, `ring-primary`, etc. se pintan
+  // automáticamente con el color de la marca actual.
+  const brandStyle = {
+    "--brand-accent": accent,
+    "--primary": accent,
+    "--ring": accent,
+    "--sidebar-primary": accent,
+    "--sidebar-ring": accent,
+  } as React.CSSProperties;
+
   return (
-    <div style={{ "--brand-accent": accent } as React.CSSProperties}>
+    <div style={brandStyle}>
       <Header
         brand={{ name: resolved.name, slug: resolved.slug, accentColor: resolved.accentColor }}
       />

@@ -9,10 +9,12 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginInput } from "@/lib/validators/auth";
-import { signIn } from "../actions";
 
 type FormValues = LoginInput;
+
+const SIGN_IN_ERROR = "Email o contraseña incorrectos";
 
 export function LoginForm({
   redirectedFrom,
@@ -46,13 +48,36 @@ export function LoginForm({
   const onSubmit = (values: FormValues) => {
     setServerError(null);
     startTransition(async () => {
-      const result = await signIn({ ...values, redirectedFrom });
-      if (!result.ok) {
-        setServerError(result.error);
+      const supabase = createClient();
+      // 1. Auth desde el cliente: setea cookies via @supabase/ssr y dispara
+      //    onAuthStateChange en UserProvider en el mismo tick.
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      if (error || !data.user) {
+        setServerError(SIGN_IN_ERROR);
         return;
       }
+
+      // 2. Determinar redirect: si vino con redirectedFrom, lo respetamos;
+      //    si no, decidimos por rol del user.
+      let target = "/";
+      if (redirectedFrom && redirectedFrom.startsWith("/") && !redirectedFrom.startsWith("//")) {
+        target = redirectedFrom;
+      } else {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .maybeSingle();
+        if (profile?.role === "admin" || profile?.role === "superadmin") {
+          target = "/admin";
+        }
+      }
+
       toast.success("Sesión iniciada");
-      router.replace(result.redirectTo);
+      router.replace(target);
       router.refresh();
     });
   };

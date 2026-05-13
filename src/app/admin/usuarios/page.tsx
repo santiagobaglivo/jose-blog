@@ -3,7 +3,9 @@ import { Shield, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Pagination } from "@/components/shared/pagination";
 import { SearchBar } from "@/components/shared/search-bar";
+import { paginate } from "@/lib/paginate";
 import { roleConfig } from "@/lib/status";
 import { getAllUsersAdmin, type AdminUserRoleFilter } from "@/lib/queries/users";
 import { createClient } from "@/lib/supabase/server";
@@ -23,16 +25,17 @@ function parseRoleFilter(value: string | string[] | undefined): AdminUserRoleFil
 export default async function UsuariosAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ role?: string | string[] }>;
+  searchParams: Promise<{ role?: string | string[]; page?: string | string[] }>;
 }) {
-  const { role } = await searchParams;
+  const { role, page: pageParam } = await searchParams;
   const activeFilter = parseRoleFilter(role);
   const supabase = await createClient();
-  const [users, currentUserResult] = await Promise.all([
+  const [allUsers, currentUserResult] = await Promise.all([
     getAllUsersAdmin(activeFilter),
     supabase.auth.getUser(),
   ]);
   const currentUser = currentUserResult.data.user;
+  const { items: users, total, page, totalPages } = paginate(allUsers, pageParam, 15);
 
   return (
     <div>
@@ -157,6 +160,15 @@ export default async function UsuariosAdmin({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {users.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between text-[0.75rem] text-muted-foreground">
+          <span>
+            Mostrando {(page - 1) * 15 + 1}–{Math.min(page * 15, total)} de {total}
+          </span>
+          <Pagination current={page} total={totalPages} />
         </div>
       )}
     </div>

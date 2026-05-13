@@ -6,7 +6,9 @@ import { getAllPostsAdmin } from "@/lib/queries/posts";
 import { commentStatusMap } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Pagination } from "@/components/shared/pagination";
 import { SearchBar } from "@/components/shared/search-bar";
+import { paginate } from "@/lib/paginate";
 import { CommentRowActions } from "./comment-row-actions";
 
 type Filter = "all" | "pending" | "approved" | "rejected";
@@ -33,14 +35,17 @@ function parseFilter(value: string | string[] | undefined): Filter {
 export default async function ComentariosAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; page?: string | string[] }>;
 }) {
-  const { status } = await searchParams;
+  const { status, page: pageParam } = await searchParams;
   const activeFilter = parseFilter(status);
   const [allComments, posts] = await Promise.all([getAllCommentsAdmin(), getAllPostsAdmin()]);
 
   const uiStatus = UI_STATUS_BY_FILTER[activeFilter];
-  const comments = uiStatus ? allComments.filter((c) => c.status === uiStatus) : allComments;
+  const filteredComments = uiStatus
+    ? allComments.filter((c) => c.status === uiStatus)
+    : allComments;
+  const { items: comments, total, page, totalPages } = paginate(filteredComments, pageParam, 12);
 
   return (
     <div>
@@ -132,6 +137,15 @@ export default async function ComentariosAdmin({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {comments.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between text-[0.75rem] text-muted-foreground">
+          <span>
+            Mostrando {(page - 1) * 12 + 1}–{Math.min(page * 12, total)} de {total}
+          </span>
+          <Pagination current={page} total={totalPages} />
         </div>
       )}
     </div>
