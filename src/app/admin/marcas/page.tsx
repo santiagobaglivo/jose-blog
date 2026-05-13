@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { publicBrandUrl } from "@/lib/brand-public-url";
 import { getAllBrandsAdmin } from "@/lib/queries/brands";
 import { BrandRowActions } from "./brand-row-actions";
 
@@ -12,12 +13,12 @@ function formatDate(iso: string) {
   return format(new Date(iso), "d 'de' MMMM yyyy", { locale: es });
 }
 
-function publicUrl(brand: { slug: string; domain: string | null }): string {
-  return brand.domain ? `https://${brand.domain}/` : `/${brand.slug}`;
-}
-
 export default async function MarcasAdminPage() {
   const brands = await getAllBrandsAdmin();
+  // Pre-resolver URLs públicas (siempre apuntan al subdomain, NUNCA al admin host).
+  const publicHrefs = await Promise.all(
+    brands.map((b) => publicBrandUrl({ slug: b.slug, domain: b.domain }))
+  );
 
   return (
     <div>
@@ -69,7 +70,9 @@ export default async function MarcasAdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
-                {brands.map((brand) => (
+                {brands.map((brand, idx) => {
+                  const publicHref = publicHrefs[idx];
+                  return (
                   <tr key={brand.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
@@ -112,16 +115,25 @@ export default async function MarcasAdminPage() {
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex items-center gap-1">
-                        <Link
-                          href={publicUrl(brand)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
-                          title={brand.domain ? `Ver ${brand.domain}` : "Ver (path)"}
-                          aria-label={`Ver ${brand.name}`}
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                        </Link>
+                        {publicHref ? (
+                          <a
+                            href={publicHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                            title={`Ver ${brand.domain}`}
+                            aria-label={`Ver ${brand.name}`}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </a>
+                        ) : (
+                          <span
+                            className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/30 cursor-not-allowed"
+                            title="Sin dominio asignado"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </span>
+                        )}
                         <Link
                           href={`/admin/marcas/${brand.id}`}
                           className="h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
@@ -138,7 +150,8 @@ export default async function MarcasAdminPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

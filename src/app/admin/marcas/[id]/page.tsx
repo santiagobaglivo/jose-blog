@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 
 import { getAdminScope } from "@/lib/auth/admin-scope";
+import { publicBrandUrl } from "@/lib/brand-public-url";
 import { getBrandByIdAdmin } from "@/lib/queries/brands";
 import { BrandForm } from "../brand-form";
 
@@ -22,6 +23,8 @@ export default async function EditarMarcaPage({
 
   const brand = await getBrandByIdAdmin(id);
   if (!brand) notFound();
+
+  const publicHref = await publicBrandUrl(brand);
 
   return (
     <div>
@@ -43,15 +46,25 @@ export default async function EditarMarcaPage({
             </p>
           </div>
         </div>
-        <Link
-          href={brand.domain ? `https://${brand.domain}/` : `/${brand.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 h-9 px-3 text-[0.8125rem] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 rounded-lg transition-colors"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          Ver pública
-        </Link>
+        {publicHref ? (
+          <a
+            href={publicHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 h-9 px-3 text-[0.8125rem] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 rounded-lg transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Ver pública
+          </a>
+        ) : (
+          <span
+            title="Esta marca todavía no tiene dominio asignado"
+            className="inline-flex items-center gap-1.5 h-9 px-3 text-[0.8125rem] font-medium text-muted-foreground/40 rounded-lg cursor-not-allowed"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Sin dominio
+          </span>
+        )}
       </div>
 
       <BrandForm mode="edit" initial={brand} />

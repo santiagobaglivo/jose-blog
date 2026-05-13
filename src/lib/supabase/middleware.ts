@@ -52,6 +52,31 @@ function isAdminHost(host: string | null | undefined): boolean {
   return false;
 }
 
+/**
+ * Protocolo a usar en los redirects cross-host.
+ * - Si el request trae `x-forwarded-proto`, lo respetamos.
+ * - Si NO, asumimos `http` para sslip.io / localhost / IPs internas; `https` para todo lo demás.
+ * Esto evita que un redirect a admin.<host> termine en `https://...` cuando el dominio
+ * no tiene SSL configurado (sslip.io no provee certs).
+ */
+function safeRedirectProtocol(request: NextRequest, targetHost: string): string {
+  const forwarded = request.headers.get("x-forwarded-proto");
+  if (forwarded) return forwarded;
+  const h = targetHost.toLowerCase().replace(/:\d+$/, "");
+  if (
+    h === "localhost" ||
+    h.endsWith(".localhost") ||
+    h.endsWith(".sslip.io") ||
+    h.startsWith("127.") ||
+    h.startsWith("192.168.") ||
+    h.startsWith("10.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(h)
+  ) {
+    return "http";
+  }
+  return "https";
+}
+
 export async function updateSession(request: NextRequest) {
   const host = request.headers.get("host");
   let brand = await resolveBrandFromHost(host).catch(() => null);
@@ -142,18 +167,12 @@ export async function updateSession(request: NextRequest) {
     // - superadmin: solo desde admin host (admin.* o localhost neutral).
     // - admin local: solo desde su propio brand subdomain.
     if (role === "superadmin" && !isAdminHost(host)) {
-      const adminUrl = request.nextUrl.clone();
       const configuredAdmin = process.env.NEXT_PUBLIC_ADMIN_HOST;
-      if (configuredAdmin) {
-        adminUrl.host = configuredAdmin;
-      } else {
-        // Dev: forzar admin.localhost manteniendo puerto.
-        const port = request.nextUrl.port || "3000";
-        adminUrl.host = `admin.localhost:${port}`;
-      }
-      adminUrl.pathname = pathname;
-      adminUrl.search = "";
-      return NextResponse.redirect(adminUrl);
+      const port = request.nextUrl.port || "";
+      const targetHost = configuredAdmin || `admin.localhost${port ? `:${port}` : ""}`;
+      const protocol = safeRedirectProtocol(request, targetHost);
+      const target = new URL(`${protocol}://${targetHost}${pathname}`);
+      return NextResponse.redirect(target);
     }
 
     if (role === "admin") {
@@ -165,22 +184,20 @@ export async function updateSession(request: NextRequest) {
           homeUrl.search = "";
           return NextResponse.redirect(homeUrl);
         }
-        // Buscar el slug de su brand para redirigir.
+        // Buscar el dominio público de su brand y redirigir.
         const { data: ownBrand } = await supabase
           .from("brands")
           .select("slug, domain")
           .eq("id", profile.brand_id)
           .maybeSingle();
         if (ownBrand) {
-          const redirectUrl = request.nextUrl.clone();
-          const port = request.nextUrl.port || "3000";
-          // En prod usaría ownBrand.domain; en dev usa <slug-sin-guiones>.localhost.
+          const port = request.nextUrl.port || "";
           const targetHost =
-            ownBrand.domain || `${ownBrand.slug.replace(/-/g, "")}.localhost:${port}`;
-          redirectUrl.host = targetHost;
-          redirectUrl.pathname = pathname;
-          redirectUrl.search = "";
-          return NextResponse.redirect(redirectUrl);
+            ownBrand.domain ||
+            `${ownBrand.slug.replace(/-/g, "")}.localhost${port ? `:${port}` : ""}`;
+          const protocol = safeRedirectProtocol(request, targetHost);
+          const target = new URL(`${protocol}://${targetHost}${pathname}`);
+          return NextResponse.redirect(target);
         }
       }
     }
