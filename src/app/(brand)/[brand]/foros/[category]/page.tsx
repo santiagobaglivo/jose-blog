@@ -24,6 +24,9 @@ export default async function ForumCategoryPage({
   const catThreads = await getThreadsByCategory(category);
   const displayThreads = catThreads;
 
+  // Subcategorías de esta categoría (si tiene).
+  const subcategories = allCategories.filter((c) => c.parentSlug === cat.slug);
+
   return (
     <>
       <section className="bg-gradient-to-b from-secondary/40 to-transparent pt-10 pb-8">
@@ -58,6 +61,35 @@ export default async function ForumCategoryPage({
 
       <section className="py-8 lg:py-12">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          {/* Subcategorías */}
+          {subcategories.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-sm font-semibold text-foreground font-sans mb-3">
+                Subcategorías
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {subcategories.map((sub) => (
+                  <Link
+                    key={sub.slug}
+                    href={`/foros/${sub.slug}`}
+                    className="group bg-card border border-border/50 rounded-xl p-4 hover:border-border hover:shadow-sm transition-all"
+                  >
+                    <h3 className="text-[0.9375rem] font-semibold text-foreground group-hover:text-primary/80 transition-colors">
+                      {sub.name}
+                    </h3>
+                    <p className="mt-1 text-[0.8125rem] text-muted-foreground line-clamp-2">
+                      {sub.description}
+                    </p>
+                    <div className="mt-2 flex items-center gap-3 text-[0.6875rem] text-muted-foreground/60">
+                      <span>{sub.threadCount} hilos</span>
+                      <span>{sub.replyCount} respuestas</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {displayThreads.length === 0 && (
             <div className="bg-card border border-dashed border-border/60 rounded-xl px-8 py-12 text-center mb-6">
               <h3 className="text-base font-semibold text-foreground">

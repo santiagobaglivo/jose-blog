@@ -32,6 +32,20 @@ export type UpdateProfileResult = { ok: true } | { ok: false; error: string };
 const UPDATE_GENERIC_ERROR = "No pudimos actualizar tu perfil. Intentá nuevamente.";
 const UPDATE_UNAUTHENTICATED_ERROR = "Tu sesión expiró. Volvé a iniciar sesión.";
 const UPDATE_AVATAR_ERROR = "No pudimos actualizar tu avatar. Intentá nuevamente.";
+const UPLOAD_AVATAR_ERROR = "No pudimos subir tu foto. Intentá nuevamente.";
+
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024; // 2MB
+const ALLOWED_AVATAR_MIME = ["image/png", "image/jpeg", "image/jpg", "image/webp"] as const;
+const MIME_TO_EXT: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/webp": "webp",
+};
+
+export type UploadAvatarResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string };
 
 export async function updateProfile(input: UpdateProfileInput): Promise<UpdateProfileResult> {
   const parsed = updateProfileSchema.safeParse(input);
@@ -98,4 +112,62 @@ export async function updateAvatarUrl(
   revalidatePath("/perfil");
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+// ============================================================================
+// Upload de avatar del usuario al bucket `avatars`.
+// La RLS del bucket exige que el path empiece con `<user_id>/`.
+// ============================================================================
+
+export async function uploadAvatar(formData: FormData): Promise<UploadAvatarResult> {
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    return { ok: false, error: "Archivo inválido" };
+  }
+  if (file.size === 0) {
+    return { ok: false, error: "Archivo vacío" };
+  }
+  if (file.size > MAX_AVATAR_BYTES) {
+    return { ok: false, error: "La imagen supera 2 MB" };
+  }
+  if (!ALLOWED_AVATAR_MIME.includes(file.type as (typeof ALLOWED_AVATAR_MIME)[number])) {
+    return { ok: false, error: "Formato no soportado (PNG/JPG/WEBP)" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: UPDATE_UNAUTHENTICATED_ERROR };
+  }
+
+  const ext = MIME_TO_EXT[file.type] ?? "jpg";
+  const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(path, file, {
+      contentType: file.type,
+      cacheControl: "3600",
+      upsert: false,
+    });
+  if (uploadError) {
+    return { ok: false, error: UPLOAD_AVATAR_ERROR };
+  }
+
+  const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+  const publicUrl = pub.publicUrl;
+
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+  if (updateError) {
+    return { ok: false, error: UPDATE_AVATAR_ERROR };
+  }
+
+  revalidatePath("/perfil");
+  revalidatePath("/", "layout");
+  return { ok: true, url: publicUrl };
 }

@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      // Default Next es 1MB; subimos a 256MB para soportar uploads de video
+      // a la galería de brand_media (mismo límite que el bucket brand-assets).
+      bodySizeLimit: "256mb",
+    },
+  },
 };
 
 export default nextConfig;

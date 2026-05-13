@@ -3,9 +3,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 
+import { BrandStats } from "@/components/shared/brand-stats";
+import { BrandTestimonials } from "@/components/shared/brand-testimonials";
+import { ServiceIcon } from "@/components/shared/service-icon";
 import { WhatsappCTA } from "@/components/shared/whatsapp-cta";
 import { getBrandBySlug } from "@/lib/queries/brands";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { HeroCarousel } from "./hero-carousel";
 
 export const revalidate = 300;
 
@@ -58,46 +62,51 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
   const asesoriaParagraphs = brand.asesoria_text ? paragraphs(brand.asesoria_text) : [];
 
   const whatsappMsg = `Hola, quiero hacer una consulta sobre ${brand.name}.`;
+  const activeSlides = brand.slides.filter((s) => s.is_active);
 
   return (
     <>
-      {/* Hero */}
-      <section
-        className="relative overflow-hidden border-b border-border/50"
-        style={{
-          background: `linear-gradient(135deg, ${accent}14 0%, transparent 60%)`,
-        }}
-      >
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-16 pb-16 lg:pb-24">
-          <div className="max-w-3xl">
-            <span
-              className="inline-flex items-center px-3 h-7 rounded-full text-[0.6875rem] font-semibold uppercase tracking-widest"
-              style={{ backgroundColor: `${accent}1f`, color: accent }}
-            >
-              Marca del estudio
-            </span>
-            <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight font-serif">
-              {brand.name}
-            </h1>
-            {brand.tagline && (
-              <p className="mt-4 text-lg lg:text-xl text-muted-foreground leading-relaxed">
-                {brand.tagline}
-              </p>
-            )}
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <WhatsappCTA message={whatsappMsg} variant="primary" />
-              <Link
-                href="/contacto"
-                className="inline-flex items-center gap-2 h-11 px-5 rounded-lg text-[0.875rem] font-medium border border-border hover:bg-secondary/60 transition-colors"
+      {/* Hero: si hay slides activos => carrusel; si no, hero estático */}
+      {activeSlides.length > 0 ? (
+        <HeroCarousel slides={activeSlides} accent={accent} />
+      ) : (
+        <section
+          className="relative overflow-hidden border-b border-border/50"
+          style={{
+            background: `linear-gradient(135deg, ${accent}14 0%, transparent 60%)`,
+          }}
+        >
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-16 pb-16 lg:pb-24">
+            <div className="max-w-3xl">
+              <span
+                className="inline-flex items-center px-3 h-7 rounded-full text-[0.6875rem] font-semibold uppercase tracking-widest"
+                style={{ backgroundColor: `${accent}1f`, color: accent }}
               >
-                <Mail className="h-4 w-4" aria-hidden="true" />
-                Contacto por correo
-              </Link>
+                Marca del estudio
+              </span>
+              <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight font-serif">
+                {brand.name}
+              </h1>
+              {brand.tagline && (
+                <p className="mt-4 text-lg lg:text-xl text-muted-foreground leading-relaxed">
+                  {brand.tagline}
+                </p>
+              )}
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <WhatsappCTA message={whatsappMsg} variant="primary" />
+                <Link
+                  href="/contacto"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-lg text-[0.875rem] font-medium border border-border hover:bg-secondary/60 transition-colors"
+                >
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                  Contacto por correo
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Sobre la marca */}
       <section className="py-14 lg:py-20">
@@ -126,6 +135,11 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
         </div>
       </section>
 
+      {/* Cifras destacadas */}
+      {brand.stats.length > 0 && (
+        <BrandStats stats={brand.stats} accent={accent} />
+      )}
+
       {/* Servicios */}
       {brand.services.length > 0 && (
         <section className="py-14 lg:py-20 bg-secondary/30 border-y border-border/50">
@@ -152,11 +166,35 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
                   key={service.id}
                   className="flex items-start gap-3 p-4 rounded-lg bg-background border border-border/50 hover:border-border transition-colors"
                 >
-                  <CheckCircle2
-                    className="h-4 w-4 shrink-0 mt-0.5"
-                    style={{ color: accent }}
-                    aria-hidden="true"
-                  />
+                  {service.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={service.image_url}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-full object-cover border border-border/40"
+                      loading="lazy"
+                    />
+                  ) : service.icon ? (
+                    <ServiceIcon
+                      name={service.icon}
+                      className="h-5 w-5 shrink-0 mt-0.5"
+                      style={{ color: accent }}
+                      aria-hidden="true"
+                      fallback={
+                        <CheckCircle2
+                          className="h-4 w-4 shrink-0 mt-0.5"
+                          style={{ color: accent }}
+                          aria-hidden="true"
+                        />
+                      }
+                    />
+                  ) : (
+                    <CheckCircle2
+                      className="h-4 w-4 shrink-0 mt-0.5"
+                      style={{ color: accent }}
+                      aria-hidden="true"
+                    />
+                  )}
                   <div className="min-w-0">
                     <p className="text-[0.875rem] font-medium text-foreground leading-snug">
                       {service.name}
@@ -201,6 +239,11 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
             </div>
           </div>
         </section>
+      )}
+
+      {/* Testimonios de clientes */}
+      {brand.testimonials.length > 0 && (
+        <BrandTestimonials testimonials={brand.testimonials} accent={accent} />
       )}
 
       {/* CTA final */}

@@ -1,22 +1,27 @@
-import { getPublishedPosts } from "@/lib/queries/posts";
+import Link from "next/link";
+
+import { getPostsArchive, getPublishedPosts } from "@/lib/queries/posts";
 import { getCategories, getTags } from "@/lib/queries/categories";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ArticleCard } from "@/components/blog/article-card";
+import { BlogSidebar } from "@/components/blog/blog-sidebar";
 import { SearchBar } from "@/components/shared/search-bar";
 import { Pagination } from "@/components/shared/pagination";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 
-const PER_PAGE = 7;
+const PER_PAGE = 8;
 
 function parseString(value: string | string[] | undefined): string | undefined {
   if (typeof value === "string" && value.trim()) return value.trim();
   return undefined;
 }
 
-function parsePage(value: string | string[] | undefined): number {
+function parseInt0(value: string | string[] | undefined): number | undefined {
   const raw = typeof value === "string" ? Number(value) : NaN;
-  return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 1;
+  return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : undefined;
+}
+
+function parsePage(value: string | string[] | undefined): number {
+  return parseInt0(value) ?? 1;
 }
 
 export default async function BlogPage({
@@ -27,6 +32,8 @@ export default async function BlogPage({
     q?: string | string[];
     cat?: string | string[];
     tag?: string | string[];
+    year?: string | string[];
+    month?: string | string[];
   }>;
 }) {
   const sp = await searchParams;
@@ -34,24 +41,38 @@ export default async function BlogPage({
   const q = parseString(sp.q);
   const categorySlug = parseString(sp.cat);
   const tagSlug = parseString(sp.tag);
+  const year = parseInt0(sp.year);
+  const month = parseInt0(sp.month);
 
-  const [postsResult, blogCategories, allTags] = await Promise.all([
-    getPublishedPosts({ page, q, categorySlug, tagSlug, perPage: PER_PAGE }),
+  const [postsResult, blogCategories, allTags, archive] = await Promise.all([
+    getPublishedPosts({
+      page,
+      q,
+      categorySlug,
+      tagSlug,
+      year,
+      month,
+      perPage: PER_PAGE,
+    }),
     getCategories(),
     getTags(),
+    getPostsArchive(),
   ]);
   const { items: published, total, perPage } = postsResult;
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const recent = published.slice(0, 4);
 
-  const isFiltered = Boolean(q || categorySlug || tagSlug);
-  const filterDescription = q
-    ? `Resultados para "${q}"`
-    : categorySlug
-      ? `Categoría: ${blogCategories.find((c) => c.slug === categorySlug)?.name ?? categorySlug}`
-      : tagSlug
-        ? `Etiqueta: ${allTags.find((t) => t.slug === tagSlug)?.name ?? tagSlug}`
-        : null;
+  const isFiltered = Boolean(q || categorySlug || tagSlug || year);
+  let filterDescription: string | null = null;
+  if (q) filterDescription = `Resultados para "${q}"`;
+  else if (categorySlug)
+    filterDescription = `Categoría: ${blogCategories.find((c) => c.slug === categorySlug)?.name ?? categorySlug}`;
+  else if (tagSlug)
+    filterDescription = `Etiqueta: ${allTags.find((t) => t.slug === tagSlug)?.name ?? tagSlug}`;
+  else if (year && month) {
+    const monthName = archive.find((a) => a.year === year && a.month === month)?.label ?? `${month}/${year}`;
+    filterDescription = `Archivo: ${monthName}`;
+  } else if (year) filterDescription = `Archivo: ${year}`;
 
   return (
     <>
@@ -67,13 +88,12 @@ export default async function BlogPage({
                 Artículos y análisis
               </h1>
               <p className="mt-3 text-[0.9375rem] text-muted-foreground max-w-xl">
-                Publicaciones redactadas por nuestro equipo de profesionales sobre impuestos,
-                contabilidad, empresas y finanzas.
+                Publicaciones de carácter técnico-legal redactadas por el equipo profesional.
               </p>
               {filterDescription && (
                 <p className="mt-3 text-[0.8125rem] font-medium text-primary">
-                  {filterDescription} · {total} resultado{total === 1 ? "" : "s"}
-                  {" · "}
+                  {filterDescription} · {total} resultado{total === 1 ? "" : "s"}{" "}
+                  ·{" "}
                   <Link href="/blog" className="underline">
                     Limpiar filtros
                   </Link>
@@ -88,7 +108,6 @@ export default async function BlogPage({
       <section className="py-12 lg:py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12">
-            {/* Main content */}
             <div className="flex-1 min-w-0">
               {published.length === 0 ? (
                 <div className="bg-card border border-dashed border-border/60 rounded-xl px-8 py-16 text-center">
@@ -110,91 +129,32 @@ export default async function BlogPage({
                     </div>
                   )}
 
-                  {/* Grid */}
+                  {/* Lista */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {(!isFiltered && page === 1 ? published.slice(1) : published).map((post) => (
                       <ArticleCard key={post.slug} post={post} />
                     ))}
                   </div>
 
-                  {/* Pagination */}
-                  <div className="mt-12">
-                    <Pagination current={page} total={totalPages} />
-                  </div>
+                  {totalPages > 1 && (
+                    <div className="mt-12">
+                      <Pagination current={page} total={totalPages} />
+                    </div>
+                  )}
                 </>
               )}
             </div>
 
-            {/* Sidebar */}
-            <aside className="lg:w-72 shrink-0 space-y-8">
-              {/* Categories */}
-              <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">Categorías</h3>
-                <ul className="space-y-2">
-                  {blogCategories.map((cat) => (
-                    <li key={cat.slug}>
-                      <Link
-                        href={`/blog?cat=${cat.slug}`}
-                        className={`flex items-center justify-between py-1.5 text-[0.8125rem] transition-colors ${
-                          cat.slug === categorySlug
-                            ? "text-foreground font-semibold"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        <span>{cat.name}</span>
-                        <Badge variant="secondary" className="text-[0.6875rem] font-normal">
-                          {cat.count}
-                        </Badge>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Recent */}
-              {recent.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">
-                    Artículos recientes
-                  </h3>
-                  <ul className="space-y-4">
-                    {recent.map((post) => (
-                      <li key={post.slug}>
-                        <Link href={`/blog/${post.slug}`} className="group block">
-                          <h4 className="text-[0.8125rem] font-medium text-foreground group-hover:text-primary/80 transition-colors leading-snug line-clamp-2">
-                            {post.title}
-                          </h4>
-                          <p className="mt-1 text-[0.75rem] text-muted-foreground/70">
-                            {post.date}
-                          </p>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Tags */}
-              {allTags.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground mb-4 font-sans">
-                    Etiquetas populares
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {allTags.slice(0, 12).map((tag) => (
-                      <Link key={tag.slug} href={`/blog?tag=${tag.slug}`}>
-                        <Badge
-                          variant={tag.slug === tagSlug ? "default" : "outline"}
-                          className="text-[0.75rem] font-normal cursor-pointer hover:bg-secondary/60 transition-colors"
-                        >
-                          {tag.name}
-                        </Badge>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </aside>
+            <BlogSidebar
+              categories={blogCategories}
+              tags={allTags}
+              archive={archive}
+              recent={recent}
+              activeCategorySlug={categorySlug}
+              activeTagSlug={tagSlug}
+              activeYear={year}
+              activeMonth={month}
+            />
           </div>
         </div>
       </section>

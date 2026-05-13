@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { getBrandContext } from "@/lib/auth/brand-context";
+import { getMenuPagesForBrand } from "@/lib/queries/brand-pages";
 import { getBrandBySlug } from "@/lib/queries/brands";
 
 export default async function BrandLayout({
@@ -48,6 +49,9 @@ export default async function BrandLayout({
     };
   }
 
+  // Páginas custom para inyectar como links en el nav del header.
+  const menuPages = await getMenuPagesForBrand(resolved.id);
+
   const accent = resolved.accentColor ?? "#1e3a5f";
 
   // Pisamos las CSS variables globales del theme con el accent de la brand.
@@ -65,6 +69,7 @@ export default async function BrandLayout({
     <div style={brandStyle}>
       <Header
         brand={{ name: resolved.name, slug: resolved.slug, accentColor: resolved.accentColor }}
+        customPages={menuPages.map((p) => ({ slug: p.slug, title: p.title }))}
       />
       <main className="flex-1">{children}</main>
       <Footer

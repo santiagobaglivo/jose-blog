@@ -76,8 +76,57 @@ export interface PublishedPostsFilters {
   q?: string;
   categorySlug?: string;
   tagSlug?: string;
+  year?: number;
+  month?: number; // 1-12
   page?: number;
   perPage?: number;
+}
+
+/**
+ * Devuelve el "archivo" del blog agrupado por año/mes para el sidebar tipo Blogspot.
+ */
+export async function getPostsArchive(): Promise<
+  Array<{ year: number; month: number; label: string; count: number }>
+> {
+  const brand = await getBrandContext();
+  if (!brand) return [];
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("published_at")
+    .eq("brand_id", brand.id)
+    .eq("status", "published")
+    .is("deleted_at", null)
+    .not("published_at", "is", null)
+    .order("published_at", { ascending: false });
+
+  if (!data) return [];
+
+  const months = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+  ];
+
+  const counts = new Map<string, { year: number; month: number; count: number }>();
+  for (const row of data) {
+    if (!row.published_at) continue;
+    const d = new Date(row.published_at);
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const key = `${year}-${month}`;
+    const slot = counts.get(key) ?? { year, month, count: 0 };
+    slot.count += 1;
+    counts.set(key, slot);
+  }
+
+  return Array.from(counts.values())
+    .sort((a, b) => b.year - a.year || b.month - a.month)
+    .map(({ year, month, count }) => ({
+      year,
+      month: month + 1,
+      label: `${months[month]} ${year}`,
+      count,
+    }));
 }
 
 export async function getPublishedPosts(
@@ -139,6 +188,15 @@ export async function getPublishedPosts(
   }
   if (categoryId) query = query.eq("category_id", categoryId);
   if (tagPostIds) query = query.in("id", tagPostIds);
+  if (filters.year && filters.month) {
+    const fromIso = new Date(filters.year, filters.month - 1, 1).toISOString();
+    const toIso = new Date(filters.year, filters.month, 1).toISOString();
+    query = query.gte("published_at", fromIso).lt("published_at", toIso);
+  } else if (filters.year) {
+    const fromIso = new Date(filters.year, 0, 1).toISOString();
+    const toIso = new Date(filters.year + 1, 0, 1).toISOString();
+    query = query.gte("published_at", fromIso).lt("published_at", toIso);
+  }
 
   const { data, error, count } = await query.range(from, to);
   if (error || !data) return { items: [], total: 0, page, perPage };

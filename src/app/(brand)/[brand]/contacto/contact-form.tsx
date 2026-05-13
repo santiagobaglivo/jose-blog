@@ -1,20 +1,35 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, Paperclip, X } from "lucide-react";
 
 import { submitContactMessage } from "./actions";
 
 const formSchema = z.object({
-  fullName: z.string().trim().min(2, "Ingresá tu nombre").max(120),
+  fullName: z.string().trim().min(2, "Ingresá tu nombre completo").max(120),
+  taxId: z
+    .string()
+    .trim()
+    .min(8, "El RUC / CUIT debe tener al menos 8 dígitos")
+    .max(20, "Máximo 20 caracteres")
+    .regex(/^[0-9-]+$/, "Solo números y guiones"),
   email: z.string().trim().email("Email inválido").max(200),
-  phone: z.string().trim().max(40).optional(),
+  phone: z
+    .string()
+    .trim()
+    .min(6, "Ingresá un teléfono válido")
+    .max(40, "Máximo 40 caracteres"),
   subject: z.string().trim().min(1, "Elegí un asunto"),
-  message: z.string().trim().min(10, "Contanos al menos un poco sobre tu consulta").max(4000),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Contanos un poco más sobre tu consulta")
+    .max(4000, "Máximo 4000 caracteres"),
+  documentReference: z.string().trim().max(200).optional(),
 });
 type FormValues = z.infer<typeof formSchema>;
 
@@ -27,6 +42,8 @@ const SUBJECTS = [
 ];
 
 export function ContactForm({ brandId }: { brandId: string }) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isPending, startTransition] = useTransition();
   const [sent, setSent] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -38,13 +55,32 @@ export function ContactForm({ brandId }: { brandId: string }) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { fullName: "", email: "", phone: "", subject: "", message: "" },
+    defaultValues: {
+      fullName: "",
+      taxId: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+      documentReference: "",
+    },
   });
 
   const onSubmit = (values: FormValues) => {
     setServerError(null);
     startTransition(async () => {
-      const result = await submitContactMessage({ brandId, ...values });
+      const fd = new FormData();
+      fd.set("brandId", brandId);
+      fd.set("fullName", values.fullName);
+      fd.set("taxId", values.taxId);
+      fd.set("email", values.email);
+      fd.set("phone", values.phone);
+      fd.set("subject", values.subject);
+      fd.set("message", values.message);
+      if (values.documentReference) fd.set("documentReference", values.documentReference);
+      if (file) fd.set("document", file);
+
+      const result = await submitContactMessage(fd);
       if (!result.ok) {
         setServerError(result.error);
         toast.error(result.error);
@@ -52,6 +88,7 @@ export function ContactForm({ brandId }: { brandId: string }) {
       }
       setSent(true);
       reset();
+      setFile(null);
       toast.success("¡Consulta enviada! Te respondemos a la brevedad.");
     });
   };
@@ -65,7 +102,7 @@ export function ContactForm({ brandId }: { brandId: string }) {
         <h2 className="text-lg font-semibold text-foreground">Consulta recibida</h2>
         <p className="mt-2 text-[0.875rem] text-muted-foreground max-w-md">
           Te respondemos a tu email en las próximas 24 horas hábiles. Si la consulta es urgente,
-          podés escribirnos por WhatsApp desde el botón flotante.
+          podés escribirnos por WhatsApp.
         </p>
         <button
           onClick={() => setSent(false)}
@@ -83,7 +120,12 @@ export function ContactForm({ brandId }: { brandId: string }) {
       noValidate
       className="bg-card border border-border/50 rounded-xl p-8"
     >
-      <h2 className="text-lg font-semibold text-foreground font-sans mb-6">Envíenos su consulta</h2>
+      <h2 className="text-lg font-semibold text-foreground font-sans mb-1">
+        Envíenos su consulta
+      </h2>
+      <p className="text-[0.8125rem] text-muted-foreground mb-6">
+        Identificate y describí tu consulta. Si corresponde, adjuntá el documento que la sustenta.
+      </p>
 
       {serverError && (
         <div
@@ -96,76 +138,54 @@ export function ContactForm({ brandId }: { brandId: string }) {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label
-            htmlFor="fullName"
-            className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-          >
-            Nombre completo
-          </label>
+        <Field label="Nombre completo *" error={errors.fullName?.message}>
           <input
-            id="fullName"
             type="text"
             placeholder="Ej: Juan Pérez"
             disabled={isPending}
             {...register("fullName")}
-            className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all disabled:opacity-60"
+            className={inputClass}
           />
-          {errors.fullName && (
-            <p className="mt-1 text-[0.75rem] text-destructive">{errors.fullName.message}</p>
-          )}
-        </div>
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-          >
-            Email
-          </label>
+        </Field>
+        <Field label="RUC / CUIT *" error={errors.taxId?.message}>
           <input
-            id="email"
+            type="text"
+            inputMode="numeric"
+            placeholder="20123456789"
+            disabled={isPending}
+            {...register("taxId")}
+            className={inputClass}
+          />
+        </Field>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <Field label="Email *" error={errors.email?.message}>
+          <input
             type="email"
             placeholder="juan@empresa.com"
             disabled={isPending}
             {...register("email")}
-            className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all disabled:opacity-60"
+            className={inputClass}
           />
-          {errors.email && (
-            <p className="mt-1 text-[0.75rem] text-destructive">{errors.email.message}</p>
-          )}
-        </div>
+        </Field>
+        <Field label="Teléfono *" error={errors.phone?.message}>
+          <input
+            type="tel"
+            placeholder="+51 999 000 000"
+            disabled={isPending}
+            {...register("phone")}
+            className={inputClass}
+          />
+        </Field>
       </div>
 
-      <div className="mb-4">
-        <label
-          htmlFor="phone"
-          className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-        >
-          Teléfono (opcional)
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          placeholder="+54 11 1234-5678"
-          disabled={isPending}
-          {...register("phone")}
-          className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all disabled:opacity-60"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="subject"
-          className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-        >
-          Asunto
-        </label>
+      <Field label="Asunto *" error={errors.subject?.message} className="mb-4">
         <select
-          id="subject"
           disabled={isPending}
           defaultValue=""
           {...register("subject")}
-          className="w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all appearance-none disabled:opacity-60"
+          className={`${inputClass} appearance-none`}
         >
           <option value="" disabled>
             Seleccione un área
@@ -176,29 +196,75 @@ export function ContactForm({ brandId }: { brandId: string }) {
             </option>
           ))}
         </select>
-        {errors.subject && (
-          <p className="mt-1 text-[0.75rem] text-destructive">{errors.subject.message}</p>
-        )}
-      </div>
+      </Field>
 
-      <div className="mb-6">
-        <label
-          htmlFor="message"
-          className="block text-[0.8125rem] font-medium text-foreground mb-1.5"
-        >
-          Mensaje
-        </label>
+      <Field label="Consulta *" error={errors.message?.message} className="mb-4">
         <textarea
-          id="message"
           rows={5}
-          placeholder="Describa brevemente su consulta..."
+          placeholder="Describí tu consulta. Sé concreto en qué pedís resolver."
           disabled={isPending}
           {...register("message")}
-          className="w-full px-4 py-3 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all resize-none disabled:opacity-60"
+          className={`${inputClass} resize-none py-3`}
         />
-        {errors.message && (
-          <p className="mt-1 text-[0.75rem] text-destructive">{errors.message.message}</p>
-        )}
+      </Field>
+
+      <div className="mb-4 rounded-lg border border-dashed border-border/60 bg-secondary/20 p-4">
+        <p className="text-[0.8125rem] font-medium text-foreground mb-2">
+          Documento que sustenta la consulta (opcional)
+        </p>
+        <Field
+          label={null}
+          error={errors.documentReference?.message}
+          className="mb-3"
+        >
+          <input
+            type="text"
+            placeholder="Ej: Resolución SUNAT 1234/2026, Oficio 567/2025"
+            disabled={isPending}
+            {...register("documentReference")}
+            className={inputClass}
+          />
+        </Field>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.webp"
+          className="sr-only"
+          onChange={(e) => {
+            const f = e.target.files?.[0] ?? null;
+            setFile(f);
+            e.target.value = "";
+          }}
+          disabled={isPending}
+        />
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isPending}
+            className="inline-flex items-center gap-1.5 h-9 px-3 text-[0.8125rem] font-medium border border-border rounded-md hover:bg-secondary/40 transition-colors disabled:opacity-60"
+          >
+            <Paperclip className="h-3.5 w-3.5" />
+            {file ? "Cambiar archivo" : "Adjuntar archivo"}
+          </button>
+          {file && (
+            <span className="inline-flex items-center gap-2 px-3 h-8 rounded-md bg-secondary/50 text-[0.75rem] text-foreground">
+              {file.name}
+              <button
+                type="button"
+                onClick={() => setFile(null)}
+                className="text-muted-foreground hover:text-destructive"
+                aria-label="Quitar archivo"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+        </div>
+        <p className="mt-2 text-[0.6875rem] text-muted-foreground/70">
+          Formatos: PDF, Word, Excel, PNG / JPG. Máximo 10 MB.
+        </p>
       </div>
 
       <button
@@ -216,5 +282,32 @@ export function ContactForm({ brandId }: { brandId: string }) {
         )}
       </button>
     </form>
+  );
+}
+
+const inputClass =
+  "w-full h-10 px-4 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all disabled:opacity-60";
+
+function Field({
+  label,
+  error,
+  children,
+  className,
+}: {
+  label: React.ReactNode;
+  error?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      {label && (
+        <label className="block text-[0.8125rem] font-medium text-foreground mb-1.5">
+          {label}
+        </label>
+      )}
+      {children}
+      {error && <p className="mt-1 text-[0.75rem] text-destructive">{error}</p>}
+    </div>
   );
 }

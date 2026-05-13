@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getBrandBySlug } from "@/lib/queries/brands";
 import { getPostBySlug, getRelatedPosts } from "@/lib/queries/posts";
 import { getApprovedCommentsByPost } from "@/lib/queries/comments";
 import { getCategories } from "@/lib/queries/categories";
@@ -9,6 +10,7 @@ import { SearchBar } from "@/components/shared/search-bar";
 import { PostImage } from "@/components/shared/post-image";
 import { Clock, MessageSquare, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { QuickContact } from "@/components/shared/quick-contact";
 import { CommentForm } from "./comment-form";
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,10 +18,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const brand = await requireBrandContext();
   const post = await getPostBySlug(slug);
   if (!post) notFound();
-  const [postComments, recent, blogCategories] = await Promise.all([
+  const [postComments, recent, blogCategories, brandDetail] = await Promise.all([
     getApprovedCommentsByPost(post.slug),
     getRelatedPosts(post.slug, 4),
     getCategories(),
+    getBrandBySlug(brand.slug),
   ]);
 
   return (
@@ -72,16 +75,37 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <span>{post.date}</span>
               </div>
 
-              {/* Featured image */}
-              <div className="mt-8 rounded-xl overflow-hidden aspect-[2/1] bg-secondary relative">
-                <PostImage src={post.image} alt={post.title} priority />
-              </div>
+              {/* Featured image (opcional) */}
+              {post.image && post.image.trim() && (
+                <div className="mt-8 rounded-xl overflow-hidden aspect-[2/1] bg-secondary relative">
+                  <PostImage src={post.image} alt={post.title} priority />
+                </div>
+              )}
 
               {/* Content */}
               <div
                 className="mt-10 prose-premium max-w-none"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
+
+              {/* Quick contact / asesoría directa */}
+              {brandDetail && (
+                <div className="mt-10">
+                  <QuickContact
+                    brand={{
+                      name: brandDetail.name,
+                      whatsapp_number: brandDetail.whatsapp_number,
+                      contact_email: brandDetail.contact_email,
+                      instagram_url: brandDetail.instagram_url,
+                      facebook_url: brandDetail.facebook_url,
+                      tiktok_url: brandDetail.tiktok_url,
+                      linkedin_url: brandDetail.linkedin_url,
+                      twitter_url: brandDetail.twitter_url,
+                    }}
+                    context={post.title}
+                  />
+                </div>
+              )}
 
               {/* Tags */}
               <div className="mt-10 pt-8 border-t border-border/50 flex flex-wrap gap-2">

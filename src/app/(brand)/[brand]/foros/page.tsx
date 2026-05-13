@@ -9,10 +9,12 @@ import { NewThreadButton } from "./new-thread-button";
 
 export default async function ForosPage() {
   const brand = await requireBrandContext();
-  const [forumCategories, recentThreads] = await Promise.all([
+  const [allCategories, recentThreads] = await Promise.all([
     getForumCategories(),
     getRecentThreads(4),
   ]);
+  // Mostramos solo las raíz; las subcategorías se ven al entrar a la padre.
+  const forumCategories = allCategories.filter((c) => !c.parentSlug);
 
   return (
     <>

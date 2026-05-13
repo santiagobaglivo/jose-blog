@@ -49,6 +49,13 @@ export type Database = {
           asesoria_text: string | null
           seo_title: string | null
           seo_description: string | null
+          whatsapp_number: string | null
+          contact_email: string | null
+          instagram_url: string | null
+          facebook_url: string | null
+          tiktok_url: string | null
+          linkedin_url: string | null
+          twitter_url: string | null
           created_at: string
           updated_at: string
           deleted_at: string | null
@@ -67,6 +74,13 @@ export type Database = {
           asesoria_text?: string | null
           seo_title?: string | null
           seo_description?: string | null
+          whatsapp_number?: string | null
+          contact_email?: string | null
+          instagram_url?: string | null
+          facebook_url?: string | null
+          tiktok_url?: string | null
+          linkedin_url?: string | null
+          twitter_url?: string | null
           created_at?: string
           updated_at?: string
           deleted_at?: string | null
@@ -85,6 +99,13 @@ export type Database = {
           asesoria_text?: string | null
           seo_title?: string | null
           seo_description?: string | null
+          whatsapp_number?: string | null
+          contact_email?: string | null
+          instagram_url?: string | null
+          facebook_url?: string | null
+          tiktok_url?: string | null
+          linkedin_url?: string | null
+          twitter_url?: string | null
           created_at?: string
           updated_at?: string
           deleted_at?: string | null
@@ -97,6 +118,8 @@ export type Database = {
           brand_id: string
           name: string
           description: string | null
+          icon: string | null
+          image_url: string | null
           display_order: number
           is_active: boolean
           created_at: string
@@ -107,6 +130,8 @@ export type Database = {
           brand_id: string
           name: string
           description?: string | null
+          icon?: string | null
+          image_url?: string | null
           display_order?: number
           is_active?: boolean
           created_at?: string
@@ -117,6 +142,8 @@ export type Database = {
           brand_id?: string
           name?: string
           description?: string | null
+          icon?: string | null
+          image_url?: string | null
           display_order?: number
           is_active?: boolean
           created_at?: string
@@ -125,6 +152,331 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "brand_services_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_slides: {
+        Row: {
+          id: string
+          brand_id: string
+          title: string
+          subtitle: string | null
+          image_url: string | null
+          cta_label: string | null
+          cta_href: string | null
+          display_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          title: string
+          subtitle?: string | null
+          image_url?: string | null
+          cta_label?: string | null
+          cta_href?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          title?: string
+          subtitle?: string | null
+          image_url?: string | null
+          cta_label?: string | null
+          cta_href?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_slides_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_team: {
+        Row: {
+          id: string
+          brand_id: string
+          member_name: string
+          role: string
+          photo_url: string | null
+          bio: string | null
+          display_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          member_name: string
+          role: string
+          photo_url?: string | null
+          bio?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          member_name?: string
+          role?: string
+          photo_url?: string | null
+          bio?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_team_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_stats: {
+        Row: {
+          id: string
+          brand_id: string
+          label: string
+          value: string
+          suffix: string | null
+          display_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          label: string
+          value: string
+          suffix?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          label?: string
+          value?: string
+          suffix?: string | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_stats_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_testimonials: {
+        Row: {
+          id: string
+          brand_id: string
+          author_name: string
+          author_role: string | null
+          author_company: string | null
+          author_photo_url: string | null
+          quote: string
+          rating: number | null
+          display_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          author_name: string
+          author_role?: string | null
+          author_company?: string | null
+          author_photo_url?: string | null
+          quote: string
+          rating?: number | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          author_name?: string
+          author_role?: string | null
+          author_company?: string | null
+          author_photo_url?: string | null
+          quote?: string
+          rating?: number | null
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_testimonials_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_media: {
+        Row: {
+          id: string
+          brand_id: string
+          uploader_id: string | null
+          kind: "image" | "video" | "document" | "embed"
+          url: string
+          thumbnail_url: string | null
+          title: string | null
+          description: string | null
+          mime_type: string | null
+          size_bytes: number | null
+          duration_seconds: number | null
+          embed_provider: string | null
+          embed_html: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          uploader_id?: string | null
+          kind: "image" | "video" | "document" | "embed"
+          url: string
+          thumbnail_url?: string | null
+          title?: string | null
+          description?: string | null
+          mime_type?: string | null
+          size_bytes?: number | null
+          duration_seconds?: number | null
+          embed_provider?: string | null
+          embed_html?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          uploader_id?: string | null
+          kind?: "image" | "video" | "document" | "embed"
+          url?: string
+          thumbnail_url?: string | null
+          title?: string | null
+          description?: string | null
+          mime_type?: string | null
+          size_bytes?: number | null
+          duration_seconds?: number | null
+          embed_provider?: string | null
+          embed_html?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_media_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brand_media_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_pages: {
+        Row: {
+          id: string
+          brand_id: string
+          slug: string
+          title: string
+          subtitle: string | null
+          content_html: string
+          hero_image: string | null
+          show_in_menu: boolean
+          menu_order: number
+          status: "draft" | "published" | "archived"
+          seo_title: string | null
+          seo_description: string | null
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          brand_id: string
+          slug: string
+          title: string
+          subtitle?: string | null
+          content_html?: string
+          hero_image?: string | null
+          show_in_menu?: boolean
+          menu_order?: number
+          status?: "draft" | "published" | "archived"
+          seo_title?: string | null
+          seo_description?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          brand_id?: string
+          slug?: string
+          title?: string
+          subtitle?: string | null
+          content_html?: string
+          hero_image?: string | null
+          show_in_menu?: boolean
+          menu_order?: number
+          status?: "draft" | "published" | "archived"
+          seo_title?: string | null
+          seo_description?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_pages_brand_id_fkey"
             columns: ["brand_id"]
             isOneToOne: false
             referencedRelation: "brands"
@@ -430,6 +782,7 @@ export type Database = {
         Row: {
           id: string
           brand_id: string
+          parent_id: string | null
           slug: string
           name: string
           description: string | null
@@ -441,6 +794,7 @@ export type Database = {
         Insert: {
           id?: string
           brand_id: string
+          parent_id?: string | null
           slug: string
           name: string
           description?: string | null
@@ -452,6 +806,7 @@ export type Database = {
         Update: {
           id?: string
           brand_id?: string
+          parent_id?: string | null
           slug?: string
           name?: string
           description?: string | null
@@ -560,6 +915,9 @@ export type Database = {
           full_name: string
           email: string
           phone: string | null
+          tax_id: string | null
+          attachment_url: string | null
+          attachment_name: string | null
           subject: string
           message: string
           status: Database["public"]["Enums"]["contact_message_status"]
@@ -573,6 +931,9 @@ export type Database = {
           full_name: string
           email: string
           phone?: string | null
+          tax_id?: string | null
+          attachment_url?: string | null
+          attachment_name?: string | null
           subject: string
           message: string
           status?: Database["public"]["Enums"]["contact_message_status"]
@@ -586,6 +947,9 @@ export type Database = {
           full_name?: string
           email?: string
           phone?: string | null
+          tax_id?: string | null
+          attachment_url?: string | null
+          attachment_name?: string | null
           subject?: string
           message?: string
           status?: Database["public"]["Enums"]["contact_message_status"]

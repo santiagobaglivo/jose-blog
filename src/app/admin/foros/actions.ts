@@ -30,6 +30,7 @@ function slugify(value: string): string {
 const upsertForumCatSchema = z.object({
   categoryId: z.string().uuid().optional(),
   brandId: z.string().uuid().optional(),
+  parentId: z.string().uuid().optional().or(z.literal("")),
   name: z.string().trim().min(2).max(80),
   description: z.string().trim().max(300).optional().or(z.literal("")),
   icon: z.string().trim().max(60).optional().or(z.literal("")),
@@ -61,6 +62,7 @@ export async function upsertForumCategory(
 
   const payload = {
     brand_id: brandId,
+    parent_id: parsed.data.parentId?.trim() || null,
     slug,
     name: parsed.data.name,
     description: parsed.data.description?.trim() || null,

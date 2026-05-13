@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { sanitizeHtml } from "@/lib/editor/sanitize";
 import { createClient } from "@/lib/supabase/server";
 
 function slugify(value: string): string {
@@ -68,7 +69,7 @@ export async function createForumReply(input: ReplyInput): Promise<ReplyResult> 
   const { error: insertError } = await supabase.from("forum_replies").insert({
     thread_id: thread.id,
     author_id: user.id,
-    content: parsed.data.content,
+    content: sanitizeHtml(parsed.data.content),
   });
   if (insertError) return { ok: false, error: GENERIC };
 
@@ -165,7 +166,7 @@ export async function createForumThread(input: NewThreadInput): Promise<NewThrea
     author_id: user.id,
     slug: candidate,
     title: parsed.data.title,
-    content: parsed.data.content,
+    content: sanitizeHtml(parsed.data.content),
   });
   if (error) return { ok: false, error: GENERIC };
 
@@ -176,4 +177,50 @@ export async function createForumThread(input: NewThreadInput): Promise<NewThrea
     threadSlug: candidate,
     categorySlug: parsed.data.categorySlug,
   };
+}
+
+// ============================================================================
+// Upload de adjunto (imagen) al bucket forum-attachments.
+// Devuelve URL pública para insertar como <img> en el content.
+// ============================================================================
+
+const ALLOWED_FORUM_MIME = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+const MAX_FORUM_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+
+export type ForumAttachmentResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string };
+
+export async function uploadForumAttachment(
+  formData: FormData
+): Promise<ForumAttachmentResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: UNAUTHENTICATED };
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "Archivo inválido" };
+  }
+  if (file.size > MAX_FORUM_ATTACHMENT_BYTES) {
+    return { ok: false, error: "La imagen supera 10MB" };
+  }
+  if (!ALLOWED_FORUM_MIME.includes(file.type)) {
+    return { ok: false, error: "Formato no soportado (PNG/JPG/WEBP/GIF)" };
+  }
+
+  const ext = (file.name.match(/\.([a-z0-9]+)$/i)?.[1] ?? "png").toLowerCase();
+  const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error: upErr } = await supabase.storage
+    .from("forum-attachments")
+    .upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
+  if (upErr) {
+    return { ok: false, error: `No pudimos subir la imagen: ${upErr.message}` };
+  }
+
+  const { data: pub } = supabase.storage.from("forum-attachments").getPublicUrl(path);
+  return { ok: true, url: pub.publicUrl };
 }

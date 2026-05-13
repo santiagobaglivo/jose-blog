@@ -91,11 +91,34 @@ function initials(name: string) {
 }
 
 // Equipo profesional mostrado en la página "Sobre nosotros" de cada brand.
-// Devuelve los admins globales (brand_id NULL) más los admins propios de la brand actual.
+// Prioridad:
+//   1) brand_team activos de la brand actual (cargados por el admin desde el panel).
+//   2) Fallback: admins de la brand + admins globales (comportamiento histórico),
+//      para que la sección no quede vacía cuando todavía no se cargó nadie a mano.
 export async function getTeamMembers(): Promise<Author[]> {
   const brand = await getBrandContext();
   const supabase = createAdminClient();
 
+  // 1) Intentar primero con brand_team (si hay brand resuelta).
+  if (brand) {
+    const { data: teamRows } = await supabase
+      .from("brand_team")
+      .select("member_name, role, photo_url, bio, display_order, is_active")
+      .eq("brand_id", brand.id)
+      .eq("is_active", true)
+      .order("display_order", { ascending: true });
+
+    if (teamRows && teamRows.length > 0) {
+      return teamRows.map((m) => ({
+        name: m.member_name,
+        role: m.role,
+        // Si hay foto se usa la URL; si no, iniciales (Author.avatar admite ambos).
+        avatar: m.photo_url ?? initials(m.member_name),
+      }));
+    }
+  }
+
+  // 2) Fallback histórico: admins de la brand + admins globales.
   let query = supabase
     .from("profiles")
     .select("display_name, role, brand_id, bio")

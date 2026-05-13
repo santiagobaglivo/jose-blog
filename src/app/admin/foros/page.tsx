@@ -13,7 +13,7 @@ export default async function ForosAdmin() {
 
   const catsQuery = supabase
     .from("forum_categories")
-    .select("id, slug, name, description, icon")
+    .select("id, slug, name, description, icon, parent_id")
     .order("display_order");
 
   const threadsQuery = supabase
@@ -51,6 +51,7 @@ export default async function ForosAdmin() {
     return {
       id: c.id,
       slug: c.slug,
+      parent_id: c.parent_id ?? null,
       name: c.name,
       description: c.description ?? "",
       icon: c.icon ?? "help-circle",

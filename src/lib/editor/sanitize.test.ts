@@ -28,9 +28,39 @@ describe("sanitizeHtml — XSS payloads", () => {
     assert.equal(out.includes("<script"), false);
   });
 
-  it("removes <iframe> entirely", () => {
+  it("removes <iframe> from disallowed hosts entirely", () => {
     const out = sanitizeHtml('<iframe src="https://evil.example"></iframe>');
     assert.equal(out.includes("<iframe"), false);
+  });
+
+  it("removes <iframe> with non-https src", () => {
+    const out = sanitizeHtml('<iframe src="http://youtube.com/embed/xyz"></iframe>');
+    assert.equal(out.includes("<iframe"), false);
+  });
+
+  it("preserves <iframe> with whitelisted youtube src", () => {
+    const out = sanitizeHtml(
+      '<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" width="560" height="315" frameborder="0" allow="autoplay" allowfullscreen title="vid"></iframe>'
+    );
+    assert.ok(out.includes("<iframe"));
+    assert.match(out, /src="https:\/\/www\.youtube\.com\/embed\/dQw4w9WgXcQ"/);
+  });
+
+  it("preserves <iframe> with whitelisted vimeo src", () => {
+    const out = sanitizeHtml(
+      '<iframe src="https://player.vimeo.com/video/12345"></iframe>'
+    );
+    assert.ok(out.includes("<iframe"));
+    assert.match(out, /src="https:\/\/player\.vimeo\.com\/video\/12345"/);
+  });
+
+  it("strips onload and other handlers from allowed iframes", () => {
+    const out = sanitizeHtml(
+      '<iframe src="https://www.youtube.com/embed/x" onload="alert(1)" onerror="alert(2)"></iframe>'
+    );
+    assert.equal(out.includes("onload"), false);
+    assert.equal(out.includes("onerror"), false);
+    assert.equal(out.includes("alert"), false);
   });
 
   it("removes <style> and <svg> based vectors", () => {

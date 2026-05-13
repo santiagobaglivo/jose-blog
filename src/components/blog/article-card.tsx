@@ -5,37 +5,51 @@ import { Clock, MessageSquare } from "lucide-react";
 import { PostImage } from "@/components/shared/post-image";
 
 export function ArticleCard({ post, featured = false }: { post: Post; featured?: boolean }) {
+  const hasImage = Boolean(post.image && post.image.trim());
+
   return (
     <Link
       href={`/blog/${post.slug}`}
       className={`group flex flex-col bg-card border border-border/50 rounded-xl overflow-hidden hover:border-border hover:shadow-md transition-all duration-300 ${
-        featured ? "md:flex-row md:col-span-2" : ""
+        featured ? (hasImage ? "md:flex-row md:col-span-2" : "md:col-span-2") : ""
       }`}
     >
-      {/* Image */}
+      {hasImage && (
+        <div
+          className={`relative overflow-hidden bg-secondary ${
+            featured ? "md:w-1/2 aspect-[16/10] md:aspect-auto md:min-h-[280px]" : "aspect-[16/10]"
+          }`}
+        >
+          <PostImage
+            src={post.image}
+            alt={post.title}
+            className="group-hover:scale-[1.03] transition-transform duration-500"
+          />
+          <div className="absolute top-3 left-3 z-10">
+            <Badge
+              variant="secondary"
+              className="bg-white/90 backdrop-blur-sm text-foreground text-[0.6875rem] font-medium"
+            >
+              {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
+            </Badge>
+          </div>
+        </div>
+      )}
+
       <div
-        className={`relative overflow-hidden bg-secondary ${
-          featured ? "md:w-1/2 aspect-[16/10] md:aspect-auto md:min-h-[280px]" : "aspect-[16/10]"
+        className={`flex flex-col justify-between p-5 ${
+          featured ? (hasImage ? "md:w-1/2 md:p-8" : "md:p-8") : ""
         }`}
       >
-        <PostImage
-          src={post.image}
-          alt={post.title}
-          className="group-hover:scale-[1.03] transition-transform duration-500"
-        />
-        <div className="absolute top-3 left-3 z-10">
-          <Badge
-            variant="secondary"
-            className="bg-white/90 backdrop-blur-sm text-foreground text-[0.6875rem] font-medium"
-          >
-            {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
-          </Badge>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className={`flex flex-col justify-between p-5 ${featured ? "md:w-1/2 md:p-8" : ""}`}>
         <div>
+          {!hasImage && (
+            <Badge
+              variant="secondary"
+              className="text-[0.6875rem] font-medium mb-3 inline-flex"
+            >
+              {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
+            </Badge>
+          )}
           <h3
             className={`font-semibold text-foreground group-hover:text-primary/80 transition-colors leading-snug ${
               featured ? "text-xl lg:text-2xl" : "text-base"
@@ -43,7 +57,11 @@ export function ArticleCard({ post, featured = false }: { post: Post; featured?:
           >
             {post.title}
           </h3>
-          <p className="mt-2.5 text-[0.8125rem] leading-relaxed text-muted-foreground line-clamp-2">
+          <p
+            className={`mt-2.5 text-[0.8125rem] leading-relaxed text-muted-foreground ${
+              hasImage ? "line-clamp-2" : featured ? "line-clamp-4" : "line-clamp-3"
+            }`}
+          >
             {post.excerpt}
           </p>
         </div>

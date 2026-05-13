@@ -55,6 +55,8 @@ export interface ForumCategory {
   replyCount: number;
   lastActivity: string;
   lastAuthor: string;
+  parentSlug?: string | null;
+  subcategorySlugs?: string[];
 }
 
 export interface Thread {

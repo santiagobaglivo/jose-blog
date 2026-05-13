@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Loader2, AlertCircle, Plus } from "lucide-react";
+import { Loader2, AlertCircle, ImagePlus, Plus } from "lucide-react";
 
 import { useUser } from "@/lib/auth/UserProvider";
 import {
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { createForumThread } from "./actions";
+import { createForumThread, uploadForumAttachment } from "./actions";
 
 type CategoryOption = { slug: string; name: string };
 
@@ -55,11 +55,15 @@ export function NewThreadButton({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -69,6 +73,22 @@ export function NewThreadButton({
       content: "",
     },
   });
+
+  const handleAttach = async (file: File) => {
+    setUploading(true);
+    const fd = new FormData();
+    fd.set("file", file);
+    const result = await uploadForumAttachment(fd);
+    setUploading(false);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    const current = getValues("content") ?? "";
+    const append = `\n<p><img src="${result.url}" alt="" /></p>`;
+    setValue("content", `${current}${append}`, { shouldDirty: true });
+    toast.success("Imagen adjuntada");
+  };
 
   const onSubmit = (values: FormValues) => {
     setServerError(null);
@@ -192,6 +212,36 @@ export function NewThreadButton({
             {errors.content && (
               <p className="mt-1 text-[0.75rem] text-destructive">{errors.content.message}</p>
             )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleAttach(f);
+                e.target.value = "";
+              }}
+              disabled={isPending || uploading}
+            />
+            <div className="mt-2 flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isPending || uploading}
+                className="inline-flex items-center gap-1.5 h-8 px-3 text-[0.75rem] font-medium border border-border rounded-md hover:bg-secondary/40 transition-colors disabled:opacity-60"
+              >
+                {uploading ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <ImagePlus className="h-3 w-3" />
+                )}
+                Adjuntar imagen
+              </button>
+              <p className="text-[0.6875rem] text-muted-foreground/60">
+                Acepta HTML básico (h2/h3, p, ul/ol, blockquote, strong, em, a, img).
+              </p>
+            </div>
           </div>
 
           <DialogFooter className="pt-2">

@@ -14,6 +14,7 @@ type RawForumCategoryRow = {
   name: string;
   description: string | null;
   icon: string | null;
+  parent_id?: string | null;
 };
 
 async function aggregateCategoryStats(
@@ -85,7 +86,7 @@ export async function getForumCategories(): Promise<ForumCategory[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("forum_categories")
-    .select("id, slug, name, description, icon")
+    .select("id, slug, name, description, icon, parent_id")
     .eq("brand_id", brand.id)
     .order("display_order", { ascending: true });
   if (error || !data) return [];
@@ -95,7 +96,20 @@ export async function getForumCategories(): Promise<ForumCategory[]> {
     (data as RawForumCategoryRow[]).map((c) => c.id)
   );
 
-  return (data as RawForumCategoryRow[]).map((c) => {
+  const allRows = data as RawForumCategoryRow[];
+  // Mapas para resolver parentSlug y subcategorySlugs.
+  const slugById = new Map<string, string>();
+  for (const c of allRows) slugById.set(c.id, c.slug);
+  const childrenByParent = new Map<string, string[]>();
+  for (const c of allRows) {
+    if (c.parent_id) {
+      const slot = childrenByParent.get(c.parent_id) ?? [];
+      slot.push(c.slug);
+      childrenByParent.set(c.parent_id, slot);
+    }
+  }
+
+  return allRows.map((c) => {
     const s = stats.get(c.id) ?? { threadCount: 0, replyCount: 0, lastActivity: "", lastAuthor: "" };
     return {
       slug: c.slug,
@@ -106,6 +120,8 @@ export async function getForumCategories(): Promise<ForumCategory[]> {
       replyCount: s.replyCount,
       lastActivity: s.lastActivity,
       lastAuthor: s.lastAuthor,
+      parentSlug: c.parent_id ? slugById.get(c.parent_id) ?? null : null,
+      subcategorySlugs: childrenByParent.get(c.id) ?? [],
     };
   });
 }

@@ -8,6 +8,24 @@ const hexColorRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 // Acepta tanto producción (escudotributario.pe) como dev (escudotributario.local).
 const domainRegex = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/;
 
+// Teléfono / whatsapp: dígitos, +, espacios y guiones.
+const phoneRegex = /^[0-9+\-\s]+$/;
+
+// URL http/https. Reutilizable en redes sociales.
+const httpUrlSchema = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max, `Máximo ${max} caracteres`)
+    .url("URL inválida")
+    .refine((v) => /^https?:\/\//i.test(v), "Debe empezar con http:// o https://")
+    .optional()
+    .or(z.literal("").transform(() => undefined));
+
+// Slug-ish: minúsculas, números y guiones. Mismo formato que usan los nombres de
+// iconos de lucide ("scale", "shield-check", "file-text", etc).
+const lucideIconRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 export const brandServiceSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
@@ -19,6 +37,20 @@ export const brandServiceSchema = z.object({
     .string()
     .trim()
     .max(600, "Máximo 600 caracteres")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  icon: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(60, "Máximo 60 caracteres")
+    .regex(lucideIconRegex, "Formato inválido. Usá kebab-case (ej: shield-check)")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  image_url: z
+    .string()
+    .trim()
+    .url("URL inválida")
     .optional()
     .or(z.literal("").transform(() => undefined)),
   display_order: z.number().int().min(0).default(0),
@@ -88,6 +120,25 @@ export const brandSchema = z.object({
     .max(300, "Máximo 300 caracteres")
     .optional()
     .or(z.literal("").transform(() => undefined)),
+  whatsapp_number: z
+    .string()
+    .trim()
+    .max(30, "Máximo 30 caracteres")
+    .regex(phoneRegex, "Solo dígitos, +, espacios y guiones")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  contact_email: z
+    .string()
+    .trim()
+    .max(200, "Máximo 200 caracteres")
+    .email("Email inválido")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  instagram_url: httpUrlSchema(300),
+  facebook_url: httpUrlSchema(300),
+  tiktok_url: httpUrlSchema(300),
+  linkedin_url: httpUrlSchema(300),
+  twitter_url: httpUrlSchema(300),
   services: z.array(brandServiceSchema).default([]),
 });
 

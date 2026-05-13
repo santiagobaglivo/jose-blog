@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageCircle, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { BrandDetail } from "@/lib/queries/brands";
@@ -11,6 +11,10 @@ import type { BrandInput } from "@/lib/validators/brand";
 import { createBrand, updateBrand } from "./actions";
 import { LogoUploader } from "./logo-uploader";
 import { ServicesEditor, type ServiceDraft } from "./services-editor";
+import { SlidesEditor } from "./slides-editor";
+import { StatsEditor } from "./stats-editor";
+import { TeamEditor } from "./team-editor";
+import { TestimonialsEditor } from "./testimonials-editor";
 
 interface BrandFormProps {
   initial?: BrandDetail;
@@ -52,11 +56,20 @@ export function BrandForm({ initial, mode }: BrandFormProps) {
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
   const [seoTitle, setSeoTitle] = useState(initial?.seo_title ?? "");
   const [seoDescription, setSeoDescription] = useState(initial?.seo_description ?? "");
+  const [whatsappNumber, setWhatsappNumber] = useState(initial?.whatsapp_number ?? "");
+  const [contactEmail, setContactEmail] = useState(initial?.contact_email ?? "");
+  const [instagramUrl, setInstagramUrl] = useState(initial?.instagram_url ?? "");
+  const [facebookUrl, setFacebookUrl] = useState(initial?.facebook_url ?? "");
+  const [tiktokUrl, setTiktokUrl] = useState(initial?.tiktok_url ?? "");
+  const [linkedinUrl, setLinkedinUrl] = useState(initial?.linkedin_url ?? "");
+  const [twitterUrl, setTwitterUrl] = useState(initial?.twitter_url ?? "");
   const [services, setServices] = useState<ServiceDraft[]>(
     initial?.services.map((s) => ({
       id: s.id,
       name: s.name,
       description: s.description ?? "",
+      icon: s.icon ?? "",
+      image_url: s.image_url ?? "",
       is_active: s.is_active,
     })) ?? []
   );
@@ -84,12 +97,21 @@ export function BrandForm({ initial, mode }: BrandFormProps) {
       is_active: isActive,
       seo_title: seoTitle.trim() || undefined,
       seo_description: seoDescription.trim() || undefined,
+      whatsapp_number: whatsappNumber.trim() || undefined,
+      contact_email: contactEmail.trim() || undefined,
+      instagram_url: instagramUrl.trim() || undefined,
+      facebook_url: facebookUrl.trim() || undefined,
+      tiktok_url: tiktokUrl.trim() || undefined,
+      linkedin_url: linkedinUrl.trim() || undefined,
+      twitter_url: twitterUrl.trim() || undefined,
       services: services
         .filter((s) => s.name.trim().length > 0)
         .map((s, i) => ({
           id: s.id,
           name: s.name.trim(),
           description: s.description.trim() || undefined,
+          icon: s.icon.trim() || undefined,
+          image_url: s.image_url.trim() || undefined,
           display_order: i,
           is_active: s.is_active,
         })),
@@ -240,7 +262,172 @@ export function BrandForm({ initial, mode }: BrandFormProps) {
           </div>
         </div>
 
-        <ServicesEditor services={services} onChange={setServices} />
+        <ServicesEditor
+          brandId={initial?.id}
+          services={services}
+          onChange={setServices}
+        />
+
+        <SlidesEditor brandId={initial?.id} initialSlides={initial?.slides ?? []} />
+
+        <StatsEditor brandId={initial?.id} initialStats={initial?.stats ?? []} />
+
+        <TeamEditor brandId={initial?.id} initialTeam={initial?.team ?? []} />
+
+        <TestimonialsEditor
+          brandId={initial?.id}
+          initialTestimonials={initial?.testimonials ?? []}
+        />
+
+        <div className="bg-card border border-border/50 rounded-xl p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground">Canales de contacto</h2>
+          <p className="text-[0.75rem] text-muted-foreground/70 -mt-2">
+            Datos que se mostrarán en la web pública. Dejá vacío lo que no aplique.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass} htmlFor="whatsapp_number">
+                <span className="inline-flex items-center gap-1.5">
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  WhatsApp
+                </span>
+              </label>
+              <input
+                id="whatsapp_number"
+                className={inputClass}
+                value={whatsappNumber}
+                onChange={(e) => setWhatsappNumber(e.target.value)}
+                placeholder="+54 9 11 1234-5678"
+                inputMode="tel"
+                autoComplete="off"
+              />
+              <p className={helpClass}>Solo dígitos, +, espacios y guiones.</p>
+              {errors.whatsapp_number && (
+                <p className={errorClass}>{errors.whatsapp_number}</p>
+              )}
+            </div>
+
+            <div>
+              <label className={labelClass} htmlFor="contact_email">
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5" />
+                  Email de contacto
+                </span>
+              </label>
+              <input
+                id="contact_email"
+                type="email"
+                className={inputClass}
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+                placeholder="contacto@tumarca.com"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+              />
+              {errors.contact_email && (
+                <p className={errorClass}>{errors.contact_email}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-border/40 pt-4 space-y-4">
+            <h3 className="text-[0.8125rem] font-medium text-foreground">Redes sociales</h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass} htmlFor="instagram_url">Instagram</label>
+                <input
+                  id="instagram_url"
+                  type="url"
+                  className={inputClass}
+                  value={instagramUrl}
+                  onChange={(e) => setInstagramUrl(e.target.value)}
+                  placeholder="https://instagram.com/tumarca"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                {errors.instagram_url && (
+                  <p className={errorClass}>{errors.instagram_url}</p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="facebook_url">Facebook</label>
+                <input
+                  id="facebook_url"
+                  type="url"
+                  className={inputClass}
+                  value={facebookUrl}
+                  onChange={(e) => setFacebookUrl(e.target.value)}
+                  placeholder="https://facebook.com/tumarca"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                {errors.facebook_url && (
+                  <p className={errorClass}>{errors.facebook_url}</p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="tiktok_url">TikTok</label>
+                <input
+                  id="tiktok_url"
+                  type="url"
+                  className={inputClass}
+                  value={tiktokUrl}
+                  onChange={(e) => setTiktokUrl(e.target.value)}
+                  placeholder="https://tiktok.com/@tumarca"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                {errors.tiktok_url && (
+                  <p className={errorClass}>{errors.tiktok_url}</p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClass} htmlFor="linkedin_url">LinkedIn</label>
+                <input
+                  id="linkedin_url"
+                  type="url"
+                  className={inputClass}
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  placeholder="https://linkedin.com/company/tumarca"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                {errors.linkedin_url && (
+                  <p className={errorClass}>{errors.linkedin_url}</p>
+                )}
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className={labelClass} htmlFor="twitter_url">X / Twitter</label>
+                <input
+                  id="twitter_url"
+                  type="url"
+                  className={inputClass}
+                  value={twitterUrl}
+                  onChange={(e) => setTwitterUrl(e.target.value)}
+                  placeholder="https://x.com/tumarca"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                {errors.twitter_url && (
+                  <p className={errorClass}>{errors.twitter_url}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-6">

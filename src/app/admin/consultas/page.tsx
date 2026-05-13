@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Mail, Phone, Building, Inbox } from "lucide-react";
+import { Mail, Phone, Building, Inbox, Paperclip, FileText, Download } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -14,10 +14,13 @@ type ContactRow = {
   full_name: string;
   email: string;
   phone: string | null;
+  tax_id: string | null;
   subject: string;
   message: string;
   status: "nuevo" | "leido" | "respondido";
   created_at: string;
+  attachment_url: string | null;
+  attachment_name: string | null;
   brand: { name: string; slug: string } | null;
 };
 
@@ -45,7 +48,8 @@ export default async function ConsultasAdmin({
   let query = supabase
     .from("contact_messages")
     .select(
-      `id, full_name, email, phone, subject, message, status, created_at,
+      `id, full_name, email, phone, tax_id, subject, message, status, created_at,
+       attachment_url, attachment_name,
        brand:brands ( name, slug )`
     )
     .order("created_at", { ascending: false });
@@ -54,6 +58,22 @@ export default async function ConsultasAdmin({
 
   const allRows = (data ?? []) as unknown as ContactRow[];
   const { items: rows, total, page, totalPages } = paginate(allRows, pageParam, 12);
+
+  // Generar signed URLs en batch para los attachments de la página actual
+  const attachmentPaths = rows
+    .map((r) => r.attachment_url)
+    .filter((p): p is string => Boolean(p));
+  const signedUrlByPath = new Map<string, string>();
+  if (attachmentPaths.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from("contact-attachments")
+      .createSignedUrls(attachmentPaths, 60 * 60);
+    for (const item of signed ?? []) {
+      if (item.path && item.signedUrl) {
+        signedUrlByPath.set(item.path, item.signedUrl);
+      }
+    }
+  }
 
   return (
     <div>
@@ -123,6 +143,15 @@ export default async function ConsultasAdmin({
                       {row.phone}
                     </a>
                   )}
+                  {row.tax_id && (
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-3.5 w-3.5 text-muted-foreground/50" />
+                      <span>
+                        <span className="text-muted-foreground/70">RUC/CUIT:</span>{" "}
+                        <span className="font-medium text-foreground">{row.tax_id}</span>
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-secondary/30 border border-border/40 rounded-lg p-4">
@@ -130,6 +159,31 @@ export default async function ConsultasAdmin({
                     {row.message}
                   </p>
                 </div>
+
+                {row.attachment_url &&
+                  (() => {
+                    const signedUrl = signedUrlByPath.get(row.attachment_url);
+                    if (!signedUrl) return null;
+                    const fallbackName =
+                      row.attachment_url.split("/").pop() ?? "documento";
+                    const displayName = row.attachment_name ?? fallbackName;
+                    return (
+                      <div className="mt-3 flex items-center gap-2 text-[0.8125rem]">
+                        <Paperclip className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        <a
+                          href={signedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={displayName}
+                          className="inline-flex items-center gap-1.5 text-foreground hover:underline"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          <span>Descargar documento</span>
+                          <span className="text-muted-foreground">({displayName})</span>
+                        </a>
+                      </div>
+                    );
+                  })()}
               </div>
             );
           })}

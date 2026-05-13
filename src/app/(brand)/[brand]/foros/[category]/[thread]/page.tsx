@@ -96,9 +96,10 @@ export default async function ThreadPage({
                   </Badge>
                 </div>
                 <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">{threadData.date}</p>
-                <div className="mt-4 text-[0.875rem] text-muted-foreground leading-relaxed">
-                  {threadData.content}
-                </div>
+                <div
+                  className="mt-4 text-[0.875rem] text-foreground leading-relaxed prose-premium max-w-none [&_img]:rounded-lg [&_img]:my-3 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:text-sm [&_h3]:font-semibold"
+                  dangerouslySetInnerHTML={{ __html: threadData.content }}
+                />
               </div>
             </div>
           </div>
@@ -130,9 +131,10 @@ export default async function ThreadPage({
                       )}
                     </div>
                     <p className="mt-0.5 text-[0.75rem] text-muted-foreground/60">{reply.date}</p>
-                    <div className="mt-3 text-[0.875rem] text-muted-foreground leading-relaxed">
-                      {reply.content}
-                    </div>
+                    <div
+                      className="mt-3 text-[0.875rem] text-foreground leading-relaxed prose-premium max-w-none [&_img]:rounded-lg [&_img]:my-2"
+                      dangerouslySetInnerHTML={{ __html: reply.content }}
+                    />
                   </div>
                 </div>
               </div>

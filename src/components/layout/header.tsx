@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const navigation = [
+const baseNavigation = [
   { name: "Inicio", href: "/" },
   { name: "Sobre nosotros", href: "/sobre-nosotros" },
   { name: "Blog", href: "/blog" },
@@ -35,6 +35,11 @@ export interface HeaderBrand {
   accentColor: string | null;
 }
 
+export interface HeaderCustomPage {
+  slug: string;
+  title: string;
+}
+
 function getInitials(profile: Profile | null, email: string | null | undefined) {
   const source = profile?.display_name?.trim() || email?.split("@")[0] || "";
   if (!source) return "U";
@@ -43,7 +48,13 @@ function getInitials(profile: Profile | null, email: string | null | undefined) 
   return initials.toUpperCase();
 }
 
-export function Header({ brand }: { brand?: HeaderBrand }) {
+export function Header({
+  brand,
+  customPages = [],
+}: {
+  brand?: HeaderBrand;
+  customPages?: HeaderCustomPage[];
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -56,6 +67,21 @@ export function Header({ brand }: { brand?: HeaderBrand }) {
   const brandName = brand?.name ?? "Estudio";
   const brandInitial = brand?.name?.charAt(0).toUpperCase() ?? "E";
   const brandAccent = brand?.accentColor ?? undefined;
+
+  // Páginas custom como links extra del nav. Insertamos antes de "Contacto"
+  // si existe, para que las páginas tipo "Precios", "FAQ", etc. queden agrupadas
+  // entre el contenido propio (Blog/Foros) y la acción final (Contacto).
+  const navigation = (() => {
+    if (customPages.length === 0) return baseNavigation;
+    const extras = customPages.map((p) => ({ name: p.title, href: `/p/${p.slug}` }));
+    const contactIdx = baseNavigation.findIndex((i) => i.href === "/contacto");
+    if (contactIdx === -1) return [...baseNavigation, ...extras];
+    return [
+      ...baseNavigation.slice(0, contactIdx),
+      ...extras,
+      ...baseNavigation.slice(contactIdx),
+    ];
+  })();
 
   const handleSignOut = () => {
     startSignOut(async () => {

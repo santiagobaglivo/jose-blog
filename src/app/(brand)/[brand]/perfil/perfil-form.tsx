@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ImageUploader } from "@/components/shared/ImageUploader";
 import type { Profile } from "@/lib/auth/UserProvider";
-import { updateAvatarUrl, updateProfile } from "./actions";
+import { updateProfile } from "./actions";
+import { AvatarUploader } from "./avatar-uploader";
 
 const formSchema = z.object({
   display_name: z
@@ -61,26 +61,6 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
     });
   };
 
-  const handleAvatarUpload = async (url: string) => {
-    const result = await updateAvatarUrl(url);
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
-    }
-    toast.success("Avatar actualizado");
-    router.refresh();
-  };
-
-  const handleAvatarRemove = async () => {
-    const result = await updateAvatarUrl(null);
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
-    }
-    toast.success("Avatar eliminado");
-    router.refresh();
-  };
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -100,20 +80,12 @@ export function PerfilForm({ profile, email }: { profile: Profile; email: string
       )}
 
       <div className="space-y-5">
-        <ImageUploader
-          bucket="avatars"
-          path={(file) => {
-            const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-            return `${profile.id}/avatar.${ext}`;
-          }}
-          onUpload={handleAvatarUpload}
-          onRemove={handleAvatarRemove}
-          initialUrl={profile.avatar_url}
-          maxSizeMB={1}
-          accept={["image/jpeg", "image/png", "image/webp"]}
-          label="Foto de perfil"
-          disabled={isPending}
-        />
+        <div>
+          <label className="block text-[0.8125rem] font-medium text-foreground mb-2">
+            Foto de perfil
+          </label>
+          <AvatarUploader currentUrl={profile.avatar_url} />
+        </div>
 
         <div>
           <label

@@ -35,6 +35,7 @@ import {
 type ForumCat = {
   slug: string;
   id?: string;
+  parent_id?: string | null;
   name: string;
   description: string;
   icon: string;
@@ -69,12 +70,14 @@ export function ForosPanel({
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [icon, setIcon] = useState("");
+  const [parentId, setParentId] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
   const reset = () => {
     setName("");
     setDesc("");
     setIcon("");
+    setParentId("");
   };
 
   const handleCreate = () => {
@@ -87,6 +90,7 @@ export function ForosPanel({
         name: name.trim(),
         description: desc.trim(),
         icon: icon.trim(),
+        parentId: parentId || "",
       });
       if (!result.ok) {
         toast.error(result.error);
@@ -111,6 +115,7 @@ export function ForosPanel({
         name: editing.name,
         description: editing.description,
         icon: editing.icon,
+        parentId: editing.parent_id || "",
       });
       if (!result.ok) {
         toast.error(result.error);
@@ -360,6 +365,21 @@ export function ForosPanel({
               disabled={isPending}
               className="w-full h-10 px-3 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all"
             />
+            <select
+              value={parentId}
+              onChange={(e) => setParentId(e.target.value)}
+              disabled={isPending}
+              className="w-full h-10 px-3 bg-secondary/30 border border-border/50 rounded-lg text-[0.8125rem] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-ring/40 transition-all"
+            >
+              <option value="">— Categoría raíz (sin padre)</option>
+              {cats
+                .filter((c) => !c.parent_id && c.id)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    Subcategoría de: {c.name}
+                  </option>
+                ))}
+            </select>
             <input
               type="text"
               placeholder="Icono lucide (ej: receipt, users, building, calculator, help-circle)"

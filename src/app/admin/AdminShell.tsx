@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
+  FileStack,
   CalendarClock,
+  Image as ImageIcon,
   MessageSquare,
   Mail,
   Tag,
@@ -28,6 +30,8 @@ const nav = [
   { name: "Programados", href: "/admin/programados", icon: CalendarClock },
   { name: "Comentarios", href: "/admin/comentarios", icon: MessageSquare },
   { name: "Categorías & Tags", href: "/admin/categorias", icon: Tag },
+  { name: "Páginas", href: "/admin/paginas", icon: FileStack },
+  { name: "Galería", href: "/admin/media", icon: ImageIcon },
   { name: "Foros", href: "/admin/foros", icon: MessagesSquare },
   { name: "Consultas", href: "/admin/consultas", icon: Mail },
   { name: "Usuarios", href: "/admin/usuarios", icon: Users },
