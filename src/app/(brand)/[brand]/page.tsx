@@ -11,14 +11,19 @@ export const revalidate = 300;
 
 export async function generateStaticParams() {
   // No usar createClient() del server: corre en build time, sin request → no hay cookies.
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("brands")
-    .select("slug")
-    .eq("is_active", true)
-    .is("deleted_at", null)
-    .order("display_order", { ascending: true });
-  return (data ?? []).map((b) => ({ brand: b.slug }));
+  // try/catch para tolerar build en CI sin DB accesible: las páginas se generan on-demand.
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("brands")
+      .select("slug")
+      .eq("is_active", true)
+      .is("deleted_at", null)
+      .order("display_order", { ascending: true });
+    return (data ?? []).map((b) => ({ brand: b.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({
