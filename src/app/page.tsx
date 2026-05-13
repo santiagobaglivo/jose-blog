@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { ArrowRight, Shield } from "lucide-react";
 
+import { publicBrandUrl } from "@/lib/brand-public-url";
 import { getActiveBrands } from "@/lib/queries/brands";
 
 export const revalidate = 60;
 
 export default async function RootPage() {
   const brands = await getActiveBrands();
+  // Resolver URLs públicas: cada link "Ver" va al subdomain de la brand,
+  // NUNCA a un path local (que en admin.<host> caería dentro del admin host).
+  const publicHrefs = await Promise.all(
+    brands.map((b) => publicBrandUrl({ slug: b.slug, domain: b.domain }))
+  );
 
   return (
     <main className="min-h-screen bg-background">
@@ -25,30 +31,43 @@ export default async function RootPage() {
         <section className="mt-14">
           <h2 className="text-base font-semibold text-foreground mb-5">Marcas disponibles</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
-            {brands.map((b) => (
-              <li
-                key={b.id}
-                className="flex items-center justify-between rounded-lg border border-border/50 bg-card p-4 hover:border-border transition-colors"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-[0.875rem] font-medium text-foreground">{b.name}</p>
-                  <p className="text-[0.75rem] text-muted-foreground mt-0.5">
-                    {b.domain ? (
-                      <>Dominio: {b.domain}</>
-                    ) : (
-                      <span className="italic">Sin dominio asignado</span>
-                    )}
-                  </p>
-                </div>
-                <Link
-                  href={`/${b.slug}`}
-                  className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-foreground hover:text-primary transition-colors shrink-0 ml-4"
+            {brands.map((b, idx) => {
+              const publicHref = publicHrefs[idx];
+              return (
+                <li
+                  key={b.id}
+                  className="flex items-center justify-between rounded-lg border border-border/50 bg-card p-4 hover:border-border transition-colors"
                 >
-                  Ver
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </li>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[0.875rem] font-medium text-foreground">{b.name}</p>
+                    <p className="text-[0.75rem] text-muted-foreground mt-0.5">
+                      {b.domain ? (
+                        <>Dominio: {b.domain}</>
+                      ) : (
+                        <span className="italic">Sin dominio asignado</span>
+                      )}
+                    </p>
+                  </div>
+                  {publicHref ? (
+                    <a
+                      href={publicHref}
+                      className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-foreground hover:text-primary transition-colors shrink-0 ml-4"
+                    >
+                      Ver
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </a>
+                  ) : (
+                    <Link
+                      href={`/${b.slug}`}
+                      className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-foreground hover:text-primary transition-colors shrink-0 ml-4"
+                    >
+                      Ver
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
 
