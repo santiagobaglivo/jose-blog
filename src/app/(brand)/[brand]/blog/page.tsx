@@ -76,31 +76,31 @@ export default async function BlogPage({
 
   return (
     <>
-      <section className="bg-gradient-to-b from-secondary/40 to-transparent pt-10 pb-8">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      {/* Hero editorial — sin imagen, fondo neutro */}
+      <section className="border-b border-border/40 bg-secondary/20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-20">
           <Breadcrumbs items={[{ label: "Blog" }]} />
-          <div className="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-warm mb-3 font-sans">
-                Blog profesional
+          <div className="mt-8 max-w-3xl">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-primary mb-4">
+              Publicaciones
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-semibold text-foreground tracking-tight leading-[1.05]">
+              Análisis técnico
+              <br />
+              <span className="text-muted-foreground italic">y notas profesionales</span>
+            </h1>
+            <p className="mt-6 text-[1rem] lg:text-[1.0625rem] text-muted-foreground leading-relaxed max-w-2xl">
+              Artículos redactados por nuestro equipo. Sin titulares atrapavistas — solo
+              fundamento técnico y análisis legal aplicable a tu caso.
+            </p>
+            {filterDescription && (
+              <p className="mt-6 inline-flex items-center gap-3 text-[0.8125rem] font-medium px-4 py-2 rounded-full bg-primary/10 text-primary">
+                {filterDescription} · {total} resultado{total === 1 ? "" : "s"}{" "}
+                <Link href="/blog" className="underline opacity-70 hover:opacity-100">
+                  Limpiar
+                </Link>
               </p>
-              <h1 className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">
-                Artículos y análisis
-              </h1>
-              <p className="mt-3 text-[0.9375rem] text-muted-foreground max-w-xl">
-                Publicaciones de carácter técnico-legal redactadas por el equipo profesional.
-              </p>
-              {filterDescription && (
-                <p className="mt-3 text-[0.8125rem] font-medium text-primary">
-                  {filterDescription} · {total} resultado{total === 1 ? "" : "s"}{" "}
-                  ·{" "}
-                  <Link href="/blog" className="underline">
-                    Limpiar filtros
-                  </Link>
-                </p>
-              )}
-            </div>
-            <SearchBar placeholder="Buscar artículos..." className="w-full lg:w-72" />
+            )}
           </div>
         </div>
       </section>
@@ -110,27 +110,27 @@ export default async function BlogPage({
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex-1 min-w-0">
               {published.length === 0 ? (
-                <div className="bg-card border border-dashed border-border/60 rounded-xl px-8 py-16 text-center">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    {isFiltered ? "Sin resultados" : "Aún no hay artículos publicados"}
+                <div className="bg-card border border-dashed border-border/60 rounded-xl px-8 py-20 text-center">
+                  <h2 className="text-lg font-serif font-semibold text-foreground">
+                    {isFiltered ? "Sin resultados" : "Aún no hay publicaciones"}
                   </h2>
                   <p className="mt-2 text-[0.875rem] text-muted-foreground max-w-md mx-auto">
                     {isFiltered
                       ? "Probá con otros términos o limpiá los filtros."
-                      : "Pronto vamos a compartir análisis y notas profesionales en esta sección."}
+                      : "Pronto vamos a compartir análisis y notas profesionales."}
                   </p>
                 </div>
               ) : (
                 <>
                   {/* Featured (solo en página 1 sin filtros) */}
                   {!isFiltered && page === 1 && (
-                    <div className="mb-10">
+                    <div className="mb-8">
                       <ArticleCard post={published[0]} featured />
                     </div>
                   )}
 
-                  {/* Lista */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Lista en grid editorial */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {(!isFiltered && page === 1 ? published.slice(1) : published).map((post) => (
                       <ArticleCard key={post.slug} post={post} />
                     ))}

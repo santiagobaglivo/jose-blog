@@ -32,38 +32,41 @@ export function BrandStats({ stats, accent }: BrandStatsProps) {
           : "sm:grid-cols-1";
 
   return (
-    <section
-      className="py-14 lg:py-20 border-y border-border/50"
-      style={{
-        background: `linear-gradient(180deg, ${accent}08 0%, transparent 100%)`,
-      }}
-    >
+    <section className="py-24 lg:py-32 bg-secondary/30 border-y border-border/40">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="max-w-2xl mb-10">
+        <div className="max-w-3xl mb-16 text-center mx-auto">
           <p
-            className="text-xs font-semibold uppercase tracking-widest mb-3"
+            className="text-xs font-semibold uppercase tracking-[0.2em] mb-5"
             style={{ color: accent }}
           >
             Cifras
           </p>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight font-serif">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight font-serif leading-[1.1]">
             Números que nos respaldan
           </h2>
+          <div
+            aria-hidden="true"
+            className="mt-8 mx-auto h-1 w-16 rounded-full"
+            style={{ backgroundColor: accent }}
+          />
         </div>
 
-        <ul className={`grid gap-4 ${colsClass}`}>
+        <ul className={`grid gap-6 lg:gap-8 ${colsClass}`}>
           {stats.map((stat) => (
             <li
               key={stat.id}
-              className="rounded-xl border border-border/50 bg-card p-6 text-center"
+              className="rounded-xl border border-border/40 bg-background p-8 lg:p-10 text-center shadow-sm hover:shadow-md transition-shadow"
             >
-              <p className="text-4xl sm:text-5xl font-semibold tracking-tight" style={{ color: accent }}>
+              <p
+                className="text-5xl lg:text-6xl font-semibold tracking-tight font-serif leading-none"
+                style={{ color: accent }}
+              >
                 <AnimatedNumber value={stat.value} />
                 {stat.suffix && (
                   <span className="ml-0.5 align-baseline">{stat.suffix}</span>
                 )}
               </p>
-              <p className="mt-3 text-[0.875rem] text-muted-foreground leading-snug">
+              <p className="mt-6 text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground leading-snug">
                 {stat.label}
               </p>
             </li>

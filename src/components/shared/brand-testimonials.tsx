@@ -47,64 +47,72 @@ export function BrandTestimonials({
 
   return (
     <section
-      className="py-14 lg:py-20 border-y border-border/50"
-      style={{ background: `linear-gradient(180deg, ${accent}08 0%, ${accent}14 100%)` }}
+      className="py-24 lg:py-32 bg-secondary/30 border-y border-border/40"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
       aria-label="Testimonios de clientes"
     >
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
-        <div className="text-center mb-10">
+        <div className="text-center mb-16">
           <p
-            className="text-xs font-semibold uppercase tracking-widest mb-3"
+            className="text-xs font-semibold uppercase tracking-[0.2em] mb-5"
             style={{ color: accent }}
           >
             Testimonios
           </p>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight font-serif">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight font-serif leading-[1.1]">
             Lo que dicen nuestros clientes
           </h2>
+          <div
+            aria-hidden="true"
+            className="mt-8 mx-auto h-1 w-16 rounded-full"
+            style={{ backgroundColor: accent }}
+          />
         </div>
 
         <div className="relative">
           <article
             key={current.id}
-            className="bg-background border border-border/50 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-sm"
+            className="bg-background border border-border/40 rounded-xl p-8 sm:p-10 lg:p-14 shadow-sm"
             aria-roledescription="slide"
             aria-label={`Testimonio ${safeIndex + 1} de ${testimonials.length}`}
           >
             <Quote
-              className="h-8 w-8 mb-4 opacity-50"
-              style={{ color: accent }}
+              className="h-10 w-10 mb-6"
+              style={{ color: accent, opacity: 0.6 }}
               aria-hidden="true"
             />
 
             {current.rating != null && current.rating > 0 && (
               <div
-                className="flex items-center gap-1 mb-4"
+                className="flex items-center gap-1 mb-6"
                 aria-label={`Calificación ${current.rating} de 5`}
               >
                 {[1, 2, 3, 4, 5].map((n) => (
                   <Star
                     key={n}
-                    className={`h-4 w-4 ${
+                    className="h-5 w-5"
+                    style={
                       n <= (current.rating ?? 0)
-                        ? "fill-amber-400 text-amber-400"
-                        : "text-muted-foreground/30"
-                    }`}
+                        ? { color: accent, fill: accent }
+                        : { color: "rgb(var(--muted-foreground) / 0.25)" }
+                    }
                     aria-hidden="true"
                   />
                 ))}
               </div>
             )}
 
-            <blockquote className="text-base sm:text-lg leading-relaxed text-foreground/90">
-              {current.quote}
+            <blockquote className="text-xl sm:text-2xl lg:text-[1.625rem] leading-relaxed text-foreground/90 font-serif italic">
+              &ldquo;{current.quote}&rdquo;
             </blockquote>
 
-            <div className="mt-6 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full overflow-hidden bg-secondary/40 border border-border/50 flex-shrink-0">
+            <div
+              className="mt-10 pt-8 flex items-center gap-5 border-t"
+              style={{ borderColor: `${accent}22` }}
+            >
+              <div className="h-16 w-16 rounded-full overflow-hidden bg-secondary/40 border border-border/40 flex-shrink-0">
                 {current.author_photo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -114,16 +122,19 @@ export function BrandTestimonials({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
-                    <UserRound className="h-6 w-6" />
+                    <UserRound className="h-8 w-8" />
                   </div>
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-[0.9375rem] font-semibold text-foreground truncate">
+                <p className="text-base font-semibold text-foreground truncate font-serif">
                   {current.author_name}
                 </p>
                 {(current.author_role || current.author_company) && (
-                  <p className="text-[0.8125rem] text-muted-foreground truncate">
+                  <p
+                    className="mt-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.2em] truncate"
+                    style={{ color: accent }}
+                  >
                     {[current.author_role, current.author_company]
                       .filter(Boolean)
                       .join(" · ")}
@@ -135,12 +146,12 @@ export function BrandTestimonials({
 
           {testimonials.length > 1 && (
             <>
-              <div className="mt-6 flex items-center justify-center gap-3">
+              <div className="mt-10 flex items-center justify-center gap-4">
                 <button
                   type="button"
                   onClick={goPrev}
                   aria-label="Testimonio anterior"
-                  className="h-10 w-10 rounded-full bg-background border border-border/50 flex items-center justify-center hover:bg-secondary/60 transition-colors"
+                  className="h-11 w-11 rounded-full bg-background border border-border/40 flex items-center justify-center hover:bg-secondary/60 transition-colors shadow-sm"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -155,8 +166,8 @@ export function BrandTestimonials({
                       aria-current={i === safeIndex}
                       className="h-2 rounded-full transition-all"
                       style={{
-                        width: i === safeIndex ? 24 : 8,
-                        backgroundColor: i === safeIndex ? accent : `${accent}55`,
+                        width: i === safeIndex ? 28 : 8,
+                        backgroundColor: i === safeIndex ? accent : `${accent}40`,
                       }}
                     />
                   ))}
@@ -166,7 +177,7 @@ export function BrandTestimonials({
                   type="button"
                   onClick={goNext}
                   aria-label="Testimonio siguiente"
-                  className="h-10 w-10 rounded-full bg-background border border-border/50 flex items-center justify-center hover:bg-secondary/60 transition-colors"
+                  className="h-11 w-11 rounded-full bg-background border border-border/40 flex items-center justify-center hover:bg-secondary/60 transition-colors shadow-sm"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>

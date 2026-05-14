@@ -1,82 +1,64 @@
 import Link from "next/link";
 import type { Post } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MessageSquare } from "lucide-react";
-import { PostImage } from "@/components/shared/post-image";
+import { ArrowUpRight, Clock, MessageSquare } from "lucide-react";
 
+/**
+ * ArticleCard editorial — sin imagen destacada por default.
+ * Estilo "informe técnico legal": tipografía serif para el título,
+ * meta minimalista, separador inferior con accent. Inspiración Inkas Marble.
+ */
 export function ArticleCard({ post, featured = false }: { post: Post; featured?: boolean }) {
-  const hasImage = Boolean(post.image && post.image.trim());
-
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className={`group flex flex-col bg-card border border-border/50 rounded-xl overflow-hidden hover:border-border hover:shadow-md transition-all duration-300 ${
-        featured ? (hasImage ? "md:flex-row md:col-span-2" : "md:col-span-2") : ""
+      className={`group flex flex-col bg-card border border-border/50 rounded-xl p-6 lg:p-7 hover:border-primary/30 hover:shadow-sm transition-all duration-300 ${
+        featured ? "md:col-span-2 lg:p-9" : ""
       }`}
     >
-      {hasImage && (
-        <div
-          className={`relative overflow-hidden bg-secondary ${
-            featured ? "md:w-1/2 aspect-[16/10] md:aspect-auto md:min-h-[280px]" : "aspect-[16/10]"
-          }`}
+      <div className="flex items-center justify-between mb-4">
+        <Badge
+          variant="outline"
+          className="text-[0.6875rem] font-medium uppercase tracking-widest border-primary/20 text-primary bg-primary/5"
         >
-          <PostImage
-            src={post.image}
-            alt={post.title}
-            className="group-hover:scale-[1.03] transition-transform duration-500"
-          />
-          <div className="absolute top-3 left-3 z-10">
-            <Badge
-              variant="secondary"
-              className="bg-white/90 backdrop-blur-sm text-foreground text-[0.6875rem] font-medium"
-            >
-              {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
-            </Badge>
-          </div>
-        </div>
-      )}
+          {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
+        </Badge>
+        <ArrowUpRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+      </div>
 
-      <div
-        className={`flex flex-col justify-between p-5 ${
-          featured ? (hasImage ? "md:w-1/2 md:p-8" : "md:p-8") : ""
+      <h3
+        className={`font-serif font-semibold text-foreground group-hover:text-primary transition-colors leading-[1.2] tracking-tight ${
+          featured ? "text-2xl lg:text-3xl" : "text-lg lg:text-xl"
         }`}
       >
-        <div>
-          {!hasImage && (
-            <Badge
-              variant="secondary"
-              className="text-[0.6875rem] font-medium mb-3 inline-flex"
-            >
-              {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
-            </Badge>
-          )}
-          <h3
-            className={`font-semibold text-foreground group-hover:text-primary/80 transition-colors leading-snug ${
-              featured ? "text-xl lg:text-2xl" : "text-base"
-            }`}
-          >
-            {post.title}
-          </h3>
-          <p
-            className={`mt-2.5 text-[0.8125rem] leading-relaxed text-muted-foreground ${
-              hasImage ? "line-clamp-2" : featured ? "line-clamp-4" : "line-clamp-3"
-            }`}
-          >
-            {post.excerpt}
-          </p>
+        {post.title}
+      </h3>
+
+      <p
+        className={`mt-4 text-[0.875rem] leading-relaxed text-muted-foreground ${
+          featured ? "line-clamp-4" : "line-clamp-3"
+        }`}
+      >
+        {post.excerpt}
+      </p>
+
+      <div className="mt-auto pt-6 flex items-center justify-between text-[0.75rem] text-muted-foreground/70 border-t border-border/40">
+        <div className="flex items-center gap-3">
+          <span className="font-medium text-foreground/70">{post.author.name}</span>
+          <span className="text-muted-foreground/40">·</span>
+          <span>{post.date}</span>
         </div>
-        <div className="mt-4 flex items-center gap-4 text-[0.75rem] text-muted-foreground/70">
+        <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />
+            <Clock className="h-3 w-3" />
             {post.readTime}
           </span>
           {post.commentCount > 0 && (
             <span className="flex items-center gap-1">
-              <MessageSquare className="h-3.5 w-3.5" />
+              <MessageSquare className="h-3 w-3" />
               {post.commentCount}
             </span>
           )}
-          <span className="ml-auto">{post.date}</span>
         </div>
       </div>
     </Link>
